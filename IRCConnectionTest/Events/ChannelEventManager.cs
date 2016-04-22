@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using IRCConnectionTest.Events.ComstumEventArgs;
 using IRCConnectionTest.Events.Misc;
@@ -37,6 +39,13 @@ namespace IRCConnectionTest.Events
             @"\s(\+o|-o)\s" +
             @"(" + GlobalTwitchPatterns.TwitchUserNamePattern + @")$";
 
+        private const string UserListPattern =
+            @"^:(" + GlobalTwitchPatterns.TwitchUserNamePattern + @")" +
+            @"." + GlobalTwitchPatterns.TwitchHostNamePattern +
+            @"\s353\s" + GlobalTwitchPatterns.TwitchUserNamePattern +
+            @"\s=\s#(" + GlobalTwitchPatterns.TwitchChannelNamePattern + @")" +
+            @"\s:(.*)";
+
         private static readonly Regex RegExJoinPart = new Regex(UserJoinPartPattern);
         private static readonly Regex RegExRoomState = new Regex(RoomStateBasePattern);
         private static readonly Regex RegExSlowMod = new Regex(SlowModePattern);
@@ -45,6 +54,7 @@ namespace IRCConnectionTest.Events
         private static readonly Regex RegExLangMod = new Regex(BroadcasterLanguagePattern);
         private static readonly Regex RegExAllMod = new Regex(AllModePattern);
         private static readonly Regex RegExOpMod = new Regex(OperatorPattern);
+        private static readonly Regex RegExUserList = new Regex(UserListPattern);
 
         static ChannelEventManager()
         {                     
@@ -56,6 +66,7 @@ namespace IRCConnectionTest.Events
             RaiseUserJoinPartEvent(eArgs.Message);
             RaiseRoomStateEvents(eArgs.Message);
             RaiseOperatorEvents(eArgs.Message);
+            RaiseUserListEvent(eArgs.Message);
         }
 
         public static event EventHandler<UserEventArgs> UserJoinEvent;
@@ -67,6 +78,7 @@ namespace IRCConnectionTest.Events
         public static event EventHandler<RoomStateLangModeEventArgs> RoomStateLangModeEvent;
         public static event EventHandler<OperatorModeEventArgs> OperatorGrantedEvent;
         public static event EventHandler<OperatorModeEventArgs> OperatorRevokedEvent;
+        public static event EventHandler<UserListEventArgs> UserListEvent;
 
         private static void OnUserJoinEvent(UserEventArgs e) => UserJoinEvent?.Invoke(typeof(ChannelEventManager), e);
         private static void OnUserPartEvent(UserEventArgs e) => UserPartEvent?.Invoke(typeof(ChannelEventManager), e);
@@ -86,6 +98,17 @@ namespace IRCConnectionTest.Events
 
         private static void OnRoomStateLangModeEvent(RoomStateLangModeEventArgs e)
             => RoomStateLangModeEvent?.Invoke(null, e);
+
+        private static void OnUserListEvent(UserListEventArgs e) => UserListEvent?.Invoke(null, e);
+
+        private static void RaiseUserListEvent(string message)
+        {
+            var match = RegExUserList.Match(message);
+            if (!match.Success) return;
+
+            var userArray = match.Groups[3].Value.Split(' ');           
+            OnUserListEvent(new UserListEventArgs(userArray.ToList(), match.Groups[1].Value, match.Groups[2].Value));
+        }
 
         private static void RaiseOperatorEvents(string message)
         {

@@ -52,6 +52,7 @@
     <Compile Include="Events\ComstumEventArgs\RoomStateR9KModeEventArgs.cs" />
     <Compile Include="Events\ComstumEventArgs\RoomStateSlowModeEventArgs.cs" />
     <Compile Include="Events\ComstumEventArgs\RoomStateSubscriberModeEventArgs.cs" />
+    <Compile Include="Events\ComstumEventArgs\UserListEventArgs.cs" />
     <Compile Include="Events\ComstumEventArgs\UserStateEventArgs.cs" />
     <Compile Include="Events\EventManager.cs" />
     <Compile Include="Events\Misc\RoomStateTags.cs" />
