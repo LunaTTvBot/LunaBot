@@ -3,7 +3,8 @@ using System.Diagnostics;
 using System.Threading;
 using IRCConnectionTest.Events;
 using IRCConnectionTest.Events.ComstumEventArgs;
-using IRCConnectionTest.Properties;
+using IRCConnectionTest.Misc;
+using System.IO;
 
 namespace IRCConnectionTest
 {
@@ -13,17 +14,30 @@ namespace IRCConnectionTest
 
         public void StartApp()
         {
+            var settingsFileName = "settings.json";
+            AppSettings settings;
+
+            try
+            {
+                settings = AppSettings.Load(settingsFileName);
+            }
+            catch (FileNotFoundException)
+            {
+                settings = AppSettings.LoadLocal(settingsFileName);
+            }
+
             _connection = new IrcConnection(
-                Settings.Default.User,
-                Settings.Default.twitchapikey,
-                Settings.Default.Nickname,
-                Settings.Default.URL,
-                Settings.Default.Port,
+                settings.Username,
+                settings.TwitchApiKey,
+                settings.Nickname,
+                settings.Url,
+                settings.Port,
                 ConnectionType.BotCon
-                );
+            );
 
             if (_connection.Connect())
             {
+                settings.Save(settingsFileName);
                 Console.WriteLine("##### Connected! #####");
 
                 _connection.RaiseMessageEvent += ConnectionOnRaiseMessageEvent;                
