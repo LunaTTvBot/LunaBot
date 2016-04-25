@@ -26,7 +26,7 @@ namespace IRCConnectionTest.Misc
 
         public static AppSettings Load(string settingsFileName)
         {
-            var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+            var isoStore = GetIsoStorage();
 
             if (!isoStore.FileExists(settingsFileName))
                 throw new FileNotFoundException(String.Format("File {0} not found", settingsFileName));
@@ -70,11 +70,31 @@ namespace IRCConnectionTest.Misc
             }
         }
 
+        public static bool TryLoad(string settingsFileName, out AppSettings settings)
+        {
+            if (!IsoStoreFileExists(settingsFileName))
+            {
+                settings = null;
+                return false;
+            }
+
+            try
+            {
+                settings = Load(settingsFileName);
+                return true;
+            }
+            catch (Exception)
+            {
+                settings = null;
+                return false;
+            }
+        }
+
         public bool Save(string settingsFileName)
         {
             try
             {
-                var isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+                var isoStore = GetIsoStorage();
 
                 if (isoStore.FileExists(settingsFileName))
                     isoStore.DeleteFile(settingsFileName);
@@ -96,5 +116,11 @@ namespace IRCConnectionTest.Misc
                 return false;
             }
         }
+
+        private static IsolatedStorageFile GetIsoStorage()
+            => IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
+
+        private static bool IsoStoreFileExists(string filename)
+            => GetIsoStorage().FileExists(filename);
     }
 }
