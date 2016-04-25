@@ -5,12 +5,14 @@ using IRCConnectionTest.Events;
 using IRCConnectionTest.Events.ComstumEventArgs;
 using IRCConnectionTest.Misc;
 using System.IO;
+using System.Runtime.Serialization;
 
 namespace IRCConnectionTest
 {
     internal class App
     {
         private IrcConnection _connection;
+        public static string BotChannel = "niksdaboy";
 
         public void StartApp()
         {
@@ -33,12 +35,13 @@ namespace IRCConnectionTest
 
             if (_connection.Connect())
             {
+                System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
                 settings.Save(settingsFileName);
                 Console.WriteLine("##### Connected! #####");
 
                 _connection.RaiseMessageEvent += ConnectionOnRaiseMessageEvent;                
 
-                _connection.Join("reiskornchen");
+                _connection.Join(BotChannel);
 
                 RegisterChannelEvents();
                 RegisterUserEvents();
@@ -67,21 +70,21 @@ namespace IRCConnectionTest
 
         private static void ChannelEventManagerOnOperatorGrantedEvent(object sender, OperatorModeEventArgs eArgs)
         {
-            Trace.WriteLine($"Operator {eArgs.OpType}: {eArgs.User}@{eArgs.Channel}");
+            Console.WriteLine($"Operator {eArgs.OpType}: {eArgs.User}@{eArgs.Channel}");
         }
 
         private static void ChannelEventManagerOnRoomStateAllEvent(object sender, RoomStateAllEventArgs eArgs)
         {
-            Trace.WriteLine($"ROOMSTATE received #{eArgs.Channel}");
+            Console.WriteLine($"ROOMSTATE received #{eArgs.Channel}");
         }
 
         private static void UserEventManagerOnUserStateEvent(object sender, UserStateEventArgs eArgs) {
-            Trace.WriteLine($"USERSTATE received #{eArgs.Channel}");
+            Console.WriteLine($"USERSTATE received #{eArgs.Channel}");
         }
 
         private static void EventManagerOnUserWhisperMessageEvent(object sender, UserWhisperMessageEventArgs eArgs)
         {
-            Trace.WriteLine($"User {eArgs.UserName} > {eArgs.ToUserName}: {eArgs.Message}");
+            Console.WriteLine($"User {eArgs.UserName} > {eArgs.ToUserName}: {eArgs.Message}");
         }
 
         private static void EventManagerOnUserPublicMessageEvent(object sender, UserPublicMessageEventArgs eArgs)
@@ -90,17 +93,17 @@ namespace IRCConnectionTest
                 ? eArgs.Tags.DisplayName
                 : eArgs.UserName;
 
-            Trace.WriteLine($"{name}#{eArgs.Channel}: {eArgs.Message}");
+            Console.WriteLine($"{name}#{eArgs.Channel}: {eArgs.Message}");
         }
 
         private static void EventManagerOnUserJoinEvent(object sender, UserEventArgs eArgs)
         {
-            Trace.WriteLine($"User {eArgs.Type}ed: {eArgs.UserName} - {eArgs.Channel}");
+            Console.WriteLine($"User {eArgs.Type}ed: {eArgs.UserName} - {eArgs.Channel}");
         }
 
         private static void ConnectionOnRaiseMessageEvent(object sender, MessageEventArgs eArgs)
         {
-            Console.WriteLine(eArgs.Message);
+            Trace.WriteLine(eArgs.Message);
         }
     }
 }
