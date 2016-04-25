@@ -17,11 +17,7 @@ namespace IRCConnectionTest
             var settingsFileName = "settings.json";
             AppSettings settings;
 
-            try
-            {
-                settings = AppSettings.Load(settingsFileName);
-            }
-            catch (FileNotFoundException)
+            if (!AppSettings.TryLoad(settingsFileName, out settings))
             {
                 settings = AppSettings.LoadLocal(settingsFileName);
             }

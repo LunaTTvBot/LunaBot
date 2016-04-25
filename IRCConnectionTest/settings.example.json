@@ -1,6 +1,6 @@
 ﻿{
   "nickname": "",
-  "port": 80,
+  "port": 6667,
   "apikey": "",
   "url": "irc.chat.twitch.tv",
   "username": ""
