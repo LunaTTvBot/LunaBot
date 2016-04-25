@@ -41,12 +41,19 @@ namespace IRCConnectionTest
                 UsrList[channel].Add(userName);
         }
 
-        public static HashSet<string> GetUserList(string channel)
+        public static IEnumerable<string> GetUserList(string channel)
         {
             if (!UsrList.ContainsKey(channel))
                 UsrList.Add(channel, new HashSet<string>());
 
-            return UsrList[channel];
+            return new HashSet<string>(UsrList[channel]);
+        }
+
+        public static ISet<string> GetUserListAsSet(string channel) {
+            if(!UsrList.ContainsKey(channel))
+                UsrList.Add(channel, new HashSet<string>());
+
+            return new HashSet<string>(UsrList[channel]);
         }
     }
 }
