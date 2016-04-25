@@ -29,17 +29,17 @@ namespace IRCConnectionTest.Misc
             var isoStore = GetIsoStorage();
 
             if (!isoStore.FileExists(settingsFileName))
-                throw new FileNotFoundException(String.Format("File {0} not found", settingsFileName));
+                throw new FileNotFoundException($"File {settingsFileName} not found");
 
             using (var file = isoStore.OpenFile(settingsFileName, FileMode.Open, FileAccess.Read))
             {
-                var buffer = new byte[file.Length];
-                file.Read(buffer, 0, buffer.Length);
-                var json = Encoding.UTF8.GetString(buffer);
-
                 try
                 {
-                    return JsonConvert.DeserializeObject<AppSettings>(json);
+                    var serializer = new JsonSerializer();
+                    using(var sr = new StreamReader(file))
+                    using(var jsonTextReader = new JsonTextReader(sr)) {
+                        return serializer.Deserialize<AppSettings>(jsonTextReader);
+                    }
                 }
                 catch (Exception)
                 {
@@ -51,20 +51,17 @@ namespace IRCConnectionTest.Misc
         public static AppSettings LoadLocal(string settingsFileName)
         {
             if (!File.Exists(settingsFileName))
-                throw new FileNotFoundException(String.Format("File {0} not found", settingsFileName));
+                throw new FileNotFoundException($"File {settingsFileName} not found");
 
             using (var file = File.Open(settingsFileName, FileMode.Open, FileAccess.Read))
             {
-                var buffer = new byte[file.Length];
-                file.Read(buffer, 0, buffer.Length);
-                var json = Encoding.UTF8.GetString(buffer);
-
-                try
-                {
-                    return JsonConvert.DeserializeObject<AppSettings>(json);
-                }
-                catch (Exception)
-                {
+                try {
+                    var serializer = new JsonSerializer();
+                    using(var sr = new StreamReader(file))
+                    using(var jsonTextReader = new JsonTextReader(sr)) {
+                        return serializer.Deserialize<AppSettings>(jsonTextReader);
+                    }
+                } catch(Exception e) {
                     return new AppSettings();
                 }
             }
