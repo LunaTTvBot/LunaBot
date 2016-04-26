@@ -1,4 +1,5 @@
-﻿using IRCConnectionTest.TmiApi.ChannelChattersEndpoint;
+﻿using System;
+using IRCConnectionTest.TmiApi.ChannelChattersEndpoint;
 using RestSharp;
 
 namespace IRCConnectionTest.TmiApi

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using IRCConnectionTest.Events;
@@ -12,11 +13,11 @@ namespace IRCConnectionTest
     internal class App
     {
         private IrcConnection _connection;
-        public static string BotChannel = "niksdaboy";
+        public static List<string> BotChannelList = new List<string> { "c9sneaky", "wtf_winds123" };
 
         public void StartApp()
         {
-            var settingsFileName = "settings.json";
+            const string settingsFileName = "settings.json";
             AppSettings settings;
 
             if (!AppSettings.TryLoad(settingsFileName, out settings))
@@ -40,9 +41,7 @@ namespace IRCConnectionTest
                 Console.WriteLine("##### Connected! #####");
 
                 _connection.RaiseMessageEvent += ConnectionOnRaiseMessageEvent;                
-
-                _connection.Join(BotChannel);
-
+                BotChannelList.ForEach(channel => _connection.Join(channel));
                 RegisterChannelEvents();
                 RegisterUserEvents();
             }
