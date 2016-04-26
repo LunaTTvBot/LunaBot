@@ -86,6 +86,8 @@ namespace IRCConnectionTest
 
         private static void HandleChattersListFromApi(ChannelChatters chatters, string channel)
         {
+            UsrList[channel].Clear();
+
             chatters.Chatters.Viewers.ForEach(chatter => AddToSetFromApi(channel, chatter));
             chatters.Chatters.GlobalMods.ForEach(chatter => AddToSetFromApi(channel, chatter));
             chatters.Chatters.Admins.ForEach(chatter => AddToSetFromApi(channel, chatter));
