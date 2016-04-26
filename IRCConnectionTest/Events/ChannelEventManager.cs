@@ -11,35 +11,35 @@ namespace IRCConnectionTest.Events
 {
     internal static class ChannelEventManager
     {
-        private const string UserJoinPartPattern =
+        public const string UserJoinPartPattern =
             @"^" + GlobalTwitchPatterns.TwichUserBasePattern +
             @"(JOIN|PART)\s" +
             @"\#(" + GlobalTwitchPatterns.TwitchChannelNamePattern + @")$";
 
-        private const string RoomStateBasePattern =
+        public const string RoomStateBasePattern =
             @"^@(.*)\s:" + GlobalTwitchPatterns.TwitchHostNamePattern +
             @"\sROOMSTATE\s" +
             @"\#(" + GlobalTwitchPatterns.TwitchChannelNamePattern + @")$";
 
-        private const string SlowModePattern = @"slow=([\d]+)";
-        private const string SubscriberModePattern = @"subs-only=([1|0])";
-        private const string R9KModePattern = @"r9k=([1|0])";
-        private const string BroadcasterLanguagePattern = @"broadcaster-lang=([\w\d-_]*)";
+        public const string SlowModePattern = @"slow=([\d]+)";
+        public const string SubscriberModePattern = @"subs-only=([1|0])";
+        public const string R9KModePattern = @"r9k=([1|0])";
+        public const string BroadcasterLanguagePattern = @"broadcaster-lang=([\w\d-_]*)";
 
-        private const string AllModePattern =
+        public const string AllModePattern =
             BroadcasterLanguagePattern +
             @";" + R9KModePattern +
             @";" + SlowModePattern +
             @";" + SubscriberModePattern;
 
-        private const string OperatorPattern =
+        public const string OperatorPattern =
             @"^:" + GlobalTwitchPatterns.JtvPattern +
             @"\sMODE\s" +
             @"\#(" + GlobalTwitchPatterns.TwitchChannelNamePattern + @")" +
             @"\s(\+o|-o)\s" +
             @"(" + GlobalTwitchPatterns.TwitchUserNamePattern + @")$";
 
-        private const string UserListPattern =
+        public const string UserListPattern =
             @"^:(" + GlobalTwitchPatterns.TwitchUserNamePattern + @")" +
             @"." + GlobalTwitchPatterns.TwitchHostNamePattern +
             @"\s353\s" + GlobalTwitchPatterns.TwitchUserNamePattern +

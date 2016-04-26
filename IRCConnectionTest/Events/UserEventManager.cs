@@ -8,26 +8,26 @@ namespace IRCConnectionTest.Events
 {
     internal static class UserEventManager
     {
-        private const string UserJoinPartPattern =
+        public const string UserJoinPartPattern =
             "^" + GlobalTwitchPatterns.TwichUserBasePattern + @"(JOIN|PART)\s" +
             @"\#(" + GlobalTwitchPatterns.TwitchChannelNamePattern + ")$";
 
-        private const string UserPublicMessagePattern =
+        public const string UserPublicMessagePattern =
             @"^(.*)\s?" + GlobalTwitchPatterns.TwichUserBasePattern + @"PRIVMSG\s" +
             @"\#(" + GlobalTwitchPatterns.TwitchChannelNamePattern + @")\s:(.*)$";
 
-        private const string UserWhisperMessagePattern =
+        public const string UserWhisperMessagePattern =
             @"^(.*)\s?" + GlobalTwitchPatterns.TwichUserBasePattern + @"WHISPER\s" +
             @"(" + GlobalTwitchPatterns.TwitchUserNamePattern + @")\s:(.*)$";
 
-        private const string UserMessageTagsPattern =
+        public const string UserMessageTagsPattern =
             @"^@color=([^;]*);display-name=([\d\w]*);emotes=(.*);mod=([0|1]);room-id=(\d+);subscriber=([0|1]);turbo=([0|1]);user-id=(\d+);user-type=(.*)$";
 
-        private const string UserStatePattern =
+        public const string UserStatePattern =
             @"^(.*)\s:" + GlobalTwitchPatterns.TwitchHostNamePattern + @"\sUSERSTATE\s" +
             @"\#(" + GlobalTwitchPatterns.TwitchChannelNamePattern + @")$";
 
-        private const string UserStateTagsPattern =
+        public const string UserStateTagsPattern =
             @"^@color=([^;]*);display-name=([\d\w]*);emote-sets=(.*);mod=([0|1]);room-id=(\d+);subscriber=([0|1]);turbo=([0|1]);user-type=(.*)$";
 
         private static readonly Regex RegExJoinPart = new Regex(UserJoinPartPattern);
