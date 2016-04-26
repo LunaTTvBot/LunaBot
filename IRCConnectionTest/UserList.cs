@@ -17,17 +17,17 @@ namespace IRCConnectionTest
 
         static UserList()
         {
-            ChannelEventManager.UserListEvent += ChannelEventManagerOnUserListEvent;
-            ChannelEventManager.UserJoinEvent += ChannelEventManagerOnUserJoinEvent;
-            ChannelEventManager.UserPartEvent += ChannelEventManagerOnUserPartEvent;
-            UserEventManager.UserPublicMessageEvent += UserEventManagerOnUserPublicMessageEvent;
-
             var myThread = new Thread(Start);
             myThread.Start();
         }
 
         private static void Start(object o)
         {
+            ChannelEventManager.UserListEvent += ChannelEventManagerOnUserListEvent;
+            ChannelEventManager.UserJoinEvent += ChannelEventManagerOnUserJoinEvent;
+            ChannelEventManager.UserPartEvent += ChannelEventManagerOnUserPartEvent;
+            UserEventManager.UserPublicMessageEvent += UserEventManagerOnUserPublicMessageEvent;
+
             if (_myTimer == null)
             {
                 _myTimer = new Timer(60*1000*1); // 1 minute
