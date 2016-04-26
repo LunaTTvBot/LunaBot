@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Timers;
+using System.Linq;
 using IRCConnectionTest.Events;
 using IRCConnectionTest.Events.ComstumEventArgs;
 using IRCConnectionTest.Misc;
@@ -136,6 +137,10 @@ namespace IRCConnectionTest
             if (!UsrList.ContainsKey(eArgs.Channel)) return;
             if (!UsrList[eArgs.Channel].Contains(eArgs.UserName)) return;
             UsrList[eArgs.Channel].Remove(eArgs.UserName);
+
+            var db = DatabaseContext.Get();
+            db.Users.Remove(db.Users.Find(eArgs.UserName));
+
             Logger.Write($"-- UserList#{eArgs.Channel} UPDATED! -> {UsrList[eArgs.Channel].Count}");
         }
 
@@ -143,8 +148,11 @@ namespace IRCConnectionTest
             if(!UsrList.ContainsKey(channel))
                 UsrList.Add(channel, new HashSet<string>());
 
-            if(!UsrList[channel].Contains(userName))
+            if (!UsrList[channel].Contains(userName))
+            {
                 UsrList[channel].Add(userName);
+                DatabaseContext.Get().Users.Add(new User { Username = userName });
+            }
         }
 
         private static void AddToSet(string channel, string userName)
@@ -156,7 +164,10 @@ namespace IRCConnectionTest
                 UsrList.Add(channel, new HashSet<string>());
 
             if (!UsrList[channel].Contains(userName))
+            {
                 UsrList[channel].Add(userName);
+                DatabaseContext.Get().Users.Add(new User { Username = userName });
+            }
             else
                 return;
 
