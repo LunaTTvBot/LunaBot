@@ -108,7 +108,7 @@ namespace IRCConnectionTest
 
         private static void CheckCount(string channel)
         {
-            if (UsrList[channel].Count > 399)
+            if (UsrList[channel].Count > 400)
             {
                 SwitchToApi(channel);
                 return;
