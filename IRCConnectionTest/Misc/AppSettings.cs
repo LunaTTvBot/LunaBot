@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Text;
@@ -23,6 +24,9 @@ namespace IRCConnectionTest.Misc
 
         [JsonProperty("username")]
         public string Username { get; set; }
+
+        [JsonProperty("channel_list")]
+        public List<string> ChannelList { get; set; }
 
         public static AppSettings Load(string settingsFileName)
         {
@@ -61,7 +65,7 @@ namespace IRCConnectionTest.Misc
                     using(var jsonTextReader = new JsonTextReader(sr)) {
                         return serializer.Deserialize<AppSettings>(jsonTextReader);
                     }
-                } catch(Exception e) {
+                } catch(Exception) {
                     return new AppSettings();
                 }
             }
