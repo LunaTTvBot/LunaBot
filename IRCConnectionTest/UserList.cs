@@ -17,6 +17,11 @@ namespace IRCConnectionTest
 
         static UserList()
         {
+            ChannelEventManager.UserListEvent += ChannelEventManagerOnUserListEvent;
+            ChannelEventManager.UserJoinEvent += ChannelEventManagerOnUserJoinEvent;
+            ChannelEventManager.UserPartEvent += ChannelEventManagerOnUserPartEvent;
+            UserEventManager.UserPublicMessageEvent += UserEventManagerOnUserPublicMessageEvent;
+
             var myThread = new Thread(Start);
             myThread.Start();
         }
@@ -35,7 +40,9 @@ namespace IRCConnectionTest
             // get chatters count from tmi
             foreach (var channel in App.BotChannelList)
             {
-                UsrList.Add(channel, new HashSet<string>());
+                if(!UsrList.ContainsKey(channel))
+                    UsrList.Add(channel, new HashSet<string>());
+
                 var chatters = TmiApi.TmiApi.GetChannelChatters(channel);
                 if (chatters.Count > 400)
                 {
@@ -45,11 +52,6 @@ namespace IRCConnectionTest
                     UseApi(chatters, channel);
                 }
             }
-
-            ChannelEventManager.UserListEvent += ChannelEventManagerOnUserListEvent;
-            ChannelEventManager.UserJoinEvent += ChannelEventManagerOnUserJoinEvent;
-            ChannelEventManager.UserPartEvent += ChannelEventManagerOnUserPartEvent;
-            UserEventManager.UserPublicMessageEvent += UserEventManagerOnUserPublicMessageEvent;
         }
 
         private static void UseApi(ChannelChatters chatters, string channel)
@@ -153,6 +155,8 @@ namespace IRCConnectionTest
 
             if (!UsrList[channel].Contains(userName))
                 UsrList[channel].Add(userName);
+            else
+                return;
 
             Logger.Write($"-- UserList#{channel} UPDATED! -> {UsrList[channel].Count}");
             CheckCount(channel);
