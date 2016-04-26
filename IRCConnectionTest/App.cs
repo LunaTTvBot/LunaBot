@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using IRCConnectionTest.Events;
 using IRCConnectionTest.Events.ComstumEventArgs;
 using IRCConnectionTest.Misc;
@@ -36,6 +37,18 @@ namespace IRCConnectionTest
 
             if (_connection.Connect())
             {
+                CommandManager.RegisterCommand(new ChannelCommand
+                {
+                    RegEx = @"!test\s?(.*)",
+                    Name = "Test",
+                    Action = (command, matches, orgMsg) =>
+                    {
+                        var m = Regex.Match(orgMsg, UserEventManager.UserPublicMessagePattern);
+                        if(m.Success)
+                            IrcConnection.Write(ConnectionType.BotCon, m.Groups[3].Value, $"Ja, Test ({matches.Groups[1].Value})!");
+                    }
+                });
+
                 RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
                 settings.Save(settingsFileName);
                 Console.WriteLine("##### Connected! #####");
