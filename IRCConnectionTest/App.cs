@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
+using System.Runtime.CompilerServices;
 using IRCConnectionTest.Events;
 using IRCConnectionTest.Events.ComstumEventArgs;
 using IRCConnectionTest.Misc;
-using System.IO;
-using System.Runtime.Serialization;
 
 namespace IRCConnectionTest
 {
     internal class App
     {
+        public static List<string> BotChannelList;
         private IrcConnection _connection;
-        public static List<string> BotChannelList = new List<string> { "c9sneaky", "wtf_winds123" };
 
         public void StartApp()
         {
@@ -25,6 +23,8 @@ namespace IRCConnectionTest
                 settings = AppSettings.LoadLocal(settingsFileName);
             }
 
+            BotChannelList = settings.ChannelList;
+
             _connection = new IrcConnection(
                 settings.Username,
                 settings.TwitchApiKey,
@@ -32,21 +32,20 @@ namespace IRCConnectionTest
                 settings.Url,
                 settings.Port,
                 ConnectionType.BotCon
-            );
+                );
 
             if (_connection.Connect())
             {
-                System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
+                RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
                 settings.Save(settingsFileName);
                 Console.WriteLine("##### Connected! #####");
-
-                _connection.RaiseMessageEvent += ConnectionOnRaiseMessageEvent;                
+                _connection.RaiseMessageEvent += ConnectionOnRaiseMessageEvent;
                 BotChannelList.ForEach(channel => _connection.Join(channel));
                 RegisterChannelEvents();
                 RegisterUserEvents();
             }
 
-            // Console.ReadLine();
+            Console.ReadLine();
         }
 
         private static void RegisterUserEvents()
@@ -61,7 +60,7 @@ namespace IRCConnectionTest
         private static void RegisterChannelEvents()
         {
             // ChannelEventManager.UserJoinEvent += EventManagerOnUserJoinEvent;
-            ChannelEventManager.UserPartEvent += EventManagerOnUserJoinEvent;
+            // ChannelEventManager.UserPartEvent += EventManagerOnUserJoinEvent;
             ChannelEventManager.RoomStateAllEvent += ChannelEventManagerOnRoomStateAllEvent;
             ChannelEventManager.OperatorGrantedEvent += ChannelEventManagerOnOperatorGrantedEvent;
             ChannelEventManager.OperatorRevokedEvent += ChannelEventManagerOnOperatorGrantedEvent;
@@ -77,7 +76,8 @@ namespace IRCConnectionTest
             Console.WriteLine($"ROOMSTATE received #{eArgs.Channel}");
         }
 
-        private static void UserEventManagerOnUserStateEvent(object sender, UserStateEventArgs eArgs) {
+        private static void UserEventManagerOnUserStateEvent(object sender, UserStateEventArgs eArgs)
+        {
             Console.WriteLine($"USERSTATE received #{eArgs.Channel}");
         }
 
