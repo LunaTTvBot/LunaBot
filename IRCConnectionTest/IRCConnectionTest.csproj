@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="Events\ChannelEventManager.cs" />
+    <Compile Include="Events\CommandManager.cs" />
     <Compile Include="Events\ComstumEventArgs\OperatorModeEventArgs.cs" />
     <Compile Include="Events\ComstumEventArgs\RoomStateAllEventArgs.cs" />
     <Compile Include="Events\ComstumEventArgs\RoomStateLangModeEventArgs.cs" />
