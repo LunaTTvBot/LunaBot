@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 using IRCConnectionTest.Events.ComstumEventArgs;
@@ -32,9 +31,10 @@ namespace IRCConnectionTest.Events
                     if (!RegExStack.ContainsKey(command.Name))
                         RegExStack.Add(command.Name, new Regex(command.RegEx));
 
-                    if (RegExStack[command.Name].Match(e.Message).Success)
+                    var m = RegExStack[command.Name].Match(e.Message);
+                    if (m.Success)
                     {
-                        ThreadPool.QueueUserWorkItem(__ => { command.Action(command, e.Message); });
+                        ThreadPool.QueueUserWorkItem(__ => { command.Action(command, m, e.Message); });
                     }
                 });
             });
@@ -50,6 +50,6 @@ namespace IRCConnectionTest.Events
     {
         public string Name { get; set; }
         public string RegEx { get; set; }
-        public Action<ChannelCommand, string> Action { get; set; }
+        public Action<ChannelCommand, Match, string> Action { get; set; }
     }
 }

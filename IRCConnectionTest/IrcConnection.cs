@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using IRCConnectionTest.Events.ComstumEventArgs;
+using IRCConnectionTest.Misc;
 
 namespace IRCConnectionTest
 {
@@ -119,6 +120,14 @@ namespace IRCConnectionTest
 
             _writer.WriteLine(msg);
             _writer.Flush();
+        }
+
+        public static void Write(ConnectionType conType, string channel, string msg)
+        {
+            if (!ConType.ContainsKey(conType))
+                return;
+
+            ConType[conType].Write(string.Format(GlobalTwitchPatterns.WritePublicFormat, channel, msg));
         }
 
         private void ReadConnection()
