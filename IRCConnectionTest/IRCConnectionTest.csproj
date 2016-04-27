@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Channel.cs" />
     <Compile Include="Events\ChannelEventManager.cs" />
     <Compile Include="Events\CommandManager.cs" />
     <Compile Include="Events\ComstumEventArgs\OperatorModeEventArgs.cs" />

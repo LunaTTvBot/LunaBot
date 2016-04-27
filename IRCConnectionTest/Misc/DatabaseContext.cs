@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
 using SQLite.CodeFirst;
 
 namespace IRCConnectionTest.Misc
 {
-    class DatabaseContext : DbContext
+    internal class DatabaseContext : DbContext
     {
-        private static DatabaseContext Instance;
+        private static DatabaseContext _instance;
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Channel> Channels { get; set; }
 
         public DatabaseContext()
-            : base("Store")
-        {
-        }
+            : base("Store") {}
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -25,11 +19,8 @@ namespace IRCConnectionTest.Misc
             Database.SetInitializer(sqliteConnectionInitializer);
         }
 
-        public static DatabaseContext Get()
-        {
-            if (Instance == null)
-                Instance = new DatabaseContext();
-            return Instance;
-        }
+        public static DatabaseContext Get() => _instance ?? (_instance = new DatabaseContext());
+
+        public static int Save() => Get().SaveChanges();
     }
 }

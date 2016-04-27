@@ -12,9 +12,9 @@ namespace IRCConnectionTest
 {
     internal static class UserList
     {
-        private static readonly Dictionary<string, HashSet<User>> UsrList = new Dictionary<string, HashSet<User>>();
+        private static readonly HashSet<Channel> Channels = new HashSet<Channel>();
+        private static readonly HashSet<Channel> ApiChannels = new HashSet<Channel>();
         private static Timer _myTimer;
-        private static readonly HashSet<string> ApiChannels = new HashSet<string>();
 
         static UserList()
         {
@@ -24,6 +24,7 @@ namespace IRCConnectionTest
 
         private static void Start(object o)
         {
+
             ChannelEventManager.UserListEvent += ChannelEventManagerOnUserListEvent;
             ChannelEventManager.UserJoinEvent += ChannelEventManagerOnUserJoinEvent;
             ChannelEventManager.UserPartEvent += ChannelEventManagerOnUserPartEvent;
@@ -39,12 +40,14 @@ namespace IRCConnectionTest
             _myTimer.Enabled = true;
 
             // get chatters count from tmi
-            foreach (var channel in App.BotChannelList)
+            foreach (var channelName in App.BotChannelList)
             {
-                if (!UsrList.ContainsKey(channel))
-                    UsrList.Add(channel, new HashSet<User>());
+                var channel = Channel.Get(channelName);
 
-                var chatters = TmiApi.TmiApi.GetChannelChatters(channel);
+                if (!Channels.Contains(channel))
+                    Channels.Add(channel);
+
+                var chatters = TmiApi.TmiApi.GetChannelChatters(channel.Name);
                 if (chatters.Count > 400)
                 {
                     /**
@@ -55,9 +58,9 @@ namespace IRCConnectionTest
             }
         }
 
-        private static void UseApi(ChannelChatters chatters, string channel)
+        private static void UseApi(ChannelChatters chatters, Channel channel)
         {
-            Logger.Write($"UserList use API#{channel} ({chatters.Count})");
+            Logger.Write($"UserList use API#{channel.Name} ({chatters.Count})");
 
             if (!ApiChannels.Contains(channel))
                 ApiChannels.Add(channel);
@@ -65,30 +68,28 @@ namespace IRCConnectionTest
             HandleChattersListFromApi(chatters, channel);
         }
 
-        private static void SwitchToApi(string channel)
+        private static void SwitchToApi(Channel channel)
         {
             if (!ApiChannels.Contains(channel))
                 ApiChannels.Add(channel);
             else
                 return;
 
-            Logger.Write($"-- UserList switch to API {UsrList[channel].Count}");
+            Logger.Write($"-- UserList switch to API {channel.Users.Count}");
         }
 
-        private static void SwitchToEvents(string channel)
+        private static void SwitchToEvents(Channel channel)
         {
             if (ApiChannels.Contains(channel))
                 ApiChannels.Remove(channel);
             else
                 return;
 
-            Logger.Write($"-- UserList switch to Events {UsrList[channel].Count}");
+            Logger.Write($"-- UserList switch to Events {channel.Users.Count}");
         }
 
-        private static void HandleChattersListFromApi(ChannelChatters chatters, string channel)
+        private static void HandleChattersListFromApi(ChannelChatters chatters, Channel channel)
         {
-            UsrList[channel].Clear();
-
             chatters.Chatters.Viewers.ForEach(chatter => AddToSetFromApi(channel, chatter));
             chatters.Chatters.GlobalMods.ForEach(chatter => AddToSetFromApi(channel, chatter));
             chatters.Chatters.Admins.ForEach(chatter => AddToSetFromApi(channel, chatter));
@@ -104,97 +105,98 @@ namespace IRCConnectionTest
         {
             foreach (var channel in ApiChannels)
             {
-                var chatters = TmiApi.TmiApi.GetChannelChatters(channel);
+                var chatters = TmiApi.TmiApi.GetChannelChatters(channel.Name);
                 HandleChattersListFromApi(chatters, channel);
             }
         }
 
-        private static void CheckCount(string channel)
+        private static void CheckCount(Channel channel)
         {
-            if (UsrList[channel].Count > 400)
+            if (channel.Users.Count > 400)
                 SwitchToApi(channel);
             else
                 SwitchToEvents(channel);
         }
 
         private static void UserEventManagerOnUserPublicMessageEvent(object sender, UserPublicMessageEventArgs eArgs)
-            => AddToSet(eArgs.Channel, eArgs.UserName);
+            => AddToSet(GetChannel(eArgs.Channel), eArgs.UserName);
 
         private static void ChannelEventManagerOnUserJoinEvent(object sender, UserEventArgs eArgs)
-            => AddToSet(eArgs.Channel, eArgs.UserName);
+            => AddToSet(GetChannel(eArgs.Channel), eArgs.UserName);
 
         private static void ChannelEventManagerOnUserListEvent(object sender, UserListEventArgs eArgs)
-            => eArgs.UserList.ForEach(s => AddToSet(eArgs.Channel, s));
+            => eArgs.UserList.ForEach(s => AddToSet(GetChannel(eArgs.Channel), s));
 
         private static void ChannelEventManagerOnUserPartEvent(object sender, UserEventArgs eArgs)
         {
-            if (ApiChannels.Contains(eArgs.Channel)
-                || !UsrList.ContainsKey(eArgs.Channel))
+            if (ApiChannels.Any(c=>c.Name == eArgs.Channel))
                 return;
 
-            var user = UsrList[eArgs.Channel].FirstOrDefault(u => u.Username == eArgs.UserName);
+            if (Channels.Any(c => c.Name == eArgs.Channel))
+                return;
 
+            var channel = Channels.First(c => c.Name == eArgs.Channel);
+            var user = channel.Users.FirstOrDefault(u => u.Username == eArgs.UserName);
+            
             // user not found
             if (user == null)
                 return;
 
-            UsrList[eArgs.Channel].Remove(user);
-            DatabaseContext.Get().Users.Remove(user);
+            channel.Users.Remove(user);
 
-            Logger.Write($"-- UserList#{eArgs.Channel} UPDATED! -> {UsrList[eArgs.Channel].Count}");
+            Logger.Write($"-- UserList#{eArgs.Channel} UPDATED! -> {channel.Users.Count}");
         }
 
-        private static void AddUser(string channel, User user)
+        private static void AddToSetFromApi(Channel channel, string userName)
         {
-            UsrList[channel].Add(user);
-            var db = DatabaseContext.Get();
+            if (!Channels.Contains(channel))
+                Channels.Add(channel);
 
-            lock (db.Users)
+            lock (channel)
             {
-                db.Users.Add(user);
+                if (channel.Users.Any(c => c.Username == userName))
+                    return;
+
+                var user = new User(userName);
+                channel.Users.Add(user);
             }
         }
 
-        private static void AddToSetFromApi(string channel, string userName)
-        {
-            if (!UsrList.ContainsKey(channel))
-                UsrList.Add(channel, new HashSet<User>());
-
-            if (!UsrList[channel].Any(u => u.Username == userName))
-                AddUser(channel, new User { Username = userName });
-        }
-
-        private static void AddToSet(string channel, string userName)
+        private static void AddToSet(Channel channel, string userName)
         {
             if (ApiChannels.Contains(channel))
                 return;
 
-            if (!UsrList.ContainsKey(channel))
-                UsrList.Add(channel, new HashSet<User>());
+            if (!Channels.Contains(channel))
+                Channels.Add(channel);
 
-            if (!UsrList[channel].Any(u => u.Username == userName))
-                AddUser(channel, new User { Username = userName });
-            else
-                return;
+            lock (channel)
+            {
+                if (channel.Users.Any(c => c.Username == userName))
+                {
+                    var user = new User(userName);
+                    channel.Users.Add(user);
+                }
+                else
+                    return;
+            }
 
-            Logger.Write($"-- UserList#{channel} UPDATED! -> {UsrList[channel].Count}");
+            Logger.Write($"-- UserList#{channel} UPDATED! -> {channel.Users.Count}");
             CheckCount(channel);
         }
 
-        public static IEnumerable<User> GetUserList(string channel)
+        private static Channel GetChannel(string channelName)
         {
-            if (!UsrList.ContainsKey(channel))
-                UsrList.Add(channel, new HashSet<User>());
+            if (!Channels.Any(c => c.Name == channelName))
+                Channels.Add(Channel.Get(channelName));
 
-            return new HashSet<User>(UsrList[channel]);
+            return Channels.First(c => c.Name == channelName);
         }
 
-        public static ISet<User> GetUserListAsSet(string channel)
-        {
-            if (!UsrList.ContainsKey(channel))
-                UsrList.Add(channel, new HashSet<User>());
+        public static IEnumerable<User> GetUserList(string channelName) 
+            => new List<User>(GetChannel(channelName).Users);
 
-            return new HashSet<User>(UsrList[channel]);
-        }
+        public static ISet<User> GetUserListAsSet(string channelName) 
+            => new HashSet<User>(GetChannel(channelName).Users);
     }
 }
