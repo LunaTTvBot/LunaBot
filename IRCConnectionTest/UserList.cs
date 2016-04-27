@@ -12,7 +12,7 @@ namespace IRCConnectionTest
 {
     internal static class UserList
     {
-        private static readonly Dictionary<string, HashSet<string>> UsrList = new Dictionary<string, HashSet<string>>();
+        private static readonly Dictionary<string, HashSet<User>> UsrList = new Dictionary<string, HashSet<User>>();
         private static Timer _myTimer;
         private static readonly HashSet<string> ApiChannels = new HashSet<string>();
 
@@ -31,7 +31,7 @@ namespace IRCConnectionTest
 
             if (_myTimer == null)
             {
-                _myTimer = new Timer(60*1000*1); // 1 minute
+                _myTimer = new Timer(60 * 1000 * 1); // 1 minute
                 _myTimer.Elapsed += MyTimerOnElapsed;
                 _myTimer.AutoReset = true;
             }
@@ -41,8 +41,8 @@ namespace IRCConnectionTest
             // get chatters count from tmi
             foreach (var channel in App.BotChannelList)
             {
-                if(!UsrList.ContainsKey(channel))
-                    UsrList.Add(channel, new HashSet<string>());
+                if (!UsrList.ContainsKey(channel))
+                    UsrList.Add(channel, new HashSet<User>());
 
                 var chatters = TmiApi.TmiApi.GetChannelChatters(channel);
                 if (chatters.Count > 400)
@@ -112,12 +112,9 @@ namespace IRCConnectionTest
         private static void CheckCount(string channel)
         {
             if (UsrList[channel].Count > 400)
-            {
                 SwitchToApi(channel);
-                return;
-            }
-
-            SwitchToEvents(channel);
+            else
+                SwitchToEvents(channel);
         }
 
         private static void UserEventManagerOnUserPublicMessageEvent(object sender, UserPublicMessageEventArgs eArgs)
@@ -131,28 +128,40 @@ namespace IRCConnectionTest
 
         private static void ChannelEventManagerOnUserPartEvent(object sender, UserEventArgs eArgs)
         {
-            if (ApiChannels.Contains(eArgs.Channel))
+            if (ApiChannels.Contains(eArgs.Channel)
+                || !UsrList.ContainsKey(eArgs.Channel))
                 return;
 
-            if (!UsrList.ContainsKey(eArgs.Channel)) return;
-            if (!UsrList[eArgs.Channel].Contains(eArgs.UserName)) return;
-            UsrList[eArgs.Channel].Remove(eArgs.UserName);
+            var user = UsrList[eArgs.Channel].FirstOrDefault(u => u.Username == eArgs.UserName);
 
-            var db = DatabaseContext.Get();
-            db.Users.Remove(db.Users.Find(eArgs.UserName));
+            // user not found
+            if (user == null)
+                return;
+
+            UsrList[eArgs.Channel].Remove(user);
+            DatabaseContext.Get().Users.Remove(user);
 
             Logger.Write($"-- UserList#{eArgs.Channel} UPDATED! -> {UsrList[eArgs.Channel].Count}");
         }
 
-        private static void AddToSetFromApi(string channel, string userName) {
-            if(!UsrList.ContainsKey(channel))
-                UsrList.Add(channel, new HashSet<string>());
+        private static void AddUser(string channel, User user)
+        {
+            UsrList[channel].Add(user);
+            var db = DatabaseContext.Get();
 
-            if (!UsrList[channel].Contains(userName))
+            lock (db.Users)
             {
-                UsrList[channel].Add(userName);
-                DatabaseContext.Get().Users.Add(new User { Username = userName });
+                db.Users.Add(user);
             }
+        }
+
+        private static void AddToSetFromApi(string channel, string userName)
+        {
+            if (!UsrList.ContainsKey(channel))
+                UsrList.Add(channel, new HashSet<User>());
+
+            if (!UsrList[channel].Any(u => u.Username == userName))
+                AddUser(channel, new User { Username = userName });
         }
 
         private static void AddToSet(string channel, string userName)
@@ -161,13 +170,10 @@ namespace IRCConnectionTest
                 return;
 
             if (!UsrList.ContainsKey(channel))
-                UsrList.Add(channel, new HashSet<string>());
+                UsrList.Add(channel, new HashSet<User>());
 
-            if (!UsrList[channel].Contains(userName))
-            {
-                UsrList[channel].Add(userName);
-                DatabaseContext.Get().Users.Add(new User { Username = userName });
-            }
+            if (!UsrList[channel].Any(u => u.Username == userName))
+                AddUser(channel, new User { Username = userName });
             else
                 return;
 
@@ -175,20 +181,20 @@ namespace IRCConnectionTest
             CheckCount(channel);
         }
 
-        public static IEnumerable<string> GetUserList(string channel)
+        public static IEnumerable<User> GetUserList(string channel)
         {
             if (!UsrList.ContainsKey(channel))
-                UsrList.Add(channel, new HashSet<string>());
+                UsrList.Add(channel, new HashSet<User>());
 
-            return new HashSet<string>(UsrList[channel]);
+            return new HashSet<User>(UsrList[channel]);
         }
 
-        public static ISet<string> GetUserListAsSet(string channel)
+        public static ISet<User> GetUserListAsSet(string channel)
         {
             if (!UsrList.ContainsKey(channel))
-                UsrList.Add(channel, new HashSet<string>());
+                UsrList.Add(channel, new HashSet<User>());
 
-            return new HashSet<string>(UsrList[channel]);
+            return new HashSet<User>(UsrList[channel]);
         }
     }
 }
