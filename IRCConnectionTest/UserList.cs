@@ -24,8 +24,11 @@ namespace IRCConnectionTest
             myThread.Start();
         }
 
+        public static event EventHandler UserListUpdated;
         public static event EventHandler<UserJoinEventArgs> UserJoined;
         public static event EventHandler<UserPartedEventArgs> UserParted;
+
+        public static void OnUserListUpdated() => UserListUpdated?.Invoke(null, new EventArgs());
 
         public static void OnUserJoined(UserJoinEventArgs eventArgs) => UserJoined?.Invoke(null, eventArgs);
 
