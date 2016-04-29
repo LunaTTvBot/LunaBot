@@ -53,22 +53,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Channel.cs" />
     <Compile Include="Events\ChannelEventManager.cs" />
     <Compile Include="Events\CommandManager.cs" />
-    <Compile Include="Events\ComstumEventArgs\OperatorModeEventArgs.cs" />
-    <Compile Include="Events\ComstumEventArgs\RoomStateAllEventArgs.cs" />
-    <Compile Include="Events\ComstumEventArgs\RoomStateLangModeEventArgs.cs" />
-    <Compile Include="Events\ComstumEventArgs\RoomStateR9KModeEventArgs.cs" />
-    <Compile Include="Events\ComstumEventArgs\RoomStateSlowModeEventArgs.cs" />
-    <Compile Include="Events\ComstumEventArgs\RoomStateSubscriberModeEventArgs.cs" />
-    <Compile Include="Events\ComstumEventArgs\UserListEventArgs.cs" />
-    <Compile Include="Events\ComstumEventArgs\UserStateEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\UserList\UserJoinEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\UserList\UserPartedEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\OperatorModeEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\RoomStateAllEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\RoomStateLangModeEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\RoomStateR9KModeEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\RoomStateSlowModeEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\RoomStateSubscriberModeEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\UserListEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\UserStateEventArgs.cs" />
     <Compile Include="Events\EventManager.cs" />
     <Compile Include="Events\Misc\RoomStateTags.cs" />
     <Compile Include="Events\Misc\UserStateTags.cs" />
     <Compile Include="Events\UserEventManager.cs" />
     <Compile Include="IrcConnection.cs" />
-    <Compile Include="Events\ComstumEventArgs\MessageEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\MessageEventArgs.cs" />
     <Compile Include="Misc\AppSettings.cs" />
     <Compile Include="Misc\GlobalTwitchPatterns.cs" />
     <Compile Include="Misc\Logger.cs" />
@@ -77,10 +80,10 @@
     <Compile Include="Plugins\Poll\PollPlugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Events\ComstumEventArgs\UserEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\UserEventArgs.cs" />
     <Compile Include="Events\Misc\UserMessageTags.cs" />
-    <Compile Include="Events\ComstumEventArgs\UserPublicMessageEventArgs.cs" />
-    <Compile Include="Events\ComstumEventArgs\UserWhisperMessageEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\UserPublicMessageEventArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\UserWhisperMessageEventArgs.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -100,6 +103,7 @@
     <Compile Include="TmiApi\ChannelChattersEndpoint\Chatters.cs" />
     <Compile Include="TmiApi\TmiApi.cs" />
     <Compile Include="TmiApi\TmiUriProvider.cs" />
+    <Compile Include="User.cs" />
     <Compile Include="UserList.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using IRCConnectionTest.Events;
-using IRCConnectionTest.Events.ComstumEventArgs;
+using IRCConnectionTest.Events.CustomEventArgs;
 using IRCConnectionTest.Misc;
 using IRCConnectionTest.Plugins;
 using IRCConnectionTest.Resources;

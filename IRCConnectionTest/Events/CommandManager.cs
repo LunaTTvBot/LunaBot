@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
-using IRCConnectionTest.Events.ComstumEventArgs;
+using IRCConnectionTest.Events.CustomEventArgs;
 
 namespace IRCConnectionTest.Events
 {

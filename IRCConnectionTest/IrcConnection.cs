@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
-using IRCConnectionTest.Events.ComstumEventArgs;
+using IRCConnectionTest.Events.CustomEventArgs;
 using IRCConnectionTest.Misc;
 
 namespace IRCConnectionTest
