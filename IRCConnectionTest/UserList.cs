@@ -160,6 +160,7 @@ namespace IRCConnectionTest
 
             channel.Users.Remove(user);
             OnUserParted(new UserPartedEventArgs(user, channel, DateTime.Now));
+            OnUserListUpdated();
 
             Logger.Write($"-- UserList#{eArgs.Channel} UPDATED! -> {channel.Users.Count}");
         }
@@ -181,6 +182,7 @@ namespace IRCConnectionTest
 
                 channel.Users.Add(user);
                 OnUserJoined(new UserJoinEventArgs(user, channel, DateTime.Now));
+                OnUserListUpdated();
             }
         }
 
@@ -203,6 +205,7 @@ namespace IRCConnectionTest
 
                     channel.Users.Add(user);
                     OnUserJoined(new UserJoinEventArgs(user, channel, DateTime.Now));
+                    OnUserListUpdated();
                 }
                 else
                     return;
