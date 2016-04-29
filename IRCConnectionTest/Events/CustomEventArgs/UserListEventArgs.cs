@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace IRCConnectionTest.Events.ComstumEventArgs
+namespace IRCConnectionTest.Events.CustomEventArgs
 {
     internal class UserListEventArgs
     {

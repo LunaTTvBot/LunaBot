@@ -1,6 +1,6 @@
 ﻿using IRCConnectionTest.Events.Misc;
 
-namespace IRCConnectionTest.Events.ComstumEventArgs
+namespace IRCConnectionTest.Events.CustomEventArgs
 {
     internal class UserPublicMessageEventArgs
     {

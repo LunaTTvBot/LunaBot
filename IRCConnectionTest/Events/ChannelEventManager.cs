@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using IRCConnectionTest.Events.ComstumEventArgs;
+using IRCConnectionTest.Events.CustomEventArgs;
 using IRCConnectionTest.Events.Misc;
 using IRCConnectionTest.Misc;
 

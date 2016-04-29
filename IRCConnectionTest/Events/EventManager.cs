@@ -1,4 +1,4 @@
-﻿using IRCConnectionTest.Events.ComstumEventArgs;
+﻿using IRCConnectionTest.Events.CustomEventArgs;
 
 namespace IRCConnectionTest.Events
 {
