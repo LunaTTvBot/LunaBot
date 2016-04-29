@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using IRCConnectionTest.Events;
-using IRCConnectionTest.Events.ComstumEventArgs;
+using IRCConnectionTest.Events.CustomEventArgs;
 using IRCConnectionTest.Misc;
 
 namespace IRCConnectionTest
