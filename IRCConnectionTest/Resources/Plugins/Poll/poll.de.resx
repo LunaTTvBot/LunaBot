@@ -133,7 +133,7 @@
     <value>Die Umfrage wurde mit der Nummer {0} angelegt.</value>
   </data>
   <data name="poll_finished" xml:space="preserve">
-    <value>Umfrage #{0} ist beendet. {1} hat gewonnen mit {2} ({3}%) von {4} Stimmen. Gib '!poll result:{5}' ein um detaillierte Informationen zu erhalten.</value>
+    <value>Umfrage #{0} ist beendet. {1} hat gewonnen mit {2} ({3}) von {4} Stimmen. Gib '!poll result:{5}' ein um detaillierte Informationen zu erhalten.</value>
   </data>
   <data name="poll_help" xml:space="preserve">
     <value>Umfrage Plugin Hilfe: Um eine Umfrage zu erstellen nutze '!poll create(TITLE) opt1|opt2|…' oder '!poll create opt1|opt2…'. Mit '!poll start:ID', kannst du eine Umfrage starten. Mehr Informationen findest du auf: https://github.com/SuNflOw1991/iBot-Wiki-DE/wiki/Poll</value>
@@ -169,7 +169,7 @@
     <value>Die Umfrage #{0} wurde erfolgreich zurück gesetzt. Du kannst die Umfrage nun mit '!poll start:{0}' starten.</value>
   </data>
   <data name="poll_result" xml:space="preserve">
-    <value>{0} Zuschauer haben abgestimmt. Das Ergebnis für Umfrage #{1} sieht wie folgt aus: {2}</value>
+    <value>{0} Zuschauer haben abgestimmt. Das Ergebnis der Umfrage #{1} sieht wie folgt aus: {2}</value>
   </data>
   <data name="poll_running" xml:space="preserve">
     <value>Die Umfrage mit der Nummer {0} läuft gerade. Du kannst sie mit '!poll abort:{0}' abbrechen.</value>

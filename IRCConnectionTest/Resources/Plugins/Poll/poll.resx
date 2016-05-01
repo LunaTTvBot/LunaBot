@@ -133,7 +133,7 @@
     <value>Poll created with id: {0}.</value>
   </data>
   <data name="poll_finished" xml:space="preserve">
-    <value>Poll {0} finished. {1} won with {2} ({3}%) from {4} votes. Enter !poll result:{5} for further information.</value>
+    <value>Poll {0} finished. {1} won with {2} ({3}) from {4} votes. Enter !poll result:{5} for further information.</value>
   </data>
   <data name="poll_help" xml:space="preserve">
     <value>Poll Plugin Help: Type !poll create(TITLE) opt1|opt2|opt3 or !poll create opt1|opt2|opt3 to create a new poll. Start a poll with !poll start:POLL-ID. For further information about the plugin visit: https://github.com/SuNflOw1991/iBot-Wiki-EN/wiki/Poll</value>

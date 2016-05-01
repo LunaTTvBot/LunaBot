@@ -115,7 +115,7 @@ namespace IRCConnectionTest.Resources.Plugins.Poll {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Poll {0} finished. {1} won with {2} ({3}%) from {4} votes. Enter !poll result:{5} for further information. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Poll {0} finished. {1} won with {2} ({3}) from {4} votes. Enter !poll result:{5} for further information. ähnelt.
         /// </summary>
         internal static string poll_finished {
             get {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -97,7 +96,7 @@ namespace IRCConnectionTest.Plugins.Poll
         {
             IrcConnection.Write(ConnectionType.BotCon, aType, target, msg);
         }
-        
+
         private static bool HandlePollBaseCommand(string pollParams, AnswerType answerT, string answerTarget)
         {
             if (pollParams != "") return false;
@@ -335,12 +334,12 @@ namespace IRCConnectionTest.Plugins.Poll
 
             var stringBuilder = new StringBuilder();
             var i = 0;
-            var percent = 0;
             foreach (var item in result.VotesPerOption)
             {
+                var percent = 0D;
                 if (i > 0) stringBuilder.Append("; ");
-                if (item.Value > 0) percent = item.Value/result.All*100;
-                stringBuilder.Append($"{item.Key.Id}: {item.Value} ({percent})");
+                if (item.Value > 0) percent = item.Value/(double) result.All;
+                stringBuilder.Append($"{item.Key.Name}: {item.Value} ({percent.ToString("0.00%")})");
                 i++;
             }
 
@@ -405,7 +404,7 @@ namespace IRCConnectionTest.Plugins.Poll
         }
 
         private static void PollAction(PublicChannelCommand command, Match match, UserPublicMessageEventArgs eArgs)
-        {            
+        {
             var pollParams = match.Groups[1].Value;
 
             try
@@ -500,8 +499,6 @@ namespace IRCConnectionTest.Plugins.Poll
 
             p.RegisterVote(o, userName);
             SendMessage(string.Format(PollLocale.poll_voted, p.Id), aType, target);
-            return;
-
         }
 
         private static void StartPoll(Poll poll, int time, AnswerType answerType, string answerTarget)
@@ -521,7 +518,7 @@ namespace IRCConnectionTest.Plugins.Poll
                     TimerStack.Remove(poll);
 
                     poll.StopPoll();
-                    var prefix = $"#{poll.Id}";
+                    var prefix = $"{poll.Id}";
                     if (poll.Title != "")
                         prefix += $": '{poll.Title}'";
                     var res = poll.GetPollResults();
@@ -534,13 +531,12 @@ namespace IRCConnectionTest.Plugins.Poll
                     }
 
                     var max = res.VotesPerOption.Values.Max();
-                    var percent = 0;
-                    if (max > 0)
-                        percent = max/res.All*100;
+                    var percent = 0D;
+                    if (max > 0) percent = max / (double) res.All;
 
                     // Poll {0} finished. {1} won with {2} ({3}%) from {4} votes. Enter !poll result:{5} for further information.
                     var text = string.Format(PollLocale.poll_finished, prefix,
-                        res.VotesPerOption.FirstOrDefault(x => x.Value == max).Key.Name, max, percent, res.All, poll.Id);
+                        res.VotesPerOption.FirstOrDefault(x => x.Value == max).Key.Name, max, percent.ToString("0.00%"), res.All, poll.Id);
 
                     SendMessage(text, answerType, answerTarget);
                 };
