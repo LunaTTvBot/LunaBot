@@ -386,11 +386,7 @@ namespace IRCConnectionTest.Plugins.Poll
 
             try
             {
-                // !poll
-                if (HandlePollBaseCommand(pollParams, AnswerType.Public, eArgs.UserName))
-                    return;
-
-                HandlePollCommands(pollParams, AnswerType.Public, eArgs.UserName);
+                HandlePollCommands(pollParams, AnswerType.Private, eArgs.UserName);
             }
             catch (Exception)
             {
