@@ -88,6 +88,15 @@ namespace IRCConnectionTest.Resources.Plugins.Poll {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die You already voted for Poll {0}. ähnelt.
+        /// </summary>
+        internal static string poll_already_voted {
+            get {
+                return ResourceManager.GetString("poll_already_voted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Upps, I&apos;m sorry. Something went wrong. Please try again or type !poll to get help. ähnelt.
         /// </summary>
         internal static string poll_base_error {
@@ -142,6 +151,15 @@ namespace IRCConnectionTest.Resources.Plugins.Poll {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Poll {0} doesnt have option {1}. ähnelt.
+        /// </summary>
+        internal static string poll_no_such_option {
+            get {
+                return ResourceManager.GetString("poll_no_such_option", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Nobody voted for poll {0}. ähnelt.
         /// </summary>
         internal static string poll_no_votes {
@@ -174,6 +192,15 @@ namespace IRCConnectionTest.Resources.Plugins.Poll {
         internal static string poll_not_running {
             get {
                 return ResourceManager.GetString("poll_not_running", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Poll {0} not started yet. Nothing to vote. ähnelt.
+        /// </summary>
+        internal static string poll_not_running_vote {
+            get {
+                return ResourceManager.GetString("poll_not_running_vote", resourceCulture);
             }
         }
         
@@ -237,6 +264,15 @@ namespace IRCConnectionTest.Resources.Plugins.Poll {
         internal static string poll_started {
             get {
                 return ResourceManager.GetString("poll_started", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die You voted for Poll {0}. ähnelt.
+        /// </summary>
+        internal static string poll_voted {
+            get {
+                return ResourceManager.GetString("poll_voted", resourceCulture);
             }
         }
         

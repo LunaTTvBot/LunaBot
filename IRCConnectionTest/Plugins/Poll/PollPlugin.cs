@@ -53,6 +53,7 @@ namespace IRCConnectionTest.Plugins.Poll
         private const string PollListPattern = @"^\slist";
         private const string PollStartPattern = @"^\s(start|restart):([0-9]+)\s?([0-9]*)";
         private const string PollActionsPattern = @"^\s(delete|abort|result|reset):([0-9]+)";
+        private const string VotePattern = @"^:([0-9]+)\s([0-9]+)";
 
         private static readonly Regex PollCreateTitleRegEx = new Regex(PollCreateTitlePattern);
         private static readonly Regex PollCreateRegEx = new Regex(PollCreatePattern);
@@ -60,6 +61,7 @@ namespace IRCConnectionTest.Plugins.Poll
         private static readonly Regex PollListRegEx = new Regex(PollListPattern);
         private static readonly Regex PollStartRegEx = new Regex(PollStartPattern);
         private static readonly Regex PollActionsRegEx = new Regex(PollActionsPattern);
+        private static readonly Regex VoteRegEx = new Regex(VotePattern);
 
         private static readonly List<Poll> PollsStack = new List<Poll>();
         private static readonly Dictionary<Poll, Timer> TimerStack = new Dictionary<Poll, Timer>();
@@ -82,13 +84,20 @@ namespace IRCConnectionTest.Plugins.Poll
                 Name = PluginName,
                 Action = PollAction
             });
+
+            CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
+            {
+                RegEx = "!vote(.*)",
+                Name = "Vote",
+                Action = VoteAction
+            });
         }
 
         private static void SendMessage(string msg, AnswerType aType, string target)
         {
             IrcConnection.Write(ConnectionType.BotCon, aType, target, msg);
         }
-
+        
         private static bool HandlePollBaseCommand(string pollParams, AnswerType answerT, string answerTarget)
         {
             if (pollParams != "") return false;
@@ -415,6 +424,21 @@ namespace IRCConnectionTest.Plugins.Poll
             }
         }
 
+        private static void VoteAction(PublicChannelCommand command, Match match, UserPublicMessageEventArgs eArgs)
+        {
+            var voteParams = match.Groups[1].Value;
+
+            try
+            {
+                HandleVoteCommand(voteParams, AnswerType.Public, eArgs.Channel, eArgs.UserName);
+            }
+            catch (Exception)
+            {
+                SendMessage(PollLocale.poll_base_error, AnswerType.Public,
+                    eArgs.Channel);
+            }
+        }
+
         private static void HandlePollCommands(string pollParams, AnswerType aType, string target)
         {
             // !poll create(_TITLE_) _OPTIONS_ 
@@ -439,6 +463,45 @@ namespace IRCConnectionTest.Plugins.Poll
             // !poll reset:_ID_
             // !poll result:_ID_
             HandlePollActions(pollParams, aType, target);
+        }
+
+        private static void HandleVoteCommand(string voteParams, AnswerType aType, string target, string userName)
+        {
+            var m = VoteRegEx.Match(voteParams);
+            if (!m.Success) return;
+            var pId = Convert.ToInt32(m.Groups[1].Value);
+            var oId = Convert.ToInt32(m.Groups[2].Value);
+
+            if (!PollsStack.Exists(poll => poll.Id == pId))
+            {
+                SendMessage(string.Format(PollLocale.poll_not_running_vote, pId), aType, target);
+                return;
+            }
+
+            var p = PollsStack.Find(poll => poll.Id == pId);
+            if (p.GetPollState() != PollState.Started)
+            {
+                SendMessage(string.Format(PollLocale.poll_running, p.Id), aType, target);
+                return;
+            }
+
+            if (!p.Options.Exists(opt => opt.Id == oId))
+            {
+                SendMessage(string.Format(PollLocale.poll_no_such_option, p.Id, oId), aType, target);
+                return;
+            }
+            var o = p.Options.Find(opt => opt.Id == oId);
+
+            if (p.UserVoted(userName))
+            {
+                SendMessage(string.Format(PollLocale.poll_already_voted, p.Id), aType, target);
+                return;
+            }
+
+            p.RegisterVote(o, userName);
+            SendMessage(string.Format(PollLocale.poll_voted, p.Id), aType, target);
+            return;
+
         }
 
         private static void StartPoll(Poll poll, int time, AnswerType answerType, string answerTarget)

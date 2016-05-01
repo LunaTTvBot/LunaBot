@@ -81,7 +81,7 @@ namespace IRCConnectionTest.Plugins.Poll
             Votes[option].Add(user);
         }
 
-        private bool UserVoted(string user)
+        public bool UserVoted(string user)
         {
             var r = false;
             foreach (var keyValuePair in Votes)

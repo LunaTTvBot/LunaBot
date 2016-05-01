@@ -183,4 +183,16 @@
   <data name="poll_wrong_state_restart" xml:space="preserve">
     <value>Poll {0} is not in created state. Use !poll result:{0} to print the results or restart the poll with: !poll restart:{0}.</value>
   </data>
+  <data name="poll_not_running_vote" xml:space="preserve">
+    <value>Poll {0} not started yet. Nothing to vote.</value>
+  </data>
+  <data name="poll_no_such_option" xml:space="preserve">
+    <value>Poll {0} doesnt have option {1}.</value>
+  </data>
+  <data name="poll_already_voted" xml:space="preserve">
+    <value>You already voted for Poll {0}.</value>
+  </data>
+  <data name="poll_voted" xml:space="preserve">
+    <value>You voted for Poll {0}.</value>
+  </data>
 </root>
