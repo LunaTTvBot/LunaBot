@@ -136,7 +136,7 @@
     <value>Umfrage #{0} ist beendet. {1} hat gewonnen mit {2} ({3}) von {4} Stimmen. Gib '!poll result:{5}' ein um detaillierte Informationen zu erhalten.</value>
   </data>
   <data name="poll_help" xml:space="preserve">
-    <value>Umfrage Plugin Hilfe: Um eine Umfrage zu erstellen nutze '!poll create(TITLE) opt1|opt2|…' oder '!poll create opt1|opt2…'. Mit '!poll start:ID', kannst du eine Umfrage starten. Mehr Informationen findest du auf: https://github.com/SuNflOw1991/iBot-Wiki-DE/wiki/Poll</value>
+    <value>Umfrage Plugin Hilfe: Um eine Umfrage zu erstellen nutze '!poll create(TITLE) opt1|opt2|…' oder '!poll create opt1|opt2…'. Mit '!poll start:ID', kannst du eine Umfrage starten. Mehr Informationen findest du auf: https://github.com/SuNflOw1991/iBot-Wiki-DE/wiki/Umfragen</value>
   </data>
   <data name="poll_is_resetted" xml:space="preserve">
     <value>Die Umfrage mit der Nummer {0} befindet sich schon im neu angelegt Status.</value>
