@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using IRCConnectionTest.Events;
-using IRCConnectionTest.Events.ComstumEventArgs;
+using IRCConnectionTest.Events.CustomEventArgs;
 using PollLocale = IRCConnectionTest.Resources.Plugins.Poll.poll;
 using Timer = System.Timers.Timer;
 
