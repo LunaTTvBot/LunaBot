@@ -30,8 +30,8 @@ namespace IRCConnectionTest.Plugins.Poll
      * !poll create _OPTIONS_               - Creates a poll with given _OPTIONS_
      * !poll list                           - Lists all created polls
      * !poll delete:_ID_                    - Delete poll with _ID_
-     * !poll start:_ID_ _TIME_              - Opens poll with _ID_ for _TIME_ minutes
-     * !poll start:_ID_                     - Opens poll with _ID_ for 5 minutes
+     * !poll (re)start:_ID_ _TIME_          - Opens poll with _ID_ for _TIME_ minutes
+     * !poll (re)start:_ID_                 - Opens poll with _ID_ for 5 minutes
      * !poll abort:_ID_                     - Stops poll with _ID_ directly
      * !poll reset:_ID_                     - Resets poll with _ID_ to not runned
      * !poll result:_ID_                    - Shows result of poll with _ID_
@@ -345,7 +345,6 @@ namespace IRCConnectionTest.Plugins.Poll
                 i++;
             }
 
-            // {0} people voted for Poll {1}. The results are: {2}
             SendMessage(
                 string.Format(PollLocale.poll_result,
                     result.All,
@@ -536,7 +535,6 @@ namespace IRCConnectionTest.Plugins.Poll
                     var percent = 0D;
                     if (max > 0) percent = max / (double) res.All;
 
-                    // Poll {0} finished. {1} won with {2} ({3}%) from {4} votes. Enter !poll result:{5} for further information.
                     var text = string.Format(PollLocale.poll_finished, prefix,
                         res.VotesPerOption.FirstOrDefault(x => x.Value == max).Key.Name, max, percent.ToString("0.00%"), res.All, poll.Id);
 
@@ -552,7 +550,6 @@ namespace IRCConnectionTest.Plugins.Poll
                 prefixB += $": '{poll.Title}'";
 
             var stringB = new StringBuilder();
-            // Poll {0} started for {1} minute(s). Vote now with !vote:{2} OPTION-ID. Options are: 
             stringB.AppendFormat(PollLocale.poll_started, prefixB, time, poll.Id);
             stringB.Append(@" ");
             poll.Options.ForEach(option =>
