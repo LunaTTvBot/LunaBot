@@ -36,15 +36,15 @@ namespace IBot
 
         private static void Start(object o)
         {
-            ChannelEventManager.UserListEvent += ChannelEventManagerOnUserListEvent;
-            ChannelEventManager.UserJoinEvent += ChannelEventManagerOnUserJoinEvent;
-            ChannelEventManager.UserPartEvent += ChannelEventManagerOnUserPartEvent;
-            UserEventManager.UserPublicMessageEvent += UserEventManagerOnUserPublicMessageEvent;
+            ChannelEventManager.UserListEvent += AddListUsersToSet;
+            ChannelEventManager.UserJoinEvent += AddJoinedUsersToSet;
+            ChannelEventManager.UserPartEvent += RemovePartingUsersFromSet;
+            UserEventManager.UserPublicMessageEvent += AddChattingUsersToSet;
 
             if (_myTimer == null)
             {
                 _myTimer = new Timer(60*1000*1); // 1 minute
-                _myTimer.Elapsed += MyTimerOnElapsed;
+                _myTimer.Elapsed += UpdateRegisteredChannelsFromApi;
                 _myTimer.AutoReset = true;
             }
 
@@ -114,7 +114,7 @@ namespace IBot
             CheckCount(channel);
         }
 
-        private static void MyTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        private static void UpdateRegisteredChannelsFromApi(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             lock (ApiChannels)
             {
@@ -134,16 +134,16 @@ namespace IBot
                 SwitchToEvents(channel);
         }
 
-        private static void UserEventManagerOnUserPublicMessageEvent(object sender, UserPublicMessageEventArgs eArgs)
+        private static void AddChattingUsersToSet(object sender, UserPublicMessageEventArgs eArgs)
             => AddToSet(GetChannel(eArgs.Channel), eArgs.UserName);
 
-        private static void ChannelEventManagerOnUserJoinEvent(object sender, UserEventArgs eArgs)
+        private static void AddJoinedUsersToSet(object sender, UserEventArgs eArgs)
             => AddToSet(GetChannel(eArgs.Channel), eArgs.UserName);
 
-        private static void ChannelEventManagerOnUserListEvent(object sender, UserListEventArgs eArgs)
+        private static void AddListUsersToSet(object sender, UserListEventArgs eArgs)
             => eArgs.UserList.ForEach(s => AddToSet(GetChannel(eArgs.Channel), s));
 
-        private static void ChannelEventManagerOnUserPartEvent(object sender, UserEventArgs eArgs)
+        private static void RemovePartingUsersFromSet(object sender, UserEventArgs eArgs)
         {
             if (ApiChannels.Any(c => c.Name == eArgs.Channel))
                 return;
