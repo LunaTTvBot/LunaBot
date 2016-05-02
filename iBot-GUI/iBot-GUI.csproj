@@ -93,9 +93,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\iBot\iBot.csproj">
       <Project>{ecd15ed1-695c-4e55-9971-5deb74e85ac2}</Project>
       <Name>iBot</Name>
