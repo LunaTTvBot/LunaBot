@@ -22,8 +22,6 @@ namespace IBot
 
         public void StartApp()
         {
-            Console.OutputEncoding = Encoding.UTF8;
-
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("de-DE");
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
 
