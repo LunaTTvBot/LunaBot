@@ -7,6 +7,7 @@ using System.Threading;
 using IRCConnectionTest.Events;
 using IRCConnectionTest.Events.Commands;
 using IRCConnectionTest.Events.CustomEventArgs;
+using IRCConnectionTest.Misc;
 using PollLocale = IRCConnectionTest.Resources.Plugins.Poll.poll;
 using Timer = System.Timers.Timer;
 
@@ -70,7 +71,7 @@ namespace IRCConnectionTest.Plugins.Poll
 
         public void Execute()
         {
-            Console.WriteLine($"{PluginName} {PollLocale.poll_plugin_loaded}");
+            Logger.Write($"{PluginName} {PollLocale.poll_plugin_loaded}");
             CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
             {
                 RegEx = "!poll(.*)",
