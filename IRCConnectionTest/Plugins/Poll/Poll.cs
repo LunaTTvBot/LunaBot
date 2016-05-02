@@ -96,32 +96,6 @@ namespace IRCConnectionTest.Plugins.Poll
         }
     }
 
-    internal class PollOption
-    {
-        public PollOption(int id, string name)
-        {
-            Id = id;
-            Name = name;
-        }
-
-        public int Id { get; }
-
-        public string Name { get; }
-    }
-
-    internal class PollResult
-    {
-        public PollResult(int all, Dictionary<PollOption, int> votesPerOption)
-        {
-            All = all;
-            VotesPerOption = votesPerOption;
-        }
-
-        public int All { get; }
-
-        public Dictionary<PollOption, int> VotesPerOption { get; }
-    }
-
     internal enum PollState
     {
         Created,
