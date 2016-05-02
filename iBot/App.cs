@@ -22,8 +22,6 @@ namespace IBot
 
         public void StartApp()
         {
-            Console.OutputEncoding = Encoding.UTF8;
-
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("de-DE");
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
 
@@ -66,14 +64,14 @@ namespace IBot
                     Action = (command, matches, mArgs) =>
                     {
                         IrcConnection.Write(ConnectionType.BotCon, mArgs.Channel,
-                            $"Ja, Test ({matches.Groups[1].Value})!");
+                                            $"Ja, Test ({matches.Groups[1].Value})!");
                     }
                 });
 
                 RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
                 settings.Save(settingsFileName);
                 Console.WriteLine(app.app_connected);
-                _connection.RaiseMessageEvent += ConnectionOnRaiseMessageEvent;
+                _connection.RaiseMessageEvent += (sender, args) => Trace.WriteLine(args.Message);
                 BotChannelList.ForEach(channel => _connection.Join(channel));
                 RegisterChannelEvents();
                 RegisterUserEvents();
@@ -84,59 +82,20 @@ namespace IBot
 
         private static void RegisterUserEvents()
         {
-            UserEventManager.UserJoinEvent += EventManagerOnUserJoinEvent;
-            UserEventManager.UserPartEvent += EventManagerOnUserJoinEvent;
-            UserEventManager.UserPublicMessageEvent += EventManagerOnUserPublicMessageEvent;
-            UserEventManager.UserWhisperMessageEvent += EventManagerOnUserWhisperMessageEvent;
-            UserEventManager.UserStateEvent += UserEventManagerOnUserStateEvent;
+            UserEventManager.UserStateEvent += (sender, args) => Console.WriteLine($"USERSTATE received #{args.Channel}");
+            UserEventManager.UserJoinEvent += (sender, args) => Console.WriteLine($"User {args.Type}ed: {args.UserName} - {args.Channel}");
+            UserEventManager.UserPartEvent += (sender, args) => Console.WriteLine($"User {args.Type}ed: {args.UserName} - {args.Channel}");
+            UserEventManager.UserWhisperMessageEvent += (sender, args) => Console.WriteLine($"User {args.UserName} > {args.ToUserName}: {args.Message}");
+
+            UserEventManager.UserPublicMessageEvent +=
+                (sender, args) => Console.WriteLine($"{(String.IsNullOrEmpty(args.Tags?.DisplayName) ? args.UserName : args.Tags.DisplayName)}#{args.Channel}: {args.Message}");
         }
 
         private static void RegisterChannelEvents()
         {
-            // ChannelEventManager.UserJoinEvent += EventManagerOnUserJoinEvent;
-            // ChannelEventManager.UserPartEvent += EventManagerOnUserJoinEvent;
-            ChannelEventManager.RoomStateAllEvent += ChannelEventManagerOnRoomStateAllEvent;
-            ChannelEventManager.OperatorGrantedEvent += ChannelEventManagerOnOperatorGrantedEvent;
-            ChannelEventManager.OperatorRevokedEvent += ChannelEventManagerOnOperatorGrantedEvent;
-        }
-
-        private static void ChannelEventManagerOnOperatorGrantedEvent(object sender, OperatorModeEventArgs eArgs)
-        {
-            Console.WriteLine($"Operator {eArgs.OpType}: {eArgs.User}@{eArgs.Channel}");
-        }
-
-        private static void ChannelEventManagerOnRoomStateAllEvent(object sender, RoomStateAllEventArgs eArgs)
-        {
-            Console.WriteLine($"ROOMSTATE received #{eArgs.Channel}");
-        }
-
-        private static void UserEventManagerOnUserStateEvent(object sender, UserStateEventArgs eArgs)
-        {
-            Console.WriteLine($"USERSTATE received #{eArgs.Channel}");
-        }
-
-        private static void EventManagerOnUserWhisperMessageEvent(object sender, UserWhisperMessageEventArgs eArgs)
-        {
-            Console.WriteLine($"User {eArgs.UserName} > {eArgs.ToUserName}: {eArgs.Message}");
-        }
-
-        private static void EventManagerOnUserPublicMessageEvent(object sender, UserPublicMessageEventArgs eArgs)
-        {
-            var name = eArgs.Tags != null && eArgs.Tags.DisplayName != ""
-                ? eArgs.Tags.DisplayName
-                : eArgs.UserName;
-
-            Console.WriteLine($"{name}#{eArgs.Channel}: {eArgs.Message}");
-        }
-
-        private static void EventManagerOnUserJoinEvent(object sender, UserEventArgs eArgs)
-        {
-            Console.WriteLine($"User {eArgs.Type}ed: {eArgs.UserName} - {eArgs.Channel}");
-        }
-
-        private static void ConnectionOnRaiseMessageEvent(object sender, MessageEventArgs eArgs)
-        {
-            Trace.WriteLine(eArgs.Message);
+            ChannelEventManager.RoomStateAllEvent += (sender, args) => Console.WriteLine($"ROOMSTATE received #{args.Channel}");
+            ChannelEventManager.OperatorGrantedEvent += (sender, args) => Console.WriteLine($"Operator {args.OpType}: {args.User}@{args.Channel}");
+            ChannelEventManager.OperatorRevokedEvent += (sender, args) => Console.WriteLine($"Operator {args.OpType}: {args.User}@{args.Channel}");
         }
 
         public static List<Type> GetTypesByInterface<T>(Assembly assembly)
@@ -145,8 +104,8 @@ namespace IBot
                 throw new ArgumentException("T must be an interface");
 
             return assembly.GetTypes()
-                .Where(x => x.GetInterface(typeof(T).Name) != null)
-                .ToList();
+                           .Where(x => x.GetInterface(typeof(T).Name) != null)
+                           .ToList();
         }
     }
 }
