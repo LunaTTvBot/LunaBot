@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iBot", "iBot\iBot.csproj", "{ECD15ED1-695C-4E55-9971-5DEB74E85AC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iBot-GUI", "iBot-GUI\iBot-GUI.csproj", "{29D6F66D-E257-4177-A608-633AB97CEFC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,13 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B6F7AD04-0743-4F0D-BF36-6ADBD476F359}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B6F7AD04-0743-4F0D-BF36-6ADBD476F359}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B6F7AD04-0743-4F0D-BF36-6ADBD476F359}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ECD15ED1-695C-4E55-9971-5DEB74E85AC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ECD15ED1-695C-4E55-9971-5DEB74E85AC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECD15ED1-695C-4E55-9971-5DEB74E85AC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECD15ED1-695C-4E55-9971-5DEB74E85AC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29D6F66D-E257-4177-A608-633AB97CEFC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29D6F66D-E257-4177-A608-633AB97CEFC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29D6F66D-E257-4177-A608-633AB97CEFC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29D6F66D-E257-4177-A608-633AB97CEFC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
