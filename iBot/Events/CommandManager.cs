@@ -21,13 +21,12 @@ namespace IBot.Events
 
         private static void Start()
         {
-            IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += ConnectionOnRaiseMessageEvent;
-            UserEventManager.UserPublicMessageEvent += UserEventManagerOnUserPublicMessageEvent;
-            UserEventManager.UserWhisperMessageEvent += UserEventManagerOnUserWhisperMessageEvent;
+            IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += CheckAndRaiseGlobalCommands;
+            UserEventManager.UserPublicMessageEvent += CheckAndRaisePublicCommands;
+            UserEventManager.UserWhisperMessageEvent += CheckAndRaiseWhisperCommands;
         }
 
-        private static void UserEventManagerOnUserWhisperMessageEvent(object sender,
-            UserWhisperMessageEventArgs eArgs)
+        private static void CheckAndRaiseWhisperCommands(object sender, UserWhisperMessageEventArgs eArgs)
         {
             ThreadPool.QueueUserWorkItem(_ =>
             {
@@ -45,8 +44,7 @@ namespace IBot.Events
             });
         }
 
-        private static void UserEventManagerOnUserPublicMessageEvent(object sender,
-            UserPublicMessageEventArgs eArgs)
+        private static void CheckAndRaisePublicCommands(object sender, UserPublicMessageEventArgs eArgs)
         {
             ThreadPool.QueueUserWorkItem(_ =>
             {
@@ -64,7 +62,7 @@ namespace IBot.Events
             });
         }
 
-        private static void ConnectionOnRaiseMessageEvent(object sender, MessageEventArgs eArgs)
+        private static void CheckAndRaiseGlobalCommands(object sender, MessageEventArgs eArgs)
         {
             ThreadPool.QueueUserWorkItem(_ =>
             {
@@ -96,5 +94,5 @@ namespace IBot.Events
         {
             WhisperCommandList.Add(command);
         }
-    }    
+    }
 }

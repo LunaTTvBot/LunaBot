@@ -39,10 +39,10 @@ namespace IBot.Events
 
         static UserEventManager()
         {
-            IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += ConnectionOnRaiseMessageEvent;
+            IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += CheckAndRaiseMessageEvent;
         }
 
-        public static void ConnectionOnRaiseMessageEvent(object sender, MessageEventArgs msgEvArgs)
+        public static void CheckAndRaiseMessageEvent(object sender, MessageEventArgs msgEvArgs)
         {
             RaiseUserJoinPartEvent(msgEvArgs.Message);
             RaiseUserPublicMessageEvent(msgEvArgs.Message);
@@ -57,6 +57,7 @@ namespace IBot.Events
         public static event EventHandler<UserStateEventArgs> UserStateEvent;
 
         private static void OnUserJoinEvent(UserEventArgs e) => UserJoinEvent?.Invoke(typeof(EventManager), e);
+
         private static void OnUserPartEvent(UserEventArgs e) => UserPartEvent?.Invoke(typeof(EventManager), e);
 
         private static void OnUserPublicMessageEvent(UserPublicMessageEventArgs e)
@@ -81,7 +82,8 @@ namespace IBot.Events
         private static void RaiseUserJoinPartEvent(string message)
         {
             var match = RegExJoinPart.Match(message);
-            if (!match.Success) return;
+            if (!match.Success)
+                return;
 
             if (match.Groups[2].Value == "JOIN")
                 OnUserJoinEvent(new UserEventArgs(match.Groups[1].Value, match.Groups[3].Value, UserEventType.Join));
@@ -92,43 +94,59 @@ namespace IBot.Events
         private static void RaiseUserPublicMessageEvent(string message)
         {
             var match = RegExPubMsg.Match(message);
-            if (!match.Success) return;
+            if (!match.Success)
+                return;
 
             var tags = ParsePublicMessageTags(match.Groups[1].Value);
 
-            OnUserPublicMessageEvent(new UserPublicMessageEventArgs(tags, match.Groups[2].Value, match.Groups[3].Value,
-                match.Groups[4].Value));
+            OnUserPublicMessageEvent(new UserPublicMessageEventArgs(tags,
+                                                                    match.Groups[2].Value,
+                                                                    match.Groups[3].Value,
+                                                                    match.Groups[4].Value));
         }
 
         private static void RaiseUserWhisperMessageEvent(string message)
         {
             var match = RegExPrivMsg.Match(message);
-            if (!match.Success) return;
+            if (!match.Success)
+                return;
 
             var tags = ParsePublicMessageTags(match.Groups[1].Value);
 
-            OnUserwhisperMessageEvent(new UserWhisperMessageEventArgs(tags, match.Groups[2].Value, match.Groups[3].Value,
-                match.Groups[4].Value));
+            OnUserwhisperMessageEvent(new UserWhisperMessageEventArgs(tags,
+                                                                      match.Groups[2].Value,
+                                                                      match.Groups[3].Value,
+                                                                      match.Groups[4].Value));
         }
 
         private static UserStateTags ParseStateTags(string tags)
         {
             var match = RegExUsrStTags.Match(tags);
             return !match.Success
-                ? null
-                : new UserStateTags(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value,
-                    match.Groups[4].Value == "1", match.Groups[5].Value == "1", match.Groups[6].Value == "1",
-                    match.Groups[7].Value);
+                       ? null
+                       : new UserStateTags(match.Groups[1].Value,
+                                           match.Groups[2].Value,
+                                           match.Groups[3].Value,
+                                           match.Groups[4].Value == "1",
+                                           match.Groups[5].Value == "1",
+                                           match.Groups[6].Value == "1",
+                                           match.Groups[7].Value);
         }
 
         private static UserMessageTags ParsePublicMessageTags(string tags)
         {
             var match = RegExMsgTags.Match(tags);
             return !match.Success
-                ? null
-                : new UserMessageTags(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value,
-                    match.Groups[4].Value == "1", Convert.ToInt64(match.Groups[5].Value), match.Groups[6].Value == "1",
-                    match.Groups[7].Value == "1", Convert.ToInt64(match.Groups[8].Value), match.Groups[9].Value);
+                       ? null
+                       : new UserMessageTags(match.Groups[1].Value,
+                                             match.Groups[2].Value,
+                                             match.Groups[3].Value,
+                                             match.Groups[4].Value == "1",
+                                             Convert.ToInt64(match.Groups[5].Value),
+                                             match.Groups[6].Value == "1",
+                                             match.Groups[7].Value == "1",
+                                             Convert.ToInt64(match.Groups[8].Value),
+                                             match.Groups[9].Value);
         }
     }
 }

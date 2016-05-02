@@ -56,10 +56,10 @@ namespace IBot.Events
 
         static ChannelEventManager()
         {                     
-            IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += ConnectionOnRaiseMessageEvent;
+            IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += CheckAndRaiseChannelEvents;
         }
 
-        public static void ConnectionOnRaiseMessageEvent(object sender, MessageEventArgs eArgs)
+        public static void CheckAndRaiseChannelEvents(object sender, MessageEventArgs eArgs)
         {
             RaiseUserJoinPartEvent(eArgs.Message);
             RaiseRoomStateEvents(eArgs.Message);
