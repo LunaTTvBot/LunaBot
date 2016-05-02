@@ -109,6 +109,13 @@ namespace IRCConnectionTest.Plugins.Poll
             return true;
         }
 
+        /// <summary>
+        /// Prints: <see cref="PollLocale.poll_created"/>
+        /// </summary>
+        /// <param name="pollParams"></param>
+        /// <param name="answerType"></param>
+        /// <param name="answerTarget"></param>
+        /// <returns></returns>
         private static bool HandlePollCreateTitleCommand(string pollParams, AnswerType answerType, string answerTarget)
         {
             var m = PollCreateTitleRegEx.Match(pollParams);
@@ -141,6 +148,13 @@ namespace IRCConnectionTest.Plugins.Poll
             return true;
         }
 
+        /// <summary>
+        /// Prints: <see cref="PollLocale.poll_created"/>
+        /// </summary>
+        /// <param name="pollParams"></param>
+        /// <param name="answerType"></param>
+        /// <param name="answerTarget"></param>
+        /// <returns></returns>
         private static bool HandlePollCreateCommand(string pollParams, AnswerType answerType, string answerTarget)
         {
             var m = PollCreateRegEx.Match(pollParams);
@@ -173,6 +187,13 @@ namespace IRCConnectionTest.Plugins.Poll
             return true;
         }
 
+        /// <summary>
+        /// Prints: #ID [- TITLE] (STATE) 1:Opt1, 2:Opt2
+        /// </summary>
+        /// <param name="pollParams"></param>
+        /// <param name="answerType"></param>
+        /// <param name="answerTarget"></param>
+        /// <returns></returns>
         private static bool HandlePollListCommand(string pollParams, AnswerType answerType, string answerTarget)
         {
             var m = PollListRegEx.Match(pollParams);
@@ -260,6 +281,12 @@ namespace IRCConnectionTest.Plugins.Poll
             return true;
         }
 
+        /// <summary>
+        /// Prints: <see cref="PollLocale.poll_removed"/>
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="answerType"></param>
+        /// <param name="answerTarget"></param>
         private static void HandlePollDelete(Poll p, AnswerType answerType, string answerTarget)
         {
             if (p.GetPollState() == PollState.Started)
@@ -273,6 +300,12 @@ namespace IRCConnectionTest.Plugins.Poll
             SendMessage(string.Format(PollLocale.poll_removed, p.Id), answerType, answerTarget);
         }
 
+        /// <summary>
+        /// Prints: <see cref="PollLocale.poll_aborted"/>
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="answerType"></param>
+        /// <param name="answerTarget"></param>
         private static void HandlePollAbort(Poll p, AnswerType answerType, string answerTarget)
         {
             if (p.GetPollState() != PollState.Started)
@@ -293,6 +326,12 @@ namespace IRCConnectionTest.Plugins.Poll
             SendMessage(string.Format(PollLocale.poll_aborted, p.Id), answerType, answerTarget);
         }
 
+        /// <summary>
+        /// Prints: <see cref="PollLocale.poll_resetted"/>
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="answerType"></param>
+        /// <param name="answerTarget"></param>
         private static void HandlePollReset(Poll p, AnswerType answerType, string answerTarget)
         {
             switch (p.GetPollState())
@@ -317,6 +356,12 @@ namespace IRCConnectionTest.Plugins.Poll
             SendMessage(string.Format(PollLocale.poll_resetted, p.Id), answerType, answerTarget);
         }
 
+        /// <summary>
+        /// Prints: <see cref="PollLocale.poll_result"/>
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="answerType"></param>
+        /// <param name="answerTarget"></param>
         private static void HandlePollResult(Poll p, AnswerType answerType, string answerTarget)
         {
             if (p.GetPollState() != PollState.Finished)
@@ -465,6 +510,13 @@ namespace IRCConnectionTest.Plugins.Poll
             HandlePollActions(pollParams, aType, target);
         }
 
+        /// <summary>
+        /// Prints: <see cref="PollLocale.poll_voted"/>
+        /// </summary>
+        /// <param name="voteParams"></param>
+        /// <param name="aType"></param>
+        /// <param name="target"></param>
+        /// <param name="userName"></param>
         private static void HandleVoteCommand(string voteParams, AnswerType aType, string target, string userName)
         {
             var m = VoteRegEx.Match(voteParams);
@@ -502,6 +554,14 @@ namespace IRCConnectionTest.Plugins.Poll
             SendMessage(string.Format(PollLocale.poll_voted, p.Id), aType, target);
         }
 
+        /// <summary>
+        /// Prints: <see cref="PollLocale.poll_started"/> after start and
+        /// <see cref="PollLocale.poll_finished"/> after minutes in <paramref name="time"/> expired.
+        /// </summary>
+        /// <param name="poll"></param>
+        /// <param name="time"></param>
+        /// <param name="answerType"></param>
+        /// <param name="answerTarget"></param>
         private static void StartPoll(Poll poll, int time, AnswerType answerType, string answerTarget)
         {
             if (!TimerStack.ContainsKey(poll))
