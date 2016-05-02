@@ -52,9 +52,9 @@ namespace IRCConnectionTest.Plugins.Poll
         private const string PollCreatePattern = @"^\screate\s(.*)";
         private const string PollOptionsPattern = @"([^|]+)\|?";
         private const string PollListPattern = @"^\slist";
-        private const string PollStartPattern = @"^\s(start|restart):([0-9]+)\s?([0-9]*)";
-        private const string PollActionsPattern = @"^\s(delete|abort|result|reset):([0-9]+)";
-        private const string VotePattern = @"^:([0-9]+)\s([0-9]+)";
+        private const string PollStartPattern = @"^\s(start|restart)[:\s]([0-9]+)\s?([0-9]*)";
+        private const string PollActionsPattern = @"^\s(delete|abort|result|reset)[:\s]([0-9]+)";
+        private const string VotePattern = @"^[:\s]([0-9]+)\s([0-9]+)";
 
         private static readonly Regex PollCreateTitleRegEx = new Regex(PollCreateTitlePattern);
         private static readonly Regex PollCreateRegEx = new Regex(PollCreatePattern);
@@ -475,7 +475,7 @@ namespace IRCConnectionTest.Plugins.Poll
 
             if (!PollsStack.Exists(poll => poll.Id == pId))
             {
-                SendMessage(string.Format(PollLocale.poll_not_running_vote, pId), aType, target);
+                SendMessage(string.Format(PollLocale.poll_not_found, pId), aType, target);
                 return;
             }
 
