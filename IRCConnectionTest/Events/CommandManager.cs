@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
+using IRCConnectionTest.Events.Commands;
 using IRCConnectionTest.Events.CustomEventArgs;
 
 namespace IRCConnectionTest.Events
@@ -96,26 +97,5 @@ namespace IRCConnectionTest.Events
         {
             WhisperCommandList.Add(command);
         }
-    }
-
-    internal class WhisperCommand
-    {
-        public string Name { get; set; }
-        public string RegEx { get; set; }
-        public Action<WhisperCommand, Match, UserWhisperMessageEventArgs> Action { get; set; }
-    }
-
-    internal class PublicChannelCommand
-    {
-        public string Name { get; set; }
-        public string RegEx { get; set; }
-        public Action<PublicChannelCommand, Match, UserPublicMessageEventArgs> Action { get; set; }
-    }
-
-    internal class GlobalCommand
-    {
-        public string Name { get; set; }
-        public string RegEx { get; set; }
-        public Action<GlobalCommand, Match, string> Action { get; set; }
-    }
+    }    
 }
