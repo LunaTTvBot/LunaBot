@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using IRCConnectionTest.Events.CustomEventArgs;
@@ -13,6 +14,11 @@ namespace IRCConnectionTest
     {
         BotCon,
         ChatCon
+    }
+
+    internal enum AnswerType {
+        Public,
+        Private
     }
 
     internal class IrcConnection
@@ -128,6 +134,22 @@ namespace IRCConnectionTest
                 return;
 
             ConType[conType].Write(string.Format(GlobalTwitchPatterns.WritePublicFormat, channel, msg));
+        }
+
+        public static void Write(ConnectionType conType, AnswerType aType, string target, string msg) {
+            if(!ConType.ContainsKey(conType))
+                return;
+
+            switch(aType) {
+                case AnswerType.Private:
+                    Write(ConnectionType.BotCon, App.BotChannelList.First(), $"/w {target} {msg}");
+                    break;
+                case AnswerType.Public:
+                    Write(ConnectionType.BotCon, target, msg);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(aType), aType, null);
+            }
         }
 
         private void ReadConnection()

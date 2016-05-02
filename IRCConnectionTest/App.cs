@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
+using System.Text;
 using IRCConnectionTest.Events;
+using IRCConnectionTest.Events.Commands;
 using IRCConnectionTest.Events.CustomEventArgs;
 using IRCConnectionTest.Misc;
+using IRCConnectionTest.Plugins;
+using IRCConnectionTest.Resources;
 
 namespace IRCConnectionTest
 {
@@ -16,6 +22,11 @@ namespace IRCConnectionTest
 
         public void StartApp()
         {
+            Console.OutputEncoding = Encoding.UTF8;
+
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("de-DE");
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
+
             const string settingsFileName = "settings.json";
             AppSettings settings;
 
@@ -37,21 +48,31 @@ namespace IRCConnectionTest
 
             if (_connection.Connect())
             {
-                CommandManager.RegisterCommand(new ChannelCommand
+                var consoleAssembly = Assembly.GetExecutingAssembly();
+                var pluginTypes = GetTypesByInterface<IPlugin>(consoleAssembly);
+
+                // List<IPlugin> plugins = new List<IPlugin>();
+                foreach (var pluginType in pluginTypes)
+                {
+                    var plugin = Activator.CreateInstance(pluginType) as IPlugin;
+                    // plugins.Add(plugin);
+                    plugin?.Execute();
+                }
+
+                CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
                 {
                     RegEx = @"!test\s?(.*)",
                     Name = "Test",
-                    Action = (command, matches, orgMsg) =>
+                    Action = (command, matches, mArgs) =>
                     {
-                        var m = Regex.Match(orgMsg, UserEventManager.UserPublicMessagePattern);
-                        if(m.Success)
-                            IrcConnection.Write(ConnectionType.BotCon, m.Groups[3].Value, $"Ja, Test ({matches.Groups[1].Value})!");
+                        IrcConnection.Write(ConnectionType.BotCon, mArgs.Channel,
+                            $"Ja, Test ({matches.Groups[1].Value})!");
                     }
                 });
 
                 RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
                 settings.Save(settingsFileName);
-                Console.WriteLine("##### Connected! #####");
+                Console.WriteLine(app.app_connected);
                 _connection.RaiseMessageEvent += ConnectionOnRaiseMessageEvent;
                 BotChannelList.ForEach(channel => _connection.Join(channel));
                 RegisterChannelEvents();
@@ -116,6 +137,16 @@ namespace IRCConnectionTest
         private static void ConnectionOnRaiseMessageEvent(object sender, MessageEventArgs eArgs)
         {
             Trace.WriteLine(eArgs.Message);
+        }
+
+        public static List<Type> GetTypesByInterface<T>(Assembly assembly)
+        {
+            if (!typeof(T).IsInterface)
+                throw new ArgumentException("T must be an interface");
+
+            return assembly.GetTypes()
+                .Where(x => x.GetInterface(typeof(T).Name) != null)
+                .ToList();
         }
     }
 }

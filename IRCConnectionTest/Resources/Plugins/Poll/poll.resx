@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="command_not_available_private" xml:space="preserve">
+    <value>This command is not available in private chat. ({0})</value>
+  </data>
+  <data name="no_polls" xml:space="preserve">
+    <value>No polls created. Get help with !poll.</value>
+  </data>
+  <data name="poll_aborted" xml:space="preserve">
+    <value>Poll {0} aborted successfully. Votes are no longer accepted for Poll {0}.</value>
+  </data>
+  <data name="poll_base_error" xml:space="preserve">
+    <value>Upps, I'm sorry. Something went wrong. Please try again or type !poll to get help.</value>
+  </data>
+  <data name="poll_created" xml:space="preserve">
+    <value>Poll created with id: {0}.</value>
+  </data>
+  <data name="poll_finished" xml:space="preserve">
+    <value>Poll {0} finished. {1} won with {2} ({3}) from {4} votes. Enter !poll result:{5} for further information.</value>
+  </data>
+  <data name="poll_help" xml:space="preserve">
+    <value>Poll Plugin Help: Type !poll create(TITLE) opt1|opt2|opt3 or !poll create opt1|opt2|opt3 to create a new poll. Start a poll with !poll start:POLL-ID. For further information about the plugin visit: https://github.com/SuNflOw1991/iBot-Wiki-EN/wiki/Poll</value>
+  </data>
+  <data name="poll_is_resetted" xml:space="preserve">
+    <value>Poll {0} is already resetted.</value>
+  </data>
+  <data name="poll_makes_no_sense" xml:space="preserve">
+    <value>Poll makes no sense (only one option). Ignored.</value>
+  </data>
+  <data name="poll_not_found" xml:space="preserve">
+    <value>Poll {0} could not be found. Get a list with available polls with: !poll list.</value>
+  </data>
+  <data name="poll_not_ran" xml:space="preserve">
+    <value>Poll {0} not finished yet.</value>
+  </data>
+  <data name="poll_not_running" xml:space="preserve">
+    <value>Poll {0} not started yet. Nothing to abort.</value>
+  </data>
+  <data name="poll_no_votes" xml:space="preserve">
+    <value>Nobody voted for poll {0}.</value>
+  </data>
+  <data name="poll_plugin_loaded" xml:space="preserve">
+    <value>LOADED!</value>
+  </data>
+  <data name="poll_plugin_name" xml:space="preserve">
+    <value>Poll Plugin</value>
+  </data>
+  <data name="poll_removed" xml:space="preserve">
+    <value>Poll {0} has been removed successfully.</value>
+  </data>
+  <data name="poll_resetted" xml:space="preserve">
+    <value>Poll {0} resettet successfully. Start with: !poll start:{0}.</value>
+  </data>
+  <data name="poll_result" xml:space="preserve">
+    <value>{0} people voted for Poll {1}. The results are: {2}</value>
+  </data>
+  <data name="poll_running" xml:space="preserve">
+    <value>Poll {0} is still running. Abort with: !poll abort:{0}.</value>
+  </data>
+  <data name="poll_started" xml:space="preserve">
+    <value>Poll {0} started for {1} minute(s). Vote now with !vote:{2} OPTION-ID. Options are:</value>
+  </data>
+  <data name="poll_wrong_command" xml:space="preserve">
+    <value>Your command could not be executed successfully. Please try again or type !poll to get help.</value>
+  </data>
+  <data name="poll_wrong_state_restart" xml:space="preserve">
+    <value>Poll {0} is not in created state. Use !poll result:{0} to print the results or restart the poll with: !poll restart:{0}.</value>
+  </data>
+  <data name="poll_not_running_vote" xml:space="preserve">
+    <value>Poll {0} not started yet. Nothing to vote.</value>
+  </data>
+  <data name="poll_no_such_option" xml:space="preserve">
+    <value>Poll {0} doesnt have option {1}.</value>
+  </data>
+  <data name="poll_already_voted" xml:space="preserve">
+    <value>You already voted for Poll {0}.</value>
+  </data>
+  <data name="poll_voted" xml:space="preserve">
+    <value>You voted for Poll {0}.</value>
+  </data>
+</root>

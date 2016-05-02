@@ -56,6 +56,9 @@
     <Compile Include="Channel.cs" />
     <Compile Include="Events\ChannelEventManager.cs" />
     <Compile Include="Events\CommandManager.cs" />
+    <Compile Include="Events\Commands\GlobalCommand.cs" />
+    <Compile Include="Events\Commands\PublicChannelCommand.cs" />
+    <Compile Include="Events\Commands\WhisperCommand.cs" />
     <Compile Include="Events\CustomEventArgs\UserList\UserJoinEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\UserList\UserPartedEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\OperatorModeEventArgs.cs" />
@@ -75,6 +78,11 @@
     <Compile Include="Misc\AppSettings.cs" />
     <Compile Include="Misc\GlobalTwitchPatterns.cs" />
     <Compile Include="Misc\Logger.cs" />
+    <Compile Include="Plugins\IPlugin.cs" />
+    <Compile Include="Plugins\Poll\Poll.cs" />
+    <Compile Include="Plugins\Poll\PollOption.cs" />
+    <Compile Include="Plugins\Poll\PollPlugin.cs" />
+    <Compile Include="Plugins\Poll\PollResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Events\CustomEventArgs\UserEventArgs.cs" />
@@ -85,6 +93,16 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\app.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>app.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Plugins\Poll\poll.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>poll.resx</DependentUpon>
     </Compile>
     <Compile Include="TmiApi\ChannelChattersEndpoint\ChannelChatters.cs" />
     <Compile Include="TmiApi\ChannelChattersEndpoint\Chatters.cs" />
@@ -103,6 +121,19 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="settings.example.json" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\app.de.resx" />
+    <EmbeddedResource Include="Resources\app.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>app.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Plugins\Poll\poll.de.resx" />
+    <EmbeddedResource Include="Resources\Plugins\Poll\poll.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>poll.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
