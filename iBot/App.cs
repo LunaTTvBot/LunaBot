@@ -20,6 +20,8 @@ namespace IBot
 
         public void StartApp()
         {
+            AppDomain.CurrentDomain.SetData("AppDataDir", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("de-DE");
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
 
