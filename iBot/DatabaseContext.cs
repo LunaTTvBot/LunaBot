@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
 using SQLite.CodeFirst;
 
 namespace IBot
@@ -12,6 +7,8 @@ namespace IBot
     {
         public DatabaseContext()
             : base("Store") {}
+
+        public DbSet<Channel> History { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
