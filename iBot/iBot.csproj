@@ -74,7 +74,7 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="Channel.cs" />
-    <Compile Include="Datastorage.cs" />
+    <Compile Include="DatabaseContext.cs" />
     <Compile Include="Events\ChannelEventManager.cs" />
     <Compile Include="Events\CommandManager.cs" />
     <Compile Include="Events\Commands\GlobalCommand.cs" />
