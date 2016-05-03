@@ -1,0 +1,69 @@
+﻿<Window x:Class="iBot_GUI.Forms.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:iBot_GUI.Resources"
+        xmlns:vectors="clr-namespace:iBot_GUI.Template.Controls.Vectors"
+        mc:Ignorable="d"
+        Background="{DynamicResource MainBackgroundBrush}"
+        SnapsToDevicePixels="True" WindowStartupLocation="CenterScreen" AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip" WindowStyle="None" StateChanged="Window_StateChanged"
+        Title="{x:Static p:Main.bot_name}" Height="600" Width="1024" MinHeight="600" MinWidth="800">
+    <Grid x:Name="MainGrid">
+        <Border BorderThickness="25" BorderBrush="Transparent" Height="60" VerticalAlignment="Top" Panel.ZIndex="10"
+                x:Name="HeaderThumb"
+                PreviewMouseLeftButtonDown="headerThumb_MouseLeftButtonDown"
+                PreviewMouseLeftButtonUp="headerThumb_MouseLeftButtonUp"
+                PreviewMouseMove="headerThumb_MouseMove" Margin="0,0,104,0" />
+
+        <Border x:Name="BorderFrame" BorderBrush="{DynamicResource ApplicationAccentBrush}"
+                BorderThickness="1,1,1,23">
+            <Grid>
+                <Grid x:Name="ContainerFrame">
+                    <Grid x:Name="Header" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="60">
+                        <vectors:LogoModel Width="40" Height="40" HorizontalAlignment="Left" Margin="8,8,0,13" />
+
+                        <TextBlock x:Name="MainTitle" Text="{x:Static p:Main.bot_name}"
+                                   Foreground="{DynamicResource TextBrushSecondary}" VerticalAlignment="Top"
+                                   HorizontalAlignment="Stretch" FontSize="15" Margin="54,16,280,0"
+                                   TextTrimming="CharacterEllipsis" />
+
+                        <StackPanel x:Name="HomeHeaderActionButtons" Orientation="Horizontal" VerticalAlignment="Top"
+                                    HorizontalAlignment="Right" Height="26" Margin="0,0,0,0">
+                            <Button x:Name="BtnActionMinimize" ToolTip="{x:Static p:Main.window_minimize}" Width="34"
+                                    Height="26"
+                                    Style="{StaticResource HeaderActionButton}" VerticalAlignment="Top"
+                                    d:LayoutOverrides="Height" Click="btnActionMinimize_Click">
+                                <vectors:MinimizeIcon Width="34" Height="26" />
+                            </Button>
+
+                            <Button x:Name="BtnActionRestore" ToolTip="{x:Static p:Main.window_restore}" Width="34"
+                                    Height="26"
+                                    Style="{StaticResource HeaderActionButton}" Visibility="Collapsed"
+                                    Click="btnActionRestore_Click">
+                                <vectors:RestoreIcon Width="34" Height="26" />
+                            </Button>
+
+                            <Button x:Name="BtnActionMaxamize" ToolTip="{x:Static p:Main.window_maximize}" Width="34"
+                                    Height="26"
+                                    Style="{StaticResource HeaderActionButton}" Click="btnActionMaximize_Click">
+                                <vectors:MaximizeIcon Width="34" Height="26" Margin="0,1,0,0" />
+                            </Button>
+
+                            <Button x:Name="BtnActionClose" ToolTip="{x:Static p:Main.window_close}" Width="34"
+                                    Height="26"
+                                    Style="{StaticResource HeaderActionButton}" Click="btnActionClose_Click">
+                                <vectors:CloseIcon Width="34" Height="26" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                    <Grid x:Name="Content" Margin="0,60,0,0" />
+                </Grid>
+
+                <TextBlock x:Name="Status" Margin="5,0,0,-19" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                           Text="{x:Static p:Main.status_base}" Foreground="{DynamicResource TextBrushStatus}" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

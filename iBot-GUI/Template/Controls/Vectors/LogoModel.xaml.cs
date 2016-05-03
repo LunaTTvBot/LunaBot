@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace iBot_GUI
+namespace iBot_GUI.Template.Controls.Vectors
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaktionslogik für LogoModel.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class LogoModel : UserControl
     {
-        public MainWindow()
+        public LogoModel()
         {
             InitializeComponent();
         }
