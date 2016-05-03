@@ -13,6 +13,7 @@ namespace IBot
         {
             _user = user;
             DbChannel = new DbChannel();
+            DbChannel.Name = _user.ChannelName ?? _user.Channel?.Name;
         }
 
         [Key]

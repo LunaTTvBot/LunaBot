@@ -13,8 +13,13 @@ namespace IBot
         public DbChannel(Channel channel)
         {
             _channel = channel;
+            Name = _channel.Name;
             DbUsers = DbUser.From(_channel.Users).ToList();
-            DbUsers.ForEach(u => u.ChannelName = _channel.Name);
+            DbUsers.ForEach(u =>
+            {
+                u.ChannelName = _channel.Name;
+                u.DbChannel = this;
+            });
         }
 
         [Key]
@@ -23,7 +28,7 @@ namespace IBot
             get { return _channel.Name; }
             set { _channel.Name = value; }
         }
-        
+
         public List<DbUser> DbUsers { get; set; }
     }
 }
