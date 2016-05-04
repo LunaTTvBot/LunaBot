@@ -10,7 +10,9 @@
                 <ResourceDictionary Source="Template/Themes/Color/Red.xaml" />
                 <ResourceDictionary Source="Template/Themes/Color/Green.xaml" />
                 <ResourceDictionary Source="Template/Themes/Light.xaml" />
-                <ResourceDictionary Source="Template/Controls/Buttons/HeaderActionButton.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Template/Controls/Buttons/HeaderActionButton.xaml"/>
+                <ResourceDictionary Source="Template/Controls/BaseTabControl.xaml"/>
+                <ResourceDictionary Source="Template/Controls/SidebarTabControl.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

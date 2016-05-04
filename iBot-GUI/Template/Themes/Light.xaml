@@ -4,6 +4,9 @@
     <SolidColorBrush x:Key="MainBackgroundBrush" Color="#FFF2F2F2"/>
     <SolidColorBrush x:Key="MainBackgroundBrushSecondary" Color="#FFCCCCCC"/>
 
+    <SolidColorBrush x:Key="BorderBrush" Color="#FF555555"/>
+    <SolidColorBrush x:Key="BorderBrushSecondary" Color="#FFCCCCCC"/>
+
     <SolidColorBrush x:Key="TextBrushPrimary" Color="#FF222222"/>
     <SolidColorBrush x:Key="TextBrushSecondary" Color="#FF555555"/>
 

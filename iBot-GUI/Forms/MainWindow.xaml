@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:p="clr-namespace:iBot_GUI.Resources"
         xmlns:vectors="clr-namespace:iBot_GUI.Template.Controls.Vectors"
+        xmlns:poll="clr-namespace:iBot_GUI.Forms.Plugins.Poll"
+        xmlns:tabControls="clr-namespace:iBot_GUI.Forms.TabControls"
         mc:Ignorable="d"
         Background="{DynamicResource MainBackgroundBrush}"
         SnapsToDevicePixels="True" WindowStartupLocation="CenterScreen" AllowsTransparency="True"
@@ -58,7 +60,22 @@
                             </Button>
                         </StackPanel>
                     </Grid>
-                    <Grid x:Name="Content" Margin="0,60,0,0" />
+                    <Grid x:Name="Content" Margin="0,60,0,0">
+                        <Grid Grid.Column="0" x:Name="TabContent">
+                            <TabControl x:Name="HomeTabControl" Background="{x:Null}" Margin="0,0,0,0" BorderBrush="{DynamicResource ApplicationAccentBrush}" Foreground="{DynamicResource TextBrushPrimary}" BorderThickness="0,2,0,0" Padding="2" SelectionChanged="HomeTabControl_OnSelectionChanged">
+                                <TabItem Header="Start">
+                                    <Grid Margin="-2">
+                                        <tabControls:StartPage x:Name="TheStartPage" />
+                                    </Grid>
+                                </TabItem>
+                                <TabItem Header="Poll">
+                                    <Grid>
+                                        <poll:PollPage x:Name="ThePollPage" />
+                                    </Grid>
+                                </TabItem>
+                            </TabControl>
+                        </Grid>
+                    </Grid>
                 </Grid>
 
                 <TextBlock x:Name="Status" Margin="5,0,0,-19" VerticalAlignment="Bottom" HorizontalAlignment="Left"

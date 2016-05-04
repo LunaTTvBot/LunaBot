@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Threading;
 using Application = System.Windows.Application;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using Locale = iBot_GUI.Resources;
+using TabControl = System.Windows.Controls.TabControl;
 
 namespace iBot_GUI.Forms
 {
@@ -14,10 +18,40 @@ namespace iBot_GUI.Forms
     /// </summary>
     public partial class MainWindow
     {
+        private readonly DispatcherTimer _statusUpdateTimer = new DispatcherTimer();
+
         public MainWindow()
         {
             InitializeComponent();
             SourceInitialized += win_SourceInitialized;
+        }
+
+        public void UpdateTitleText(string title)
+        {
+            if (string.IsNullOrEmpty(title))
+            {
+                Title = string.Format(Locale.Main.bot_name);
+                MainTitle.Text = string.Format(Locale.Main.bot_name);
+                return;
+            }
+
+            Title = string.Format(Locale.Main.window_title, title.Trim());
+            MainTitle.Text = string.Format(Locale.Main.window_title, title.Trim());
+        }
+
+        public void UpdateStatusText(string status)
+        {
+            Status.Text = status;
+
+            _statusUpdateTimer.Stop();
+            _statusUpdateTimer.Interval = new TimeSpan(0, 0, 0, 4);
+            _statusUpdateTimer.Tick += statusUpdateCleaner_Clear;
+            _statusUpdateTimer.Start();
+        }
+
+        private void statusUpdateCleaner_Clear(object sender, EventArgs e)
+        {
+            Status.Text = Locale.Main.status_base;
         }
 
         #region Window Handle Stuff
@@ -240,5 +274,13 @@ namespace iBot_GUI.Forms
         }
 
         #endregion
+
+        private void HomeTabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var tab = sender as TabControl;
+            var i = tab?.SelectedItem as TabItem;
+
+            UpdateTitleText(i?.Header.ToString());
+        }
     }
 }
