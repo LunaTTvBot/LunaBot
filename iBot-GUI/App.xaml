@@ -8,11 +8,14 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Template/Themes/Color/Red.xaml" />
-                <ResourceDictionary Source="Template/Themes/Color/Green.xaml" />
+                <!--<ResourceDictionary Source="Template/Themes/Color/Green.xaml" />-->
                 <ResourceDictionary Source="Template/Themes/Light.xaml" />
                 <ResourceDictionary Source="Template/Controls/Buttons/HeaderActionButton.xaml"/>
                 <ResourceDictionary Source="Template/Controls/BaseTabControl.xaml"/>
                 <ResourceDictionary Source="Template/Controls/SidebarTabControl.xaml"/>
+                <ResourceDictionary Source="Template/Controls/ScrollBar.xaml"/>
+                <ResourceDictionary Source="Template/Controls/Expander.xaml"/>
+                <ResourceDictionary Source="Template/Controls/TextBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

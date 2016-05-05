@@ -1,0 +1,13 @@
+﻿<UserControl x:Class="iBot_GUI.Template.Controls.Vectors.PlusIcon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="120">
+    <Grid>
+        <Canvas Width="100" Height="125">
+            <Polygon Points="93,40.667 58.244,40.667 58.244,5.911 41.757,5.911 41.757,40.667 7,40.667 7,57.154 41.757,57.154 41.757,91.91   58.244,91.91 58.244,57.154 93,57.154 " FillRule="NonZero" Fill="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"/>
+        </Canvas>
+    </Grid>
+</UserControl>

@@ -87,11 +87,17 @@
     <Compile Include="Template\Controls\Vectors\MinimizeIcon.xaml.cs">
       <DependentUpon>MinimizeIcon.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Template\Controls\Vectors\PlusIcon.xaml.cs">
+      <DependentUpon>PlusIcon.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Template\Controls\Vectors\ResizeIcon.xaml.cs">
       <DependentUpon>ResizeIcon.xaml</DependentUpon>
     </Compile>
     <Compile Include="Template\Controls\Vectors\RestoreIcon.xaml.cs">
       <DependentUpon>RestoreIcon.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Template\Controls\Vectors\TreshCanIcon.xaml.cs">
+      <DependentUpon>TreshCanIcon.xaml</DependentUpon>
     </Compile>
     <Page Include="Forms\MainWindow.xaml">
       <SubType>Designer</SubType>
@@ -123,7 +129,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Template\Controls\Expander.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Template\Controls\ScrollBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Template\Controls\SidebarTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Template\Controls\TextBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -143,11 +161,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Template\Controls\Vectors\PlusIcon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Template\Controls\Vectors\ResizeIcon.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Template\Controls\Vectors\RestoreIcon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Template\Controls\Vectors\TreshCanIcon.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

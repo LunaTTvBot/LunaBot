@@ -3,5 +3,6 @@
 
     <SolidColorBrush x:Key="ApplicationAccentBrush" Color="#FFEE0E23"/>
     <SolidColorBrush x:Key="ApplicationAccentBrushSecondary" Color="#FFB00817"/>
+    <SolidColorBrush x:Key="ApplicationAccentBrushBackground" Color="#FFFFDADD"/>
 
 </ResourceDictionary>
