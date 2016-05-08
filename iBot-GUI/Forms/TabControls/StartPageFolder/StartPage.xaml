@@ -179,7 +179,9 @@
                 <TabItem Style="{DynamicResource SidebarTabItem}" Width="196" Header="Settings">
                     <TabItem.Content>
                         <Grid>
-                            <TextBox VerticalAlignment="Top">Test2</TextBox>
+                            <TextBlock>
+                                Comming Soon...
+                            </TextBlock>
                         </Grid>
                     </TabItem.Content>
                 </TabItem>
