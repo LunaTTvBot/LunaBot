@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:p="clr-namespace:iBot_GUI.Resources"
         xmlns:vectors="clr-namespace:iBot_GUI.Template.Controls.Vectors"
-        xmlns:poll="clr-namespace:iBot_GUI.Forms.Plugins.Poll"
-        xmlns:tabControls="clr-namespace:iBot_GUI.Forms.TabControls"
+        xmlns:startPageFolder="clr-namespace:iBot_GUI.Forms.TabControls.StartPageFolder"
+        xmlns:pollPageFolder="clr-namespace:iBot_GUI.Forms.TabControls.Plugins.Poll.PollPageFolder"
         mc:Ignorable="d"
         Background="{DynamicResource MainBackgroundBrush}"
         SnapsToDevicePixels="True" WindowStartupLocation="CenterScreen" AllowsTransparency="True"
@@ -31,46 +31,51 @@
                                    HorizontalAlignment="Stretch" FontSize="15" Margin="54,16,280,0"
                                    TextTrimming="CharacterEllipsis" />
 
-                        <StackPanel x:Name="HomeHeaderActionButtons" Orientation="Horizontal" VerticalAlignment="Top"
-                                    HorizontalAlignment="Right" Height="26" Margin="0,0,0,0">
-                            <Button x:Name="BtnActionMinimize" ToolTip="{x:Static p:Main.window_minimize}" Width="34"
-                                    Height="26"
-                                    Style="{StaticResource HeaderActionButton}" VerticalAlignment="Top"
-                                    d:LayoutOverrides="Height" Click="btnActionMinimize_Click">
-                                <vectors:MinimizeIcon Width="34" Height="26" />
-                            </Button>
+                        <StackPanel HorizontalAlignment="Right" Height="auto" Margin="0,0,0,0" VerticalAlignment="Top">
+                            <StackPanel x:Name="HomeHeaderActionButtons" Orientation="Horizontal" VerticalAlignment="Top"
+                                        HorizontalAlignment="Right" Height="25" Margin="0,0,0,0">
+                                <Button x:Name="BtnActionMinimize" ToolTip="{x:Static p:Main.window_minimize}" Width="34"
+                                        Height="26"
+                                        Style="{StaticResource HeaderActionButton}" VerticalAlignment="Top"
+                                        d:LayoutOverrides="Height" Click="btnActionMinimize_Click">
+                                    <vectors:MinimizeIcon Width="34" Height="26" />
+                                </Button>
 
-                            <Button x:Name="BtnActionRestore" ToolTip="{x:Static p:Main.window_restore}" Width="34"
-                                    Height="26"
-                                    Style="{StaticResource HeaderActionButton}" Visibility="Collapsed"
-                                    Click="btnActionRestore_Click">
-                                <vectors:RestoreIcon Width="34" Height="26" />
-                            </Button>
+                                <Button x:Name="BtnActionRestore" ToolTip="{x:Static p:Main.window_restore}" Width="34"
+                                        Height="26"
+                                        Style="{StaticResource HeaderActionButton}" Visibility="Collapsed"
+                                        Click="btnActionRestore_Click">
+                                    <vectors:RestoreIcon Width="34" Height="26" />
+                                </Button>
 
-                            <Button x:Name="BtnActionMaxamize" ToolTip="{x:Static p:Main.window_maximize}" Width="34"
-                                    Height="26"
-                                    Style="{StaticResource HeaderActionButton}" Click="btnActionMaximize_Click">
-                                <vectors:MaximizeIcon Width="34" Height="26" Margin="0,1,0,0" />
-                            </Button>
+                                <Button x:Name="BtnActionMaxamize" ToolTip="{x:Static p:Main.window_maximize}" Width="34"
+                                        Height="26"
+                                        Style="{StaticResource HeaderActionButton}" Click="btnActionMaximize_Click">
+                                    <vectors:MaximizeIcon Width="34" Height="26" Margin="0,1,0,0" />
+                                </Button>
 
-                            <Button x:Name="BtnActionClose" ToolTip="{x:Static p:Main.window_close}" Width="34"
-                                    Height="26"
-                                    Style="{StaticResource HeaderActionButton}" Click="btnActionClose_Click">
-                                <vectors:CloseIcon Width="34" Height="26" />
-                            </Button>
+                                <Button x:Name="BtnActionClose" ToolTip="{x:Static p:Main.window_close}" Width="34"
+                                        Height="26"
+                                        Style="{StaticResource HeaderActionButton}" Click="btnActionClose_Click">
+                                    <vectors:CloseIcon Width="34" Height="26" />
+                                </Button>
+                            </StackPanel>
+                            <StackPanel Height="30" Margin="0,5,5,0">
+                                <Button x:Name="ConnectButton" Content="Connect" Click="ConnectButton_OnClick"></Button>
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
-                    <Grid x:Name="Content" Margin="0,60,0,0">
+                    <Grid x:Name="MyContent" Margin="0,60,0,0">
                         <Grid Grid.Column="0" x:Name="TabContent">
                             <TabControl x:Name="HomeTabControl" Background="{x:Null}" Margin="0,0,0,0" BorderBrush="{DynamicResource ApplicationAccentBrush}" Foreground="{DynamicResource TextBrushPrimary}" BorderThickness="0,2,0,0" Padding="2" SelectionChanged="HomeTabControl_OnSelectionChanged">
                                 <TabItem Header="Start">
                                     <Grid Margin="-2">
-                                        <tabControls:StartPage x:Name="TheStartPage" />
+                                        <startPageFolder:StartPage x:Name="TheStartPage" />
                                     </Grid>
                                 </TabItem>
                                 <TabItem Header="Poll">
                                     <Grid>
-                                        <poll:PollPage x:Name="ThePollPage" />
+                                        <pollPageFolder:PollPage x:Name="ThePollPage" />
                                     </Grid>
                                 </TabItem>
                             </TabControl>

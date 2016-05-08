@@ -34,6 +34,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Expression.Controls, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Expression.Drawing, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -62,9 +69,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Forms\TabControls\StartPage.xaml.cs">
+    <Compile Include="Forms\TabControls\StartPageFolder\ConnectionDetails.cs" />
+    <Compile Include="Forms\TabControls\StartPageFolder\ConnectionDetailsViewModel.cs" />
+    <Compile Include="Forms\TabControls\StartPageFolder\StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Misc\PasswordHelper.cs" />
     <Compile Include="Resources\Main.de.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -103,7 +113,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Forms\TabControls\Plugins\Poll\PollPage.xaml">
+    <Page Include="Forms\TabControls\Plugins\Poll\PollPageFolder\PollPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -114,10 +124,10 @@
     <Compile Include="Forms\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TabControls\Plugins\Poll\PollPage.xaml.cs">
+    <Compile Include="Forms\TabControls\Plugins\Poll\PollPageFolder\PollPage.xaml.cs">
       <DependentUpon>PollPage.xaml</DependentUpon>
     </Compile>
-    <Page Include="Forms\TabControls\StartPage.xaml">
+    <Page Include="Forms\TabControls\StartPageFolder\StartPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -130,6 +140,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Template\Controls\Expander.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Template\Controls\PasswordBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

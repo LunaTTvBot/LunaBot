@@ -17,11 +17,18 @@ namespace IBot
         private static readonly HashSet<Channel> Channels = new HashSet<Channel>();
         private static readonly HashSet<Channel> ApiChannels = new HashSet<Channel>();
         private static Timer _myTimer;
+        private static Thread _myThread;
 
         static UserList()
         {
-            var myThread = new Thread(Start);
-            myThread.Start();
+            if(_myThread != null)
+            {
+                _myThread.Abort();
+                _myThread = null;
+            }
+
+            _myThread = new Thread(Start);
+            _myThread.Start();
         }
 
         public static event EventHandler UserListUpdated;

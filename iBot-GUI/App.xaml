@@ -16,6 +16,7 @@
                 <ResourceDictionary Source="Template/Controls/ScrollBar.xaml"/>
                 <ResourceDictionary Source="Template/Controls/Expander.xaml"/>
                 <ResourceDictionary Source="Template/Controls/TextBox.xaml"/>
+                <ResourceDictionary Source="Template/Controls/PasswordBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

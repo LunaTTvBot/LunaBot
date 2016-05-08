@@ -6,7 +6,9 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using IBot.Events.CustomEventArgs;
 using Application = System.Windows.Application;
+using Button = System.Windows.Controls.Button;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Locale = iBot_GUI.Resources;
 using TabControl = System.Windows.Controls.TabControl;
@@ -19,11 +21,66 @@ namespace iBot_GUI.Forms
     public partial class MainWindow
     {
         private readonly DispatcherTimer _statusUpdateTimer = new DispatcherTimer();
+        private bool _connected;
 
         public MainWindow()
         {
             InitializeComponent();
             SourceInitialized += win_SourceInitialized;
+
+            var red = new Uri("pack://Application:,,,/Template/Themes/Color/Red.xaml", UriKind.RelativeOrAbsolute);
+            Application.Current.Resources.MergedDictionaries.Remove(new ResourceDictionary() { Source = red });
+
+            IBot.Misc.ConnectionManager.BotConnectedEvent += ConnectionManagerOnBotConnectedEvent;
+            IBot.Misc.ConnectionManager.BotDisconnectedEvent += ConnectionManagerOnBotDisconnectedEvent;
+        }
+
+        private void ConnectionManagerOnBotConnectedEvent(object sender, ConnectionEventArgs connectedEventArgs)
+        {
+            var green = new Uri("pack://Application:,,,/Template/Themes/Color/Green.xaml", UriKind.RelativeOrAbsolute);
+            var red = new Uri("pack://Application:,,,/Template/Themes/Color/Red.xaml", UriKind.RelativeOrAbsolute);
+            var b = ConnectButton;
+
+            if (_connected) return;
+
+            Application.Current.Resources.MergedDictionaries.Remove(new ResourceDictionary() { Source = red });
+            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = green });
+            if (b != null) b.Content = "Disconnect";
+            UpdateStatusText("Connected");
+            _connected = true;
+
+            ToggleConnectionInputs();
+        }
+
+        private void ConnectionManagerOnBotDisconnectedEvent(object sender, ConnectionEventArgs connectedEventArgs)
+        {
+            var green = new Uri("pack://Application:,,,/Template/Themes/Color/Green.xaml", UriKind.RelativeOrAbsolute);
+            var red = new Uri("pack://Application:,,,/Template/Themes/Color/Red.xaml", UriKind.RelativeOrAbsolute);
+            var b = ConnectButton;
+
+            if (!_connected) return;
+
+            Application.Current.Resources.MergedDictionaries.Remove(new ResourceDictionary() { Source = green });
+            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = red });
+            if (b != null) b.Content = "Connect";
+            UpdateStatusText("Disconnected");
+            _connected = false;
+
+            ToggleConnectionInputs();
+        }
+
+        private void ToggleConnectionInputs()
+        {
+            var en = _connected == false;
+
+            var page = TheStartPage;
+            page.ChannelList.IsEnabled = en;
+            page.ChannelTextBox.IsEnabled = en;
+            page.AddChannelButton.IsEnabled = en;
+            page.RemoveChannelButton.IsEnabled = en;
+            page.TokenBox.IsEnabled = en;
+            page.ApplyTokenButton.IsEnabled = en;
+            page.NickBox.IsEnabled = en;
         }
 
         public void UpdateTitleText(string title)
@@ -281,6 +338,20 @@ namespace iBot_GUI.Forms
             var i = tab?.SelectedItem as TabItem;
 
             UpdateTitleText(i?.Header.ToString());
+        }
+
+        private void ConnectButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var green = new Uri("pack://Application:,,,/Template/Themes/Color/Green.xaml", UriKind.RelativeOrAbsolute);
+            var red = new Uri("pack://Application:,,,/Template/Themes/Color/Red.xaml", UriKind.RelativeOrAbsolute);
+            var b = sender as Button;
+
+            if(_connected == false) {
+                IBot.Misc.ConnectionManager.ConnectToBotAccount();
+                return;
+            }
+
+            IBot.Misc.ConnectionManager.DisconnectFromBotAccount();
         }
     }
 }

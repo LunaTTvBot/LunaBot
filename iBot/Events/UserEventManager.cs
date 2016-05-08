@@ -50,6 +50,15 @@ namespace IBot.Events
             RaiseUserStateEvent(msgEvArgs.Message);
         }
 
+        public static void RemoveEventHandlers()
+        {
+            UserJoinEvent = null;
+            UserPartEvent = null;
+            UserPublicMessageEvent = null;
+            UserWhisperMessageEvent = null;
+            UserStateEvent = null;
+        }
+
         public static event EventHandler<UserEventArgs> UserJoinEvent;
         public static event EventHandler<UserEventArgs> UserPartEvent;
         public static event EventHandler<UserPublicMessageEventArgs> UserPublicMessageEvent;

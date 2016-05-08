@@ -67,6 +67,20 @@ namespace IBot.Events
             RaiseUserListEvent(eArgs.Message);
         }
 
+        public static void RemoveEventHandlers()
+        {
+            UserJoinEvent = null;
+            UserPartEvent = null;
+            RoomStateAllEvent = null;
+            RoomStateSlowModeEvent = null;
+            RoomStateSlowModeEvent = null;
+            RoomStateR9KModeEvent = null;
+            RoomStateLangModeEvent = null;
+            OperatorGrantedEvent = null;
+            OperatorRevokedEvent = null;
+            UserListEvent = null;
+        }
+
         public static event EventHandler<UserEventArgs> UserJoinEvent;
         public static event EventHandler<UserEventArgs> UserPartEvent;
         public static event EventHandler<RoomStateAllEventArgs> RoomStateAllEvent;

@@ -16,66 +16,44 @@ namespace IBot
     internal class App
     {
         public static List<string> BotChannelList;
-        private IrcConnection _connection;
 
         public void StartApp()
         {
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("de-DE");
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
 
-            const string settingsFileName = "settings.json";
-            AppSettings settings;
-
-            if (!AppSettings.TryLoad(settingsFileName, out settings))
-            {
-                settings = AppSettings.LoadLocal(settingsFileName);
-            }
+            var settings = SettingsManager.GetConnectionSettings();
 
             BotChannelList = settings.ChannelList;
 
-            _connection = new IrcConnection(
-                settings.Username,
-                settings.TwitchApiKey,
-                settings.Nickname,
-                settings.Url,
-                settings.Port,
-                ConnectionType.BotCon
-                );
+            RuntimeHelpers.RunClassConstructor(typeof(CommandManager).TypeHandle);            
 
-            if (_connection.Connect())
-            {
+            ConnectionManager.BotConnectedEvent += (s, a) =>
+            {                
+                Console.WriteLine(app.app_connected);
+
                 var consoleAssembly = Assembly.GetExecutingAssembly();
                 var pluginTypes = GetTypesByInterface<IPlugin>(consoleAssembly);
 
-                // List<IPlugin> plugins = new List<IPlugin>();
                 foreach (var pluginType in pluginTypes)
                 {
                     var plugin = Activator.CreateInstance(pluginType) as IPlugin;
-                    // plugins.Add(plugin);
                     plugin?.Execute();
                 }
 
-                CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
-                {
-                    RegEx = @"!test\s?(.*)",
-                    Name = "Test",
-                    Action = (command, matches, mArgs) =>
-                    {
-                        IrcConnection.Write(ConnectionType.BotCon, mArgs.Channel,
-                            $"Ja, Test ({matches.Groups[1].Value})!");
-                    }
-                });
-
                 RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
-                settings.Save(settingsFileName);
-                Console.WriteLine(app.app_connected);
-                _connection.RaiseMessageEvent += (sender, args) => Trace.WriteLine(args.Message);
-                BotChannelList.ForEach(channel => _connection.Join(channel));
+
                 RegisterChannelEvents();
                 RegisterUserEvents();
-            }
+            };
 
-            Console.ReadLine();
+            ConnectionManager.BotDisconnectedEvent += (s, a) =>
+            {
+                Console.WriteLine(app.app_disconnected);
+
+                UserEventManager.RemoveEventHandlers();
+
+            };
         }
 
         private static void RegisterUserEvents()
@@ -117,6 +95,7 @@ namespace IBot
 
         public void StopApp()
         {
+            ConnectionManager.DisconnectFromBotAccount();
         }
     }
 }

@@ -10,7 +10,7 @@ using IBot.Misc;
 
 namespace IBot
 {
-    internal enum ConnectionType
+    public enum ConnectionType
     {
         BotCon,
         ChatCon
@@ -64,7 +64,26 @@ namespace IBot
 
         public static IrcConnection GetIrcConnection(ConnectionType conType)
         {
-            return ConType[conType];
+            return ConType.ContainsKey(conType) ? ConType[conType] : null;
+        }
+
+        public static void RemoveIrcConnection(ConnectionType conType)
+        {
+            if (ConType.ContainsKey(conType))
+                ConType.Remove(conType);
+        }
+
+        public bool Connected => _client != null ? _client.Connected : false;
+        
+        public void Disconnect()
+        {
+            if(_client != null)
+            {
+                _thread.Abort();
+                _client.Close();
+                _client = null;
+                _channelList.Clear();
+            }
         }
 
         public bool Connect()

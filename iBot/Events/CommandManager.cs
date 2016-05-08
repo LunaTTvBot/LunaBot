@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using IBot.Events.Commands;
 using IBot.Events.CustomEventArgs;
+using IBot.Misc;
 
 namespace IBot.Events
 {
@@ -21,9 +22,20 @@ namespace IBot.Events
 
         private static void Start()
         {
-            IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += CheckAndRaiseGlobalCommands;
-            UserEventManager.UserPublicMessageEvent += CheckAndRaisePublicCommands;
-            UserEventManager.UserWhisperMessageEvent += CheckAndRaiseWhisperCommands;
+            ConnectionManager.BotConnectedEvent += (s, e) =>
+            {
+                UserEventManager.UserPublicMessageEvent += CheckAndRaisePublicCommands;
+                UserEventManager.UserWhisperMessageEvent += CheckAndRaiseWhisperCommands;
+                IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += CheckAndRaiseGlobalCommands;
+            };
+
+            ConnectionManager.BotDisconnectedEvent += (s, e) =>
+            {
+                GlobalCommandList.Clear();
+                PublicCommandList.Clear();
+                WhisperCommandList.Clear();
+                IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent -= CheckAndRaiseGlobalCommands;
+            };
         }
 
         private static void CheckAndRaiseWhisperCommands(object sender, UserWhisperMessageEventArgs eArgs)

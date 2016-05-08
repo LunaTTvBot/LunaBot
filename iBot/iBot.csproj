@@ -36,6 +36,13 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -79,8 +86,13 @@
     <Compile Include="IrcConnection.cs" />
     <Compile Include="Events\CustomEventArgs\MessageEventArgs.cs" />
     <Compile Include="Misc\AppSettings.cs" />
+    <Compile Include="Events\CustomEventArgs\ConnectionEventArgs.cs" />
+    <Compile Include="Misc\ConnectionManager.cs" />
     <Compile Include="Misc\GlobalTwitchPatterns.cs" />
     <Compile Include="Misc\Logger.cs" />
+    <Compile Include="Misc\SettingsManager.cs" />
+    <Compile Include="Misc\Settings\ConnectionSettings.cs" />
+    <Compile Include="Misc\Settings\SettingsBase.cs" />
     <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\Poll\Poll.cs" />
     <Compile Include="Plugins\Poll\PollOption.cs" />
