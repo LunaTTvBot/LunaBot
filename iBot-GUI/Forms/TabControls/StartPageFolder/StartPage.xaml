@@ -145,7 +145,7 @@
                                                     Channels:
                                                 </Label>
                                                 <DockPanel>
-                                                    <Button Click="Add_Channel" DockPanel.Dock="Right" Name="AddChannelButton"
+                                                    <Button TabIndex="0" Click="Add_Channel" DockPanel.Dock="Right" Name="AddChannelButton"
                                                             Margin="10,0,0,0">
                                                         <Viewbox Height="20" Width="20" Margin="0,4,0,0">
                                                             <vectors:PlusIcon Margin="0" Padding="0" />
@@ -160,7 +160,7 @@
                                                                 <Setter Property="Margin" Value="0,0,0,5" />
                                                             </Style>
                                                         </StackPanel.Resources>
-                                                        <Button IsEnabled="False" Name="RemoveChannelButton" Click="Remove_Channel">
+                                                        <Button TabIndex="0" IsEnabled="False" Name="RemoveChannelButton" Click="Remove_Channel">
                                                             <Viewbox Height="20" Width="20" Margin="0,4,0,0">
                                                                 <vectors:TreshCanIcon Margin="0" Padding="0" />
                                                             </Viewbox>
