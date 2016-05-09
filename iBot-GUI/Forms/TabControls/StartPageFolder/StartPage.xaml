@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
              xmlns:vectors="clr-namespace:iBot_GUI.Template.Controls.Vectors"
+             xmlns:p="clr-namespace:iBot_GUI.Resources"
              mc:Ignorable="d"
              Background="{DynamicResource MainBackgroundBrush}"
              xmlns:startPageFolder="clr-namespace:iBot_GUI.Forms.TabControls.StartPageFolder"
@@ -16,10 +17,10 @@
                 <Rectangle Fill="{DynamicResource BorderBrush}" Width="2" Margin="0" VerticalAlignment="Stretch"
                            HorizontalAlignment="Right" d:LayoutOverrides="Height" />
 
-                <TextBlock Text="iBot" Foreground="{DynamicResource TextBrushPrimary}" FontSize="32"
+                <TextBlock Text="{x:Static p:Main.bot_name}" Foreground="{DynamicResource TextBrushPrimary}" FontSize="32"
                            Margin="25,36.5,13,0" Height="50"
                            VerticalAlignment="Top" />
-                <TextBlock Text="by SuNflOw1991" Foreground="{DynamicResource TextBrushSecondary}" FontSize="16"
+                <TextBlock Text="{x:Static p:Main.bot_by}" Foreground="{DynamicResource TextBrushSecondary}" FontSize="16"
                            Margin="28,76,10,0"
                            Height="20" VerticalAlignment="Top" />
                 <ed:RegularPolygon Fill="{DynamicResource BorderBrush}" HorizontalAlignment="Left" Height="19"
@@ -42,7 +43,7 @@
             <Grid x:Name="MainContent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="225, 25, 0, 0">
                 <Grid Margin="10,10,10,10">
                     <StackPanel VerticalAlignment="Top">
-                        <TextBlock Text="Welcome to iBot" Foreground="{DynamicResource TextBrushPrimary}" FontSize="32"
+                        <TextBlock Text="{x:Static p:Main.welcome_to_bot}" Foreground="{DynamicResource TextBrushPrimary}" FontSize="32"
                                    Margin="0,0,0,0"
                                    VerticalAlignment="Top" />
                         <Rectangle Fill="{DynamicResource BorderBrushSecondary}" Height="1" Margin="0,7,0,0"
@@ -58,7 +59,7 @@
                         Background="{DynamicResource MainBackgroundBrushSecondary}"
                         BorderBrush="{DynamicResource BorderBrush}" TabStripPlacement="Left"
                         x:Name="TabControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <TabItem x:Name="ConnectionDetailsTab" Style="{DynamicResource SidebarTabItem}" Width="196" Header="Start"
+                <TabItem x:Name="ConnectionDetailsTab" Style="{DynamicResource SidebarTabItem}" Width="196" Header="{x:Static p:Main.connection_tab_header}"
                          d:DataContext="{d:DesignInstance {x:Type startPageFolder:ConnectionDetails} }">
                     <TabItem.Content>
                         <Grid>
@@ -66,9 +67,8 @@
                                           VerticalScrollBarVisibility="Auto">
                                 <Grid Margin="0,0,10,0">
                                     <StackPanel>
-                                        <TextBlock x:Name="ConnectionMessageBlock" TextWrapping="Wrap">
-                                            Please enter your connection details so that the application can connect to your bot account. Press OK to save your token.
-                                        </TextBlock>
+                                        <TextBlock x:Name="ConnectionMessageBlock" TextWrapping="Wrap" Text="{x:Static p:Main.connection_instructions}"/>
+                                        
                                         <!-- Hidden -->
                                         <Expander Margin="0,10" Header="More Information" HorizontalAlignment="Stretch"
                                                   Padding="5"
@@ -86,6 +86,7 @@
                                             </Grid>
                                         </Expander>
                                         <!-- End Hidden -->
+                                        
                                         <Grid Margin="0">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="1*" />
@@ -128,7 +129,7 @@
                                             <TextBlock Grid.Column="1" Grid.Row="1" TextAlignment="Right">
                                                 <Hyperlink NavigateUri="http://twitchapps.com/tmi/"
                                                            RequestNavigate="Hyperlink_RequestNavigate">
-                                                    Get Token
+                                                    <TextBlock Text="{x:Static p:Main.get_token}"/>
                                                 </Hyperlink>
                                             </TextBlock>
                                         </Grid>
@@ -176,12 +177,10 @@
                         </Grid>
                     </TabItem.Content>
                 </TabItem>
-                <TabItem Style="{DynamicResource SidebarTabItem}" Width="196" Header="Settings">
+                <TabItem Style="{DynamicResource SidebarTabItem}" Width="196" Header="{x:Static p:Main.settings_tab_header}">
                     <TabItem.Content>
                         <Grid>
-                            <TextBlock>
-                                Comming Soon...
-                            </TextBlock>
+                            <TextBlock Text="{x:Static p:Main.work_in_progress}"/>
                         </Grid>
                     </TabItem.Content>
                 </TabItem>

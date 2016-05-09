@@ -117,11 +117,41 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="bot_by" xml:space="preserve">
+    <value>von iPaat</value>
+  </data>
   <data name="bot_name" xml:space="preserve">
     <value>iBot</value>
   </data>
+  <data name="connect" xml:space="preserve">
+    <value>Verbinden</value>
+  </data>
+  <data name="connected" xml:space="preserve">
+    <value>Verbunden</value>
+  </data>
+  <data name="connection_instructions" xml:space="preserve">
+    <value>Bitte gib die Login Informationen zu deinem Bot Account ein. Um den Token zu speichern musst du einmal auf OK drücken.</value>
+  </data>
+  <data name="connection_tab_header" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="disconnect" xml:space="preserve">
+    <value>Trennen</value>
+  </data>
+  <data name="disconnected" xml:space="preserve">
+    <value>Verbindung getrennt</value>
+  </data>
+  <data name="get_token" xml:space="preserve">
+    <value>Token generieren</value>
+  </data>
+  <data name="settings_tab_header" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
   <data name="status_base" xml:space="preserve">
     <value>Bereit</value>
+  </data>
+  <data name="welcome_to_bot" xml:space="preserve">
+    <value>Willkommen</value>
   </data>
   <data name="window_close" xml:space="preserve">
     <value>Schließen</value>
@@ -137,5 +167,8 @@
   </data>
   <data name="window_title" xml:space="preserve">
     <value>{0} - iBot</value>
+  </data>
+  <data name="work_in_progress" xml:space="preserve">
+    <value>In Arbeit...</value>
   </data>
 </root>

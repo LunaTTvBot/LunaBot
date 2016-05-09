@@ -61,6 +61,15 @@ namespace iBot_GUI.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die by iPaat ähnelt.
+        /// </summary>
+        public static string bot_by {
+            get {
+                return ResourceManager.GetString("bot_by", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die iBot ähnelt.
         /// </summary>
         public static string bot_name {
@@ -70,11 +79,92 @@ namespace iBot_GUI.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Connect ähnelt.
+        /// </summary>
+        public static string connect {
+            get {
+                return ResourceManager.GetString("connect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Connected ähnelt.
+        /// </summary>
+        public static string connected {
+            get {
+                return ResourceManager.GetString("connected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please enter your connection details so that the application can connect to your bot account. Press OK to save your token. ähnelt.
+        /// </summary>
+        public static string connection_instructions {
+            get {
+                return ResourceManager.GetString("connection_instructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Start ähnelt.
+        /// </summary>
+        public static string connection_tab_header {
+            get {
+                return ResourceManager.GetString("connection_tab_header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Disconnect ähnelt.
+        /// </summary>
+        public static string disconnect {
+            get {
+                return ResourceManager.GetString("disconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Disconnected ähnelt.
+        /// </summary>
+        public static string disconnected {
+            get {
+                return ResourceManager.GetString("disconnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Get Token ähnelt.
+        /// </summary>
+        public static string get_token {
+            get {
+                return ResourceManager.GetString("get_token", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Settings ähnelt.
+        /// </summary>
+        public static string settings_tab_header {
+            get {
+                return ResourceManager.GetString("settings_tab_header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Ready ähnelt.
         /// </summary>
         public static string status_base {
             get {
                 return ResourceManager.GetString("status_base", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Welcome to iBot ähnelt.
+        /// </summary>
+        public static string welcome_to_bot {
+            get {
+                return ResourceManager.GetString("welcome_to_bot", resourceCulture);
             }
         }
         
@@ -120,6 +210,15 @@ namespace iBot_GUI.Resources {
         public static string window_title {
             get {
                 return ResourceManager.GetString("window_title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Work in progress... ähnelt.
+        /// </summary>
+        public static string work_in_progress {
+            get {
+                return ResourceManager.GetString("work_in_progress", resourceCulture);
             }
         }
     }

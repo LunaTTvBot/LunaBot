@@ -45,8 +45,8 @@ namespace iBot_GUI.Forms
 
             Application.Current.Resources.MergedDictionaries.Remove(new ResourceDictionary() { Source = red });
             Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = green });
-            if (b != null) b.Content = "Disconnect";
-            UpdateStatusText("Connected");
+            if (b != null) b.Content = Locale.Main.disconnect;
+            UpdateStatusText(Locale.Main.connected);
             _connected = true;
 
             ToggleConnectionInputs();
@@ -62,8 +62,8 @@ namespace iBot_GUI.Forms
 
             Application.Current.Resources.MergedDictionaries.Remove(new ResourceDictionary() { Source = green });
             Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = red });
-            if (b != null) b.Content = "Connect";
-            UpdateStatusText("Disconnected");
+            if (b != null) b.Content = Locale.Main.connect;
+            UpdateStatusText(Locale.Main.disconnected);
             _connected = false;
 
             ToggleConnectionInputs();

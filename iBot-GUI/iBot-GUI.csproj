@@ -84,6 +84,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Main.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Plugins\Poll\PollLocale.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PollLocale.resx</DependentUpon>
+    </Compile>
     <Compile Include="Template\Controls\Vectors\CloseIcon.xaml.cs">
       <DependentUpon>CloseIcon.xaml</DependentUpon>
     </Compile>
@@ -230,7 +235,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Misc\" />
-    <Folder Include="Resources\Plugins\Poll\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Main.de.resx">
@@ -240,6 +244,11 @@
     <EmbeddedResource Include="Resources\Main.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Main.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Plugins\Poll\PollLocale.de.resx" />
+    <EmbeddedResource Include="Resources\Plugins\Poll\PollLocale.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>PollLocale.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -61,7 +61,7 @@
                                 </Button>
                             </StackPanel>
                             <StackPanel Height="30" Margin="0,5,5,0">
-                                <Button x:Name="ConnectButton" Content="Connect" Click="ConnectButton_OnClick"></Button>
+                                <Button x:Name="ConnectButton" Content="{x:Static p:Main.connect}" Click="ConnectButton_OnClick"/>
                             </StackPanel>
                         </StackPanel>
                     </Grid>
