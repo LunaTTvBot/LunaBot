@@ -37,8 +37,7 @@ namespace IBot.Events
         private static readonly Regex RegExUsrState = new Regex(UserStatePattern);
         private static readonly Regex RegExUsrStTags = new Regex(UserStateTagsPattern);
 
-        static UserEventManager()
-        {
+        public static void BindToMessageEvent() {
             IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += CheckAndRaiseMessageEvent;
         }
 
@@ -50,8 +49,7 @@ namespace IBot.Events
             RaiseUserStateEvent(msgEvArgs.Message);
         }
 
-        public static void RemoveEventHandlers()
-        {
+        public static void RemoveEventHandlers() {
             UserJoinEvent = null;
             UserPartEvent = null;
             UserPublicMessageEvent = null;

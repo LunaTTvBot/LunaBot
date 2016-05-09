@@ -34,7 +34,6 @@ namespace IBot.Events
                 GlobalCommandList.Clear();
                 PublicCommandList.Clear();
                 WhisperCommandList.Clear();
-                IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent -= CheckAndRaiseGlobalCommands;
             };
         }
 

@@ -4,10 +4,9 @@ using IBot.Events.CustomEventArgs;
 
 namespace IBot.Misc
 {
-    public class ConnectionManager
+    public static class ConnectionManager
     {
         private static IrcConnection _botConnection;
-        // private static IrcConnection ChatterConnection;
 
         public static event EventHandler<ConnectionEventArgs> BotConnectedEvent;
         public static event EventHandler<ConnectionEventArgs> BotDisconnectedEvent;
@@ -35,36 +34,24 @@ namespace IBot.Misc
             settings.ChannelList.ForEach(channel => _botConnection.Join(channel));
             OnBotConnectedEvent(new ConnectionEventArgs(ConnectionType.BotCon));
         }
-
-        public static void SettingsChanged()
-        {
-            _botConnection = null;
-        }
-
+       
         public static void DisconnectFromBotAccount()
         {
             if (_botConnection == null || !_botConnection.Connected)
                 return;
 
             _botConnection.Disconnect();
-            while (_botConnection.Connected) ;
+            while (_botConnection.Connected)
+            {
+            }
+
+            _botConnection = null;
 
             OnBotDisconnectedEvent(new ConnectionEventArgs(ConnectionType.BotCon));
         }
 
-        public static bool IsBotConnected()
-        {
-            return _botConnection.Connected;
-        }
-
-        protected static void OnBotConnectedEvent(ConnectionEventArgs e)
-        {
-            BotConnectedEvent?.Invoke(null, e);
-        }
-
-        protected static void OnBotDisconnectedEvent(ConnectionEventArgs e)
-        {
-            BotDisconnectedEvent?.Invoke(null, e);
-        }
+        public static bool IsBotConnected() =>  _botConnection.Connected;        
+        private static void OnBotConnectedEvent(ConnectionEventArgs e) => BotConnectedEvent?.Invoke(null, e);
+        private static void OnBotDisconnectedEvent(ConnectionEventArgs e) => BotDisconnectedEvent?.Invoke(null, e);
     }
 }

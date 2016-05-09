@@ -69,29 +69,30 @@ namespace IBot.Plugins.Poll
 
         public string PluginName => PollLocale.poll_plugin_name;
 
-        public void Execute()
+        public void BindEvents() 
         {
-            Logger.Write($"{PluginName} {PollLocale.poll_plugin_loaded}");
-            CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
-            {
+            CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand {
                 RegEx = "!poll(.*)",
                 Name = PluginName,
                 Action = PollAction
             });
 
-            CommandManager.RegisterWhisperCommand(new WhisperCommand
-            {
+            CommandManager.RegisterWhisperCommand(new WhisperCommand {
                 RegEx = "!poll(.*)",
                 Name = PluginName,
                 Action = PollAction
             });
 
-            CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
-            {
+            CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand {
                 RegEx = "!vote(.*)",
                 Name = "Vote",
                 Action = VoteAction
             });
+        }
+
+        public void Init()
+        {
+            Logger.Write($"{PluginName} {PollLocale.poll_plugin_loaded}");
         }
 
         private static void SendMessage(string msg, AnswerType aType, string target)
@@ -103,7 +104,6 @@ namespace IBot.Plugins.Poll
         {
             if (pollParams != "") return false;
 
-            SendMessage(Thread.CurrentThread.CurrentUICulture.Name, AnswerType.Public, "ipaat");
             SendMessage(PollLocale.poll_help, answerT, answerTarget);
 
             return true;

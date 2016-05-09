@@ -74,7 +74,6 @@
     <Compile Include="Forms\TabControls\StartPageFolder\StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Misc\PasswordHelper.cs" />
     <Compile Include="Resources\Main.de.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -230,6 +229,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Misc\" />
     <Folder Include="Resources\Plugins\Poll\" />
   </ItemGroup>
   <ItemGroup>

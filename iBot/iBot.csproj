@@ -90,6 +90,7 @@
     <Compile Include="Misc\ConnectionManager.cs" />
     <Compile Include="Misc\GlobalTwitchPatterns.cs" />
     <Compile Include="Misc\Logger.cs" />
+    <Compile Include="Misc\PluginManager.cs" />
     <Compile Include="Misc\SettingsManager.cs" />
     <Compile Include="Misc\Settings\ConnectionSettings.cs" />
     <Compile Include="Misc\Settings\SettingsBase.cs" />

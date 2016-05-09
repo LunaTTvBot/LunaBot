@@ -17,18 +17,18 @@ namespace IBot
         private static readonly HashSet<Channel> Channels = new HashSet<Channel>();
         private static readonly HashSet<Channel> ApiChannels = new HashSet<Channel>();
         private static Timer _myTimer;
-        private static Thread _myThread;
+        private static readonly Thread MyThread;
 
         static UserList()
         {
-            if(_myThread != null)
+            if(MyThread != null)
             {
-                _myThread.Abort();
-                _myThread = null;
+                MyThread.Abort();
+                MyThread = null;
             }
 
-            _myThread = new Thread(Start);
-            _myThread.Start();
+            MyThread = new Thread(Start);
+            MyThread.Start();
         }
 
         public static event EventHandler UserListUpdated;
@@ -58,7 +58,7 @@ namespace IBot
             _myTimer.Enabled = true;
 
             // get chatters count from tmi
-            foreach (var channelName in App.BotChannelList)
+            foreach (var channelName in SettingsManager.GetConnectionSettings().ChannelList)
             {
                 var channel = new Channel(channelName);
 
@@ -155,7 +155,7 @@ namespace IBot
             if (ApiChannels.Any(c => c.Name == eArgs.Channel))
                 return;
 
-            if (!Channels.Any(c => c.Name == eArgs.Channel))
+            if (Channels.All(c => c.Name != eArgs.Channel))
                 return;
 
             var channel = Channels.First(c => c.Name == eArgs.Channel);
@@ -224,7 +224,7 @@ namespace IBot
 
         private static Channel GetChannel(string channelName)
         {
-            if (!Channels.Any(c => c.Name == channelName))
+            if (Channels.All(c => c.Name != channelName))
                 Channels.Add(new Channel(channelName));
 
             return Channels.First(c => c.Name == channelName);

@@ -37,8 +37,6 @@ namespace IBot.Misc
             _connectionSettings.Save(ConnectionSettigsFile);
 
             _connectionSettings = null;
-            ConnectionManager.SettingsChanged();
-            IrcConnection.RemoveIrcConnection(ConnectionType.BotCon);
         }
     }
 }
