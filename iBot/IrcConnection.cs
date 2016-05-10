@@ -76,12 +76,6 @@ namespace IBot
             if (_client == null) return;
 
             _readConnection = false;
-
-            // _thread = null;
-            // _client.Close();
-            // _client = null;
-            // _stream = null;
-            // _reader = null;
             _channelList.Clear();
 
             if (ConType.ContainsKey(ConnectionType.BotCon))
@@ -119,9 +113,9 @@ namespace IBot
             _thread = new Thread(ReadConnection);
             _thread.Start();
 
-            //Write(@"CAP REQ :twitch.tv/membership");
-            //Write(@"CAP REQ :twitch.tv/commands");
-            //Write(@"CAP REQ :twitch.tv/tags");
+            Write(@"CAP REQ :twitch.tv/membership");
+            Write(@"CAP REQ :twitch.tv/commands");
+            Write(@"CAP REQ :twitch.tv/tags");
 
             if (_channelList.Count != 0)
             {
@@ -184,11 +178,10 @@ namespace IBot
             {
                 while (_readConnection)
                 {
-                    if (_client == null || !_client.Connected) continue;
+                    if (_client == null || !_client.Connected || _stream == null) continue;
 
-                    if (_stream != null)
-                        if (!_stream.DataAvailable)
-                            continue;
+                    if (!_stream.DataAvailable)
+                        continue;
 
                     var data = _reader.ReadLine();
 
