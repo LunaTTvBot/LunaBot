@@ -8,6 +8,7 @@ using IBot.Events;
 using IBot.Events.Commands;
 using IBot.Events.CustomEventArgs;
 using IBot.Misc;
+using NLog;
 using PollLocale = IBot.Resources.Plugins.Poll.poll;
 using Timer = System.Timers.Timer;
 
@@ -48,6 +49,7 @@ namespace IBot.Plugins.Poll
 
     internal class PollPlugin : IPlugin
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         private const string PollCreateTitlePattern = @"^\screate\((.*)\)\s(.*)";
         private const string PollCreatePattern = @"^\screate\s(.*)";
         private const string PollOptionsPattern = @"([^|]+)\|?";
@@ -71,7 +73,7 @@ namespace IBot.Plugins.Poll
 
         public void Execute()
         {
-            Logger.Write($"{PluginName} {PollLocale.poll_plugin_loaded}");
+            _logger.Debug($"{PluginName} {PollLocale.poll_plugin_loaded}");
             CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
             {
                 RegEx = "!poll(.*)",

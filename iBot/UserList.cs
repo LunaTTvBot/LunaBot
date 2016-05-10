@@ -8,12 +8,14 @@ using IBot.Events.CustomEventArgs;
 using IBot.Events.CustomEventArgs.UserList;
 using IBot.Misc;
 using IBot.TmiApi.ChannelChattersEndpoint;
+using NLog;
 using Timer = System.Timers.Timer;
 
 namespace IBot
 {
     internal static class UserList
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         private static readonly HashSet<Channel> Channels = new HashSet<Channel>();
         private static readonly HashSet<Channel> ApiChannels = new HashSet<Channel>();
         private static Timer _myTimer;
@@ -59,7 +61,7 @@ namespace IBot
                     Channels.Add(channel);
 
                 var chatters = TmiApi.TmiApi.GetChannelChatters(channel.Name);
-                if (chatters.Count > 400)
+                if (chatters?.Count > 400)
                 {
                     /**
                      * If there are more then 400 chatters we request chatters from tmi in 1 minute interval
@@ -71,7 +73,7 @@ namespace IBot
 
         private static void UseApi(ChannelChatters chatters, Channel channel)
         {
-            Logger.Write($"UserList use API#{channel.Name} ({chatters.Count})");
+            _logger.Debug("UserList use API#{0} ({1})", channel.Name, chatters.Count);
 
             if (!ApiChannels.Contains(channel))
                 ApiChannels.Add(channel);
@@ -86,7 +88,7 @@ namespace IBot
             else
                 return;
 
-            Logger.Write($"-- UserList switch to API {channel.Users.Count}");
+            _logger.Debug("UserList switch to API {0}", channel.Users.Count);
         }
 
         private static void SwitchToEvents(Channel channel)
@@ -96,7 +98,7 @@ namespace IBot
             else
                 return;
 
-            Logger.Write($"-- UserList switch to Events {channel.Users.Count}");
+            _logger.Debug("UserList switch to Events {0}", channel.Users.Count);
         }
 
         private static void HandleChattersListFromApi(ChannelChatters chatters, Channel channel)
@@ -109,7 +111,7 @@ namespace IBot
             chatters.Chatters.Moderators.ForEach(chatter => AddToSetFromApi(channel, chatter));
             chatters.Chatters.Staff.ForEach(chatter => AddToSetFromApi(channel, chatter));
 
-            Logger.Write($"-- UserList#{channel} UPDATED! -> {chatters.Count}");
+            _logger.Debug("UserList#{0} UPDATED! -> {1}", channel.Name, chatters.Count);
 
             CheckCount(channel);
         }
@@ -162,7 +164,7 @@ namespace IBot
             OnUserParted(new UserPartedEventArgs(user, channel, DateTime.Now));
             OnUserListUpdated();
 
-            Logger.Write($"-- UserList#{eArgs.Channel} UPDATED! -> {channel.Users.Count}");
+            _logger.Debug("UserList#{0} UPDATED! -> {1}", eArgs.Channel, channel.Users.Count);
         }
 
         private static void AddToSetFromApi(Channel channel, string userName)
@@ -211,7 +213,7 @@ namespace IBot
                     return;
             }
 
-            Logger.Write($"-- UserList#{channel} UPDATED! -> {channel.Users.Count}");
+            _logger.Debug("UserList#{0} UPDATED! -> {1}", channel.Name, channel.Users.Count);
             CheckCount(channel);
         }
 

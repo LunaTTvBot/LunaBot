@@ -10,11 +10,13 @@ using IBot.Events.Commands;
 using IBot.Misc;
 using IBot.Plugins;
 using IBot.Resources;
+using NLog;
 
 namespace IBot
 {
     internal class App
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         public static List<string> BotChannelList;
         private IrcConnection _connection;
 
@@ -69,7 +71,7 @@ namespace IBot
                 RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
                 settings.Save(settingsFileName);
                 Console.WriteLine(app.app_connected);
-                _connection.RaiseMessageEvent += (sender, args) => Trace.WriteLine(args.Message);
+                _connection.RaiseMessageEvent += (sender, args) => _logger.Trace(args.Message);
                 BotChannelList.ForEach(channel => _connection.Join(channel));
                 RegisterChannelEvents();
                 RegisterUserEvents();
