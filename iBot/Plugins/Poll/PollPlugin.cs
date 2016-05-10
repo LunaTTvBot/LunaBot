@@ -73,7 +73,7 @@ namespace IBot.Plugins.Poll
 
         public void Execute()
         {
-            _logger.Debug($"{PluginName} {PollLocale.poll_plugin_loaded}");
+            _logger.Debug("{0} {1}", PluginName, PollLocale.poll_plugin_loaded);
             CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
             {
                 RegEx = "!poll(.*)",
