@@ -7,27 +7,21 @@ namespace IBot
 {
     internal class DbUser
     {
-        private readonly User _user;
+        public DbUser() {}
 
         public DbUser(User user)
         {
-            _user = user;
+            Username = user.Username;
+            ChannelName = user.ChannelName;
             DbChannel = new DbChannel();
-            DbChannel.Name = _user.ChannelName ?? _user.Channel?.Name;
+            DbChannel.Name = user.ChannelName ?? user.Channel?.Name;
+            DbChannel.DbUsers.Add(this);
         }
 
         [Key]
-        public string Username
-        {
-            get { return _user.Username; }
-            set { _user.Username = value; }
-        }
-        
-        public string ChannelName
-        {
-            get { return _user.ChannelName; }
-            set { _user.ChannelName = value; }
-        }
+        public string Username { get; set; }
+
+        public string ChannelName { get; set; }
 
         [ForeignKey("ChannelName")]
         public DbChannel DbChannel { get; set; }
