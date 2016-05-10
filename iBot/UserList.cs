@@ -59,7 +59,7 @@ namespace IBot
                     Channels.Add(channel);
 
                 var chatters = TmiApi.TmiApi.GetChannelChatters(channel.Name);
-                if (chatters.Count > 400)
+                if (chatters?.Count > 400)
                 {
                     /**
                      * If there are more then 400 chatters we request chatters from tmi in 1 minute interval
@@ -148,7 +148,7 @@ namespace IBot
             if (ApiChannels.Any(c => c.Name == eArgs.Channel))
                 return;
 
-            if (!Channels.Any(c => c.Name == eArgs.Channel))
+            if (Channels.All(c => c.Name != eArgs.Channel))
                 return;
 
             var channel = Channels.First(c => c.Name == eArgs.Channel);
@@ -217,7 +217,7 @@ namespace IBot
 
         private static Channel GetChannel(string channelName)
         {
-            if (!Channels.Any(c => c.Name == channelName))
+            if (Channels.All(c => c.Name != channelName))
                 Channels.Add(new Channel(channelName));
 
             return Channels.First(c => c.Name == channelName);
