@@ -15,12 +15,14 @@ namespace IBot.Events
         {
             ChannelEventManager.RemoveEventHandlers();
             UserEventManager.RemoveEventHandlers();
+            ErrorManager.RemoveEventHandlers();
         }
 
         private static void ConnectionManagerOnBotConnectedEvent(object sender, ConnectionEventArgs e)
         {
             ChannelEventManager.BindToMessageEvent();
             UserEventManager.BindToMessageEvent();
+            ErrorManager.BindToMessageEvent();
         }
     }
 }

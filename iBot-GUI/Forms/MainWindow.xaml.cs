@@ -6,11 +6,13 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using IBot.Events;
 using IBot.Events.CustomEventArgs;
+using IBot.Misc;
 using Application = System.Windows.Application;
-using Button = System.Windows.Controls.Button;
-using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Locale = iBot_GUI.Resources;
+using MessageBox = System.Windows.MessageBox;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using TabControl = System.Windows.Controls.TabControl;
 
 namespace iBot_GUI.Forms
@@ -29,10 +31,18 @@ namespace iBot_GUI.Forms
             SourceInitialized += win_SourceInitialized;
 
             var red = new Uri("pack://Application:,,,/Template/Themes/Color/Red.xaml", UriKind.RelativeOrAbsolute);
-            Application.Current.Resources.MergedDictionaries.Remove(new ResourceDictionary() { Source = red });
+            Application.Current.Resources.MergedDictionaries.Remove(new ResourceDictionary {Source = red});
 
-            IBot.Misc.ConnectionManager.BotConnectedEvent += ConnectionManagerOnBotConnectedEvent;
-            IBot.Misc.ConnectionManager.BotDisconnectedEvent += ConnectionManagerOnBotDisconnectedEvent;
+            ConnectionManager.BotConnectedEvent += ConnectionManagerOnBotConnectedEvent;
+            ConnectionManager.BotDisconnectedEvent += ConnectionManagerOnBotDisconnectedEvent;
+            ErrorManager.UserLoginErrorEvent += OnUserLoginErrorEvent;
+        }
+
+        private static void OnUserLoginErrorEvent(object sender, ErrorEventArgs eArgs)
+        {
+            MessageBox.Show(eArgs.Message);
+
+            ConnectionManager.DisconnectFromBotAccount();
         }
 
         private void ConnectionManagerOnBotConnectedEvent(object sender, ConnectionEventArgs connectedEventArgs)
@@ -43,8 +53,8 @@ namespace iBot_GUI.Forms
 
             if (_connected) return;
 
-            Application.Current.Resources.MergedDictionaries.Remove(new ResourceDictionary() { Source = red });
-            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = green });
+            Application.Current.Resources.MergedDictionaries.Remove(new ResourceDictionary {Source = red});
+            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary {Source = green});
             if (b != null) b.Content = Locale.Main.disconnect;
             UpdateStatusText(Locale.Main.connected);
             _connected = true;
@@ -60,9 +70,17 @@ namespace iBot_GUI.Forms
 
             if (!_connected) return;
 
-            Application.Current.Resources.MergedDictionaries.Remove(new ResourceDictionary() { Source = green });
-            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = red });
-            if (b != null) b.Content = Locale.Main.connect;
+            Application.Current.Resources.MergedDictionaries.Remove(new ResourceDictionary {Source = green});
+            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary {Source = red});
+            if (b != null)
+            {
+                if(Dispatcher.CheckAccess()) {
+                    b.Content = Locale.Main.connect;
+                } else
+                {
+                    Dispatcher.Invoke(() => b.Content = Locale.Main.connect);
+                }
+            }
             UpdateStatusText(Locale.Main.disconnected);
             _connected = false;
 
@@ -74,13 +92,27 @@ namespace iBot_GUI.Forms
             var en = _connected == false;
 
             var page = TheStartPage;
-            page.ChannelList.IsEnabled = en;
-            page.ChannelTextBox.IsEnabled = en;
-            page.AddChannelButton.IsEnabled = en;
-            page.RemoveChannelButton.IsEnabled = en;
-            page.TokenBox.IsEnabled = en;
-            page.ApplyTokenButton.IsEnabled = en;
-            page.NickBox.IsEnabled = en;
+
+            if(Dispatcher.CheckAccess()) {
+                page.ChannelList.IsEnabled = en;
+                page.ChannelTextBox.IsEnabled = en;
+                page.AddChannelButton.IsEnabled = en;
+                page.RemoveChannelButton.IsEnabled = en;
+                page.TokenBox.IsEnabled = en;
+                page.ApplyTokenButton.IsEnabled = en;
+                page.NickBox.IsEnabled = en;
+            } else {
+                Dispatcher.Invoke(() =>
+                {
+                    page.ChannelList.IsEnabled = en;
+                    page.ChannelTextBox.IsEnabled = en;
+                    page.AddChannelButton.IsEnabled = en;
+                    page.RemoveChannelButton.IsEnabled = en;
+                    page.TokenBox.IsEnabled = en;
+                    page.ApplyTokenButton.IsEnabled = en;
+                    page.NickBox.IsEnabled = en;
+                });
+            }
         }
 
         public void UpdateTitleText(string title)
@@ -98,7 +130,11 @@ namespace iBot_GUI.Forms
 
         public void UpdateStatusText(string status)
         {
-            Status.Text = status;
+            if(Dispatcher.CheckAccess()) {
+                Status.Text = status;
+            } else {
+                Dispatcher.Invoke(() => Status.Text = status);
+            }
 
             _statusUpdateTimer.Stop();
             _statusUpdateTimer.Interval = new TimeSpan(0, 0, 0, 4);
@@ -109,6 +145,33 @@ namespace iBot_GUI.Forms
         private void statusUpdateCleaner_Clear(object sender, EventArgs e)
         {
             Status.Text = Locale.Main.status_base;
+        }
+
+        private void HomeTabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var tab = sender as TabControl;
+            var i = tab?.SelectedItem as TabItem;
+
+            UpdateTitleText(i?.Header.ToString());
+        }
+
+        private void ConnectButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_connected == false)
+            {
+                try
+                {
+                    ConnectionManager.ConnectToBotAccount();
+                }
+                catch (ArgumentException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+                return;
+            }
+
+            ConnectionManager.DisconnectFromBotAccount();
         }
 
         #region Window Handle Stuff
@@ -125,30 +188,37 @@ namespace iBot_GUI.Forms
             if (msg != 0x0024 && msg != 0x0046)
                 return IntPtr.Zero;
 
-            if(msg == 0x0046) {
+            if (msg == 0x0046)
+            {
                 var pos = (Windowpos) Marshal.PtrToStructure(lParam, typeof(Windowpos));
-                if((pos.flags & 0x0002) != 0) {
+                if ((pos.flags & 0x0002) != 0)
+                {
                     return IntPtr.Zero;
                 }
 
                 var hwndSource = HwndSource.FromHwnd(hwnd);
-                if(hwndSource != null) {
+                if (hwndSource != null)
+                {
                     var wnd = (Window) hwndSource.RootVisual;
-                    if(wnd == null) {
+                    if (wnd == null)
+                    {
                         return IntPtr.Zero;
                     }
                 }
 
                 var changedPos = false;
-                if(pos.cx < MinWidth) {
+                if (pos.cx < MinWidth)
+                {
                     pos.cx = (int) MinWidth;
                     changedPos = true;
                 }
-                if(pos.cy < MinHeight) {
+                if (pos.cy < MinHeight)
+                {
                     pos.cy = (int) MinHeight;
                     changedPos = true;
                 }
-                if(!changedPos) {
+                if (!changedPos)
+                {
                     return IntPtr.Zero;
                 }
 
@@ -331,27 +401,5 @@ namespace iBot_GUI.Forms
         }
 
         #endregion
-
-        private void HomeTabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var tab = sender as TabControl;
-            var i = tab?.SelectedItem as TabItem;
-
-            UpdateTitleText(i?.Header.ToString());
-        }
-
-        private void ConnectButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            var green = new Uri("pack://Application:,,,/Template/Themes/Color/Green.xaml", UriKind.RelativeOrAbsolute);
-            var red = new Uri("pack://Application:,,,/Template/Themes/Color/Red.xaml", UriKind.RelativeOrAbsolute);
-            var b = sender as Button;
-
-            if(_connected == false) {
-                IBot.Misc.ConnectionManager.ConnectToBotAccount();
-                return;
-            }
-
-            IBot.Misc.ConnectionManager.DisconnectFromBotAccount();
-        }
     }
 }

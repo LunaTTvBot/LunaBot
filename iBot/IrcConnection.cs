@@ -16,7 +16,8 @@ namespace IBot
         ChatCon
     }
 
-    internal enum AnswerType {
+    internal enum AnswerType
+    {
         Public,
         Private
     }
@@ -34,6 +35,7 @@ namespace IBot
 
         private readonly string _user;
         private TcpClient _client;
+        private bool _readConnection;
 
         private StreamReader _reader;
         private NetworkStream _stream;
@@ -60,6 +62,8 @@ namespace IBot
             }
         }
 
+        public bool Connected => _client?.Connected ?? false;
+
         public event EventHandler<MessageEventArgs> RaiseMessageEvent;
 
         public static IrcConnection GetIrcConnection(ConnectionType conType)
@@ -67,18 +71,20 @@ namespace IBot
             return ConType.ContainsKey(conType) ? ConType[conType] : null;
         }
 
-        public bool Connected => _client?.Connected ?? false;
-        
         public void Disconnect()
         {
             if (_client == null) return;
 
-            _thread.Abort();
-            _client.Close();
-            _client = null;
+            _readConnection = false;
+
+            // _thread = null;
+            // _client.Close();
+            // _client = null;
+            // _stream = null;
+            // _reader = null;
             _channelList.Clear();
 
-            if(ConType.ContainsKey(ConnectionType.BotCon))
+            if (ConType.ContainsKey(ConnectionType.BotCon))
                 ConType.Remove(ConnectionType.BotCon);
         }
 
@@ -108,17 +114,19 @@ namespace IBot
             Write(@"USER " + _user);
             Write(@"PASS " + _password);
             Write(@"NICK " + _nick);
-            Write(@"CAP REQ :twitch.tv/membership");
-            Write(@"CAP REQ :twitch.tv/commands");
-            Write(@"CAP REQ :twitch.tv/tags");
+
+            _readConnection = true;
+            _thread = new Thread(ReadConnection);
+            _thread.Start();
+
+            //Write(@"CAP REQ :twitch.tv/membership");
+            //Write(@"CAP REQ :twitch.tv/commands");
+            //Write(@"CAP REQ :twitch.tv/tags");
 
             if (_channelList.Count != 0)
             {
                 _channelList.ForEach(Join);
             }
-
-            _thread = new Thread(ReadConnection);
-            _thread.Start();
 
             return true;
         }
@@ -151,13 +159,16 @@ namespace IBot
             ConType[conType].Write(string.Format(GlobalTwitchPatterns.WritePublicFormat, channel, msg));
         }
 
-        public static void Write(ConnectionType conType, AnswerType aType, string target, string msg) {
-            if(!ConType.ContainsKey(conType))
+        public static void Write(ConnectionType conType, AnswerType aType, string target, string msg)
+        {
+            if (!ConType.ContainsKey(conType))
                 return;
 
-            switch(aType) {
+            switch (aType)
+            {
                 case AnswerType.Private:
-                    Write(ConnectionType.BotCon, SettingsManager.GetConnectionSettings().ChannelList.First(), $"/w {target} {msg}");
+                    Write(ConnectionType.BotCon, SettingsManager.GetConnectionSettings().ChannelList.First(),
+                        $"/w {target} {msg}");
                     break;
                 case AnswerType.Public:
                     Write(ConnectionType.BotCon, target, msg);
@@ -169,23 +180,34 @@ namespace IBot
 
         private void ReadConnection()
         {
-            while (_client.Connected)
+            using (_client)
             {
-                if (!_stream.DataAvailable) continue;
-
-                var data = _reader.ReadLine();
-
-                if (data == null) continue;
-
-                // check for PING and PONG back
-                if (data.StartsWith("PING"))
+                while (_readConnection)
                 {
-                    Write("PONG :tmi.twitch.tv");
-                    Trace.WriteLine("PING RECEIVED - PONG SENT!");
-                }
+                    if (_client == null || !_client.Connected) continue;
 
-                OnRaiseMessageEvent(new MessageEventArgs(data));
+                    if (_stream != null)
+                        if (!_stream.DataAvailable)
+                            continue;
+
+                    var data = _reader.ReadLine();
+
+                    if (data == null)
+                        continue;
+
+                    // check for PING and PONG back
+                    if (data.StartsWith("PING"))
+                    {
+                        Write("PONG :tmi.twitch.tv");
+                        Trace.WriteLine("PING RECEIVED - PONG SENT!");
+                    }
+
+                    OnRaiseMessageEvent(new MessageEventArgs(data));
+                }
             }
+
+            _thread = null;
+            _client = null;
         }
 
         public StreamReader GetReader()

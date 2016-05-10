@@ -69,6 +69,7 @@
     <Compile Include="Events\Commands\GlobalCommand.cs" />
     <Compile Include="Events\Commands\PublicChannelCommand.cs" />
     <Compile Include="Events\Commands\WhisperCommand.cs" />
+    <Compile Include="Events\CustomEventArgs\ErrorEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\UserList\UserJoinEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\UserList\UserPartedEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\OperatorModeEventArgs.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Events\CustomEventArgs\RoomStateSubscriberModeEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\UserListEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\UserStateEventArgs.cs" />
+    <Compile Include="Events\ErrorManager.cs" />
     <Compile Include="Events\EventManager.cs" />
     <Compile Include="Events\Misc\RoomStateTags.cs" />
     <Compile Include="Events\Misc\UserStateTags.cs" />
@@ -88,6 +90,7 @@
     <Compile Include="Misc\AppSettings.cs" />
     <Compile Include="Events\CustomEventArgs\ConnectionEventArgs.cs" />
     <Compile Include="Misc\ConnectionManager.cs" />
+    <Compile Include="Misc\ErrorHandler.cs" />
     <Compile Include="Misc\GlobalTwitchPatterns.cs" />
     <Compile Include="Misc\Logger.cs" />
     <Compile Include="Misc\PluginManager.cs" />
