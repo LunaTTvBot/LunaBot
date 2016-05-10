@@ -21,11 +21,7 @@ namespace IBot
             UserList.UserJoined += AddUserToHistory;
         }
 
-        private void AddUserToHistory(object sender, UserJoinEventArgs args)
-        {
-            Trace.WriteLine($"{args.JoinedUser.Channel.Name}#{args.JoinedUser.Username} at {args.JoinTime.ToLongTimeString()}");
-            StoreUser(args.JoinedUser, args.JoinTime);
-        }
+        private void AddUserToHistory(object sender, UserJoinEventArgs args) => StoreUser(args.JoinedUser, args.JoinTime);
 
         private void StoreUser(User user) => StoreUser(user, DateTime.Now);
 

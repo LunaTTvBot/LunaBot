@@ -19,6 +19,12 @@ namespace IBot
         }
 
         [Key]
+        public string Id
+        {
+            get { return $"{Username.GetHashCode()}{(ChannelName ?? DbChannel.Name).GetHashCode()}"; }
+            set { }
+        }
+
         public string Username { get; set; }
 
         public string ChannelName { get; set; }

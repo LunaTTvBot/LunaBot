@@ -11,7 +11,8 @@ namespace IBot
         public DbChannel(Channel channel)
         {
             Name = channel.Name;
-            DbUsers = DbUser.From(channel.Users).ToList();
+
+            DbUsers = DbUser.From(channel.Users.ToArray()).ToList();
             DbUsers.ForEach(u =>
             {
                 u.ChannelName = channel.Name;
