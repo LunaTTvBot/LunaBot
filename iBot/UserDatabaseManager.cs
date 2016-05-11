@@ -43,7 +43,7 @@ namespace IBot
                             db.HistoryChannels.Add(historyChannel);
                         }
 
-                        if (!historyChannel.DbUsers.Any(u => u.Username == user.Username))
+                        if (historyChannel.DbUsers.All(u => u.Username != user.Username))
                         {
                             var dbUser = user.ToDbUser();
                             dbUser.DbChannel = historyChannel;
