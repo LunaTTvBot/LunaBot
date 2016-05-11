@@ -6,6 +6,7 @@ namespace IBot
     internal class DatabaseContext : DbContext
     {
         private static DatabaseContext _instance;
+        private static readonly object InstanceLock = new object();
 
         private DatabaseContext()
             : base("Store") {}
@@ -19,6 +20,12 @@ namespace IBot
             Database.SetInitializer(sqliteConnectionInitializer);
         }
 
-        public static DatabaseContext Get() => _instance ?? (_instance = new DatabaseContext());
+        public static DatabaseContext Get()
+        {
+            lock (InstanceLock)
+            {
+                return _instance ?? (_instance = new DatabaseContext());
+            }
+        }
     }
 }
