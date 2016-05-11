@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text;
 
 namespace IBot
 {
@@ -21,7 +23,7 @@ namespace IBot
         [Key]
         public string Id
         {
-            get { return $"{Username.GetHashCode()}{(ChannelName ?? DbChannel.Name).GetHashCode()}"; }
+            get { return Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Username}{(ChannelName ?? DbChannel.Name)}")); }
             set { }
         }
 
