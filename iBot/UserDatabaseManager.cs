@@ -21,9 +21,6 @@ namespace IBot
         private Timer _dbSinkTimer;
         private bool _continueWork;
 
-        private int _added;
-        private int _skipped;
-
         private UserDatabaseManager()
         {
             _instance = this;
@@ -38,16 +35,6 @@ namespace IBot
 
             _persistenceThread.Start();
             _dbSinkTimer.Start();
-
-            var queueLengthTimer = new Timer(1000) { AutoReset = true };
-            queueLengthTimer.Elapsed += (sender, args) =>
-            {
-                _logger.Warn("queue/skip: {0} / {1}", _userQueue.Count, _storedUsers.Count);
-                _logger.Warn("added/skip: {0} / {1}", _added, _skipped);
-                _added = 0;
-                _skipped = 0;
-            };
-            queueLengthTimer.Start();
 
             UserList.UserJoined += AddUserToHistory;
         }
@@ -120,7 +107,6 @@ namespace IBot
                 {
                     if (_storedUsers.Contains(GetUniqueId(user)))
                     {
-                        ++_skipped;
                         continue;
                     }
 
@@ -145,7 +131,6 @@ namespace IBot
                         historyChannel.DbUsers.Add(dbUser);
 
                         _storedUsers.Add(GetUniqueId(user));
-                        ++_added;
 
                         _logger.Trace("user {0}#{1}' added to history", historyChannel.Name, user.Username);
                     }
