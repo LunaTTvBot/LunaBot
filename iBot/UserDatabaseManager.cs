@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Timers;
 using IBot.Events.CustomEventArgs.UserList;
 using NLog;
+using Timer = System.Timers.Timer;
 
 namespace IBot
 {
@@ -14,28 +15,63 @@ namespace IBot
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         private static UserDatabaseManager _instance;
 
-        private List<DbChannel> _channels;
+        private HashSet<string> _storedUsers;
         private ConcurrentQueue<KeyValuePair<User, DateTime>> _userQueue;
         private Thread _persistenceThread;
+        private Timer _dbSinkTimer;
         private bool _continueWork;
+
+        private int _added;
+        private int _skipped;
 
         private UserDatabaseManager()
         {
             _instance = this;
-            _channels = new List<DbChannel>();
+            _storedUsers = new HashSet<string>();
             _userQueue = new ConcurrentQueue<KeyValuePair<User, DateTime>>();
             _persistenceThread = new Thread(PersistUsers);
             _continueWork = true;
-            UserList.UserJoined += AddUserToHistory;
-            _persistenceThread.Start();
+            InitializeStoredUsers();
 
-            var x = new System.Timers.Timer(1000)
+            _dbSinkTimer = new Timer(1000) { AutoReset = true };
+            _dbSinkTimer.Elapsed += OnDbSinkTimerOnElapsed;
+
+            _persistenceThread.Start();
+            _dbSinkTimer.Start();
+
+            var queueLengthTimer = new Timer(1000) { AutoReset = true };
+            queueLengthTimer.Elapsed += (sender, args) =>
             {
-                AutoReset = true,
-                Interval = 1000.0,
+                _logger.Warn("queue/skip: {0} / {1}", _userQueue.Count, _storedUsers.Count);
+                _logger.Warn("added/skip: {0} / {1}", _added, _skipped);
+                _added = 0;
+                _skipped = 0;
             };
-            x.Elapsed += (sender, args) => _logger.Info("queue length: {0}", _userQueue.Count);
-            x.Start();
+            queueLengthTimer.Start();
+
+            UserList.UserJoined += AddUserToHistory;
+        }
+
+        private void InitializeStoredUsers()
+        {
+            var db = DatabaseContext.Get();
+
+            lock (db)
+            {
+                foreach (var user in db.HistoryUsers)
+                {
+                    _storedUsers.Add(GetUniqueId(user));
+                }
+            }
+        }
+
+        private void OnDbSinkTimerOnElapsed(object sender, ElapsedEventArgs args)
+        {
+            var db = DatabaseContext.Get();
+            lock (db)
+            {
+                db.SaveChangesAsync();
+            }
         }
 
         private void AddUserToHistory(object sender, UserJoinEventArgs args) => StoreUser(args.JoinedUser, args.JoinTime);
@@ -44,12 +80,23 @@ namespace IBot
 
         private void StoreUser(User user, DateTime time)
         {
-            if (!_userQueue.Any(kvp => kvp.Key.Username == user.Username
-                                       && kvp.Key.Channel.Name == user.Channel.Name))
+            if (!_storedUsers.Contains(GetUniqueId(user))
+                && !_userQueue.Any(kvp => kvp.Key.Username == user.Username
+                                          && kvp.Key.Channel.Name == user.Channel.Name))
             {
                 _userQueue.Enqueue(new KeyValuePair<User, DateTime>(user, time));
-                _logger.Trace("enqueue: {0}", _userQueue.Count);
             }
+        }
+
+        private string GetUniqueId(DbUser user) => $"{user.ChannelName ?? user.DbChannel.Name}#{user.Username}";
+
+        private string GetUniqueId(User user) => $"{user.ChannelName ?? user.Channel.Name}#{user.Username}";
+
+        private void Stop()
+        {
+            _continueWork = false;
+            _persistenceThread = null;
+            _dbSinkTimer.Stop();
         }
 
         private void PersistUsers()
@@ -71,45 +118,46 @@ namespace IBot
 
                 try
                 {
+                    if (_storedUsers.Contains(GetUniqueId(user)))
+                    {
+                        ++_skipped;
+                        continue;
+                    }
+
                     lock (db)
                     {
-                        var historyChannel = _channels.FirstOrDefault(c => c.Name == (user.Channel.Name ?? user.ChannelName));
+                        var historyChannel = db
+                            .HistoryChannels
+                            .FirstOrDefault(c => c.Name == (user.Channel.Name ?? user.ChannelName));
+
                         if (historyChannel == null)
                         {
-                            historyChannel = db
-                                .HistoryChannels
-                                .Include("DbUsers")
-                                .FirstOrDefault(c => c.Name == (user.Channel.Name ?? user.ChannelName));
+                            historyChannel = new DbChannel(new Channel(user.ChannelName ?? user.Channel.Name));
+                            db.HistoryChannels.Add(historyChannel);
+                            db.SaveChanges();
 
-                            if (historyChannel == null)
-                            {
-                                _logger.Debug("channel '{0}' added to history", user.Channel.Name ?? user.ChannelName);
-                                historyChannel = new DbChannel(user.Channel ?? new Channel(user.ChannelName));
-                                db.HistoryChannels.Add(historyChannel);
-                            }
-
-                            _channels.Add(historyChannel);
+                            _logger.Trace("channel '{0}' added to history", user.Channel.Name ?? user.ChannelName);
                         }
 
-                        if (historyChannel.DbUsers.All(u => u.Username != user.Username))
-                        {
-                            _logger.Debug("user {0}#{1}' added to history", historyChannel.Name, user.Username);
-                            var dbUser = user.ToDbUser();
-                            dbUser.DbChannel = historyChannel;
-                            dbUser.ChannelName = historyChannel.Name;
-                            historyChannel.DbUsers.Add(dbUser);
-                        }
+                        var dbUser = user.ToDbUser();
+                        dbUser.DbChannel = historyChannel;
+                        dbUser.ChannelName = historyChannel.Name;
+                        historyChannel.DbUsers.Add(dbUser);
 
-                        db.SaveChangesAsync();
+                        _storedUsers.Add(GetUniqueId(user));
+                        ++_added;
+
+                        _logger.Trace("user {0}#{1}' added to history", historyChannel.Name, user.Username);
                     }
                 }
                 catch (Exception e)
                 {
                     _logger.Error(e);
                 }
-
-                _logger.Trace("dequeue: {0} ", _userQueue.Count);
             }
+
+            // when the thread stops, save one last time
+            db.SaveChanges();
         }
 
         public static UserDatabaseManager Instance => _instance ?? (_instance = new UserDatabaseManager());
