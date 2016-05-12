@@ -91,6 +91,9 @@
     <Compile Include="DatabaseContext.cs" />
     <Compile Include="DbChannel.cs" />
     <Compile Include="DbUser.cs" />
+    <Compile Include="ExtendableExtensions.cs" />
+    <Compile Include="Extension.cs" />
+    <Compile Include="IExtendable.cs" />
     <Compile Include="UserDatabaseManager.cs" />
     <Compile Include="Events\ChannelEventManager.cs" />
     <Compile Include="Events\CommandManager.cs" />
@@ -152,6 +155,7 @@
     <None Include="App.config" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>

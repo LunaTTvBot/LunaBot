@@ -13,6 +13,7 @@ namespace IBot
 
         public DbSet<DbChannel> HistoryChannels { get; set; }
         public DbSet<DbUser> HistoryUsers { get; set; }
+        public DbSet<Extension> ObjectExtensions { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

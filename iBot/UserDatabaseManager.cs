@@ -132,6 +132,8 @@ namespace IBot
 
                         _storedUsers.Add(GetUniqueId(user));
 
+                        user.Set("FirstRecorded", time.Ticks);
+
                         _logger.Trace("user {0}#{1}' added to history", historyChannel.Name, user.Username);
                     }
                 }
