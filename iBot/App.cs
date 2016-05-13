@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using IBot.Events;
 using IBot.Misc;
 using IBot.Resources;
@@ -10,27 +11,28 @@ namespace IBot
     internal class App
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
-        public static List<string> BotChannelList;
-        private IrcConnection _connection;
 
         public void StartApp()
         {
-			RuntimeHelpers.RunClassConstructor(typeof(CommandManager).TypeHandle);
-            RuntimeHelpers.RunClassConstructor(typeof(EventManager).TypeHandle);
-			
             AppDomain.CurrentDomain.SetData("DataDirectory", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
 
-            ConnectionManager.BotConnectedEvent += (s, a) =>
+            RuntimeHelpers.RunClassConstructor(typeof(CommandManager).TypeHandle);
+            RuntimeHelpers.RunClassConstructor(typeof(EventManager).TypeHandle);
+            RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
+
+            ThreadPool.QueueUserWorkItem(_ =>
             {
-				UserDatabaseManager.Initialise();
-                Console.WriteLine(app.app_connected);
-				
-				// RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
+                UserDatabaseManager.Initialise();
+            });
+            
+            ConnectionManager.BotConnectedEvent += (s, a) =>
+            {				
+                Console.WriteLine(app.app_connected);			
 				
                 PluginManager.BindEvents();
 
-                RegisterChannelEvents();
-                RegisterUserEvents();
+                // RegisterChannelEvents();
+                // RegisterUserEvents();
             };
 
             ConnectionManager.BotDisconnectedEvent += (s, a) => { Console.WriteLine(app.app_disconnected); };

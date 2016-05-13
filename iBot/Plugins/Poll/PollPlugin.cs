@@ -7,7 +7,6 @@ using System.Threading;
 using IBot.Events;
 using IBot.Events.Commands;
 using IBot.Events.CustomEventArgs;
-using IBot.Misc;
 using NLog;
 using PollLocale = IBot.Resources.Plugins.Poll.poll;
 using Timer = System.Timers.Timer;
@@ -99,7 +98,7 @@ namespace IBot.Plugins.Poll
 
         public void Init()
         {
-            Logger.Write($"{PluginName} {PollLocale.poll_plugin_loaded}");
+            _logger.Trace($"{PluginName} {PollLocale.poll_plugin_loaded}");
         }
 
         private static void SendMessage(string msg, AnswerType aType, string target)
