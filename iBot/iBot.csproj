@@ -65,6 +65,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.101.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.101.0\lib\net45\System.Data.SQLite.dll</HintPath>
@@ -89,6 +90,7 @@
     <Compile Include="App.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="DatabaseContext.cs" />
+    <Compile Include="GenericDatabaseContext.cs" />
     <Compile Include="DbChannel.cs" />
     <Compile Include="DbUser.cs" />
     <Compile Include="ExtendableExtensions.cs" />
