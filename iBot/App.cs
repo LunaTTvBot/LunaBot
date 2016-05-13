@@ -3,23 +3,34 @@ using System.Runtime.CompilerServices;
 using IBot.Events;
 using IBot.Misc;
 using IBot.Resources;
+using NLog;
 
 namespace IBot
 {
     internal class App
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        public static List<string> BotChannelList;
+        private IrcConnection _connection;
+
         public void StartApp()
         {
-            RuntimeHelpers.RunClassConstructor(typeof(CommandManager).TypeHandle);
+			RuntimeHelpers.RunClassConstructor(typeof(CommandManager).TypeHandle);
             RuntimeHelpers.RunClassConstructor(typeof(EventManager).TypeHandle);
+			
+            AppDomain.CurrentDomain.SetData("DataDirectory", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
 
             ConnectionManager.BotConnectedEvent += (s, a) =>
             {
+				UserDatabaseManager.Initialise();
                 Console.WriteLine(app.app_connected);
+				
+				// RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
+				
                 PluginManager.BindEvents();
 
-                //RegisterChannelEvents();
-                //RegisterUserEvents();
+                RegisterChannelEvents();
+                RegisterUserEvents();
             };
 
             ConnectionManager.BotDisconnectedEvent += (s, a) => { Console.WriteLine(app.app_disconnected); };
