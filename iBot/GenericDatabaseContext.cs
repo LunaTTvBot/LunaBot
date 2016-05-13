@@ -18,7 +18,7 @@ namespace IBot
                 {
                     DataSource = string.Format("{0}/iBot/gstore.{1}.db3",
                                                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                               typeof(GenericDatabaseContext<T>).GUID.ToString("N")),
+                                               typeof(T).GUID.ToString("N")),
                     ForeignKeys = true,
                     Password = "secret",
                 }.ConnectionString
