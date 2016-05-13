@@ -23,7 +23,7 @@ namespace iBot_GUI.Forms.TabControls.InformationPageFolder
         }
 
         private void AppendText(PublicMessageEventArgsFacade publicMessageEventArgsFacade) {
-            InfoBox.AppendText(DateTime.Now + " | " +
+            InfoBox.AppendText(DateTime.Now.ToString("HH:mm:ss") + " | " +
                                publicMessageEventArgsFacade.User + "#" +
                                publicMessageEventArgsFacade.Channel +  " >> " +
                                publicMessageEventArgsFacade.Msg + "\r\n");
@@ -34,7 +34,7 @@ namespace iBot_GUI.Forms.TabControls.InformationPageFolder
 
         private void AppendText(CommandCalledEventArgsFacade commandCalledEventArgsFacade)
         {
-            InfoBox.AppendText(DateTime.Now + " | " +
+            InfoBox.AppendText(DateTime.Now.ToString("HH:mm:ss") + " | " +
                                commandCalledEventArgsFacade.User + " -> " +
                                commandCalledEventArgsFacade.CommandName + " (" +
                                commandCalledEventArgsFacade.CommandType + ") >> " +
