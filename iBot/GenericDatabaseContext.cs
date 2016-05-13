@@ -16,6 +16,7 @@ namespace IBot
             {
                 ConnectionString = new SQLiteConnectionStringBuilder()
                 {
+                    // ReSharper disable once UseStringInterpolation
                     DataSource = string.Format("{0}/iBot/gstore.{1}.db3",
                                                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                                                typeof(T).GUID.ToString("N")),
