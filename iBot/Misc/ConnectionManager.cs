@@ -9,6 +9,8 @@ namespace IBot.Misc
     {
         private static IrcConnection _botConnection;
 
+        public static bool IsBotConnected => _botConnection.Connected;
+
         public static event EventHandler<ConnectionEventArgs> BotConnectedEvent;
         public static event EventHandler<ConnectionEventArgs> BotDisconnectedEvent;
 
@@ -35,8 +37,6 @@ namespace IBot.Misc
                     settings.Port,
                     ConnectionType.BotCon
                     );
-
-                _botConnection.RaiseMessageEvent += (sender, args) => Trace.WriteLine(args.Message);
             }
 
             if (!_botConnection.Connect()) return;
@@ -63,7 +63,6 @@ namespace IBot.Misc
             });
         }
 
-        public static bool IsBotConnected() => _botConnection.Connected;
         private static void OnBotConnectedEvent(ConnectionEventArgs e) => BotConnectedEvent?.Invoke(null, e);
         private static void OnBotDisconnectedEvent(ConnectionEventArgs e) => BotDisconnectedEvent?.Invoke(null, e);
     }

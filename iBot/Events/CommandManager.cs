@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using IBot.Events.Commands;
@@ -19,6 +20,8 @@ namespace IBot.Events
             var myThread = new Thread(Start);
             myThread.Start();
         }
+
+        public static event EventHandler<CommandCalledEvenArgs> CommandCalledEvent;
 
         private static void Start()
         {
@@ -47,10 +50,10 @@ namespace IBot.Events
                         RegExStack.Add(command.Name, new Regex(command.RegEx));
 
                     var m = RegExStack[command.Name].Match(eArgs.Message);
-                    if (m.Success)
-                    {
-                        ThreadPool.QueueUserWorkItem(__ => { command.Action(command, m, eArgs); });
-                    }
+                    if (!m.Success) return;
+
+                    ThreadPool.QueueUserWorkItem(__ => { command.Action(command, m, eArgs); });
+                    OnCommandCalledEvent(new CommandCalledEvenArgs(eArgs.UserName, typeof(WhisperCommand), command.Name, eArgs.Message));
                 });
             });
         }
@@ -65,10 +68,10 @@ namespace IBot.Events
                         RegExStack.Add(command.Name, new Regex(command.RegEx));
 
                     var m = RegExStack[command.Name].Match(eArgs.Message);
-                    if (m.Success)
-                    {
-                        ThreadPool.QueueUserWorkItem(__ => { command.Action(command, m, eArgs); });
-                    }
+                    if (!m.Success) return;
+
+                    ThreadPool.QueueUserWorkItem(__ => { command.Action(command, m, eArgs); });
+                    OnCommandCalledEvent(new CommandCalledEvenArgs(eArgs.UserName, typeof(PublicChannelCommand), command.Name, eArgs.Message));
                 });
             });
         }
@@ -83,27 +86,17 @@ namespace IBot.Events
                         RegExStack.Add(command.Name, new Regex(command.RegEx));
 
                     var m = RegExStack[command.Name].Match(eArgs.Message);
-                    if (m.Success)
-                    {
-                        ThreadPool.QueueUserWorkItem(__ => { command.Action(command, m, eArgs.Message); });
-                    }
+                    if (!m.Success) return;
+
+                    ThreadPool.QueueUserWorkItem(__ => { command.Action(command, m, eArgs.Message); });
+                    OnCommandCalledEvent(new CommandCalledEvenArgs("Server", typeof(GlobalCommand), command.Name, eArgs.Message));
                 });
             });
         }
 
-        public static void RegisterGlobalCommand(GlobalCommand command)
-        {
-            GlobalCommandList.Add(command);
-        }
-
-        public static void RegisterPublicChannelCommand(PublicChannelCommand command)
-        {
-            PublicCommandList.Add(command);
-        }
-
-        public static void RegisterWhisperCommand(WhisperCommand command)
-        {
-            WhisperCommandList.Add(command);
-        }
+        public static void RegisterGlobalCommand(GlobalCommand command) => GlobalCommandList.Add(command);
+        public static void RegisterPublicChannelCommand(PublicChannelCommand command) => PublicCommandList.Add(command);
+        public static void RegisterWhisperCommand(WhisperCommand command) => WhisperCommandList.Add(command);
+        private static void OnCommandCalledEvent(CommandCalledEvenArgs e) => CommandCalledEvent?.Invoke(null, e);
     }
 }

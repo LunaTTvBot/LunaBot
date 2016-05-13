@@ -18,8 +18,8 @@ namespace IBot
                 Console.WriteLine(app.app_connected);
                 PluginManager.BindEvents();
 
-                RegisterChannelEvents();
-                RegisterUserEvents();
+                //RegisterChannelEvents();
+                //RegisterUserEvents();
             };
 
             ConnectionManager.BotDisconnectedEvent += (s, a) => { Console.WriteLine(app.app_disconnected); };

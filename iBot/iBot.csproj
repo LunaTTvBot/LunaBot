@@ -69,6 +69,7 @@
     <Compile Include="Events\Commands\GlobalCommand.cs" />
     <Compile Include="Events\Commands\PublicChannelCommand.cs" />
     <Compile Include="Events\Commands\WhisperCommand.cs" />
+    <Compile Include="Events\CustomEventArgs\CommandCalledEvenArgs.cs" />
     <Compile Include="Events\CustomEventArgs\ErrorEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\UserList\UserJoinEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\UserList\UserPartedEventArgs.cs" />
@@ -85,9 +86,12 @@
     <Compile Include="Events\Misc\RoomStateTags.cs" />
     <Compile Include="Events\Misc\UserStateTags.cs" />
     <Compile Include="Events\UserEventManager.cs" />
+    <Compile Include="Facades\Events\CommandManagerFacade.cs" />
+    <Compile Include="Facades\Events\CustomArgs\CommandCalledEventArgsFacade.cs" />
+    <Compile Include="Facades\Events\CustomArgs\PublicMessageEventArgsfacade.cs" />
+    <Compile Include="Facades\Events\MessageEventFacade.cs" />
     <Compile Include="IrcConnection.cs" />
     <Compile Include="Events\CustomEventArgs\MessageEventArgs.cs" />
-    <Compile Include="Misc\AppSettings.cs" />
     <Compile Include="Events\CustomEventArgs\ConnectionEventArgs.cs" />
     <Compile Include="Misc\ConnectionManager.cs" />
     <Compile Include="Misc\ErrorHandler.cs" />

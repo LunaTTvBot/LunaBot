@@ -7,6 +7,7 @@
         xmlns:vectors="clr-namespace:iBot_GUI.Template.Controls.Vectors"
         xmlns:startPageFolder="clr-namespace:iBot_GUI.Forms.TabControls.StartPageFolder"
         xmlns:pollPageFolder="clr-namespace:iBot_GUI.Forms.TabControls.Plugins.Poll.PollPageFolder"
+        xmlns:infoPageFolder="clr-namespace:iBot_GUI.Forms.TabControls.InformationPageFolder"
         mc:Ignorable="d"
         Background="{DynamicResource MainBackgroundBrush}"
         SnapsToDevicePixels="True" WindowStartupLocation="CenterScreen" AllowsTransparency="True"
@@ -77,6 +78,11 @@
                                     <Grid>
                                         <pollPageFolder:PollPage x:Name="ThePollPage" />
                                     </Grid>
+                                </TabItem>
+                                <TabItem Header="Information">
+                                    <Grid>
+                                        <infoPageFolder:InformationPage x:Name="TheInfoPage" />
+                                    </Grid>                                    
                                 </TabItem>
                             </TabControl>
                         </Grid>

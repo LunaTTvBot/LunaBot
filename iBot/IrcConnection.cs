@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -13,7 +12,7 @@ namespace IBot
     public enum ConnectionType
     {
         BotCon,
-        ChatCon
+        BroadcasterCon
     }
 
     internal enum AnswerType
@@ -45,10 +44,10 @@ namespace IBot
 
         public IrcConnection(string user, string password, string nick, string url, int port, ConnectionType conType)
         {
-            _user = user;
-            _password = password;
-            _nick = nick;
-            _url = url;
+            _user = user.Trim();
+            _password = password.Trim();
+            _nick = nick.Trim();
+            _url = url.Trim();
             _port = port;
 
             try
@@ -133,7 +132,7 @@ namespace IBot
                 _channelList.Add(channel);
         }
 
-        public void Write(string msg)
+        private void Write(string msg)
         {
             if (_client == null || !_client.Connected)
                 Connect();
@@ -150,6 +149,9 @@ namespace IBot
             if (!ConType.ContainsKey(conType))
                 return;
 
+            if (string.IsNullOrEmpty(channel) || string.IsNullOrEmpty(msg))
+                return;
+
             ConType[conType].Write(string.Format(GlobalTwitchPatterns.WritePublicFormat, channel, msg));
         }
 
@@ -158,11 +160,16 @@ namespace IBot
             if (!ConType.ContainsKey(conType))
                 return;
 
+            if (string.IsNullOrEmpty(target) || string.IsNullOrEmpty(msg))
+                return;
+
             switch (aType)
             {
                 case AnswerType.Private:
-                    Write(ConnectionType.BotCon, SettingsManager.GetConnectionSettings().ChannelList.First(),
-                        $"/w {target} {msg}");
+                    Write(
+                        ConnectionType.BotCon,
+                        SettingsManager.GetConnectionSettings().ChannelList.First(),
+                        string.Format(GlobalTwitchPatterns.WritePrivateFormat, target, msg));
                     break;
                 case AnswerType.Public:
                     Write(ConnectionType.BotCon, target, msg);
@@ -191,8 +198,7 @@ namespace IBot
                     // check for PING and PONG back
                     if (data.StartsWith("PING"))
                     {
-                        Write("PONG :tmi.twitch.tv");
-                        Trace.WriteLine("PING RECEIVED - PONG SENT!");
+                        Write($"PONG :{GlobalTwitchPatterns.TwitchHostNamePattern}");
                     }
 
                     OnRaiseMessageEvent(new MessageEventArgs(data));
@@ -201,16 +207,6 @@ namespace IBot
 
             _thread = null;
             _client = null;
-        }
-
-        public StreamReader GetReader()
-        {
-            return _reader;
-        }
-
-        public NetworkStream GetStream()
-        {
-            return _stream;
         }
 
         protected virtual void OnRaiseMessageEvent(MessageEventArgs e) => RaiseMessageEvent?.Invoke(this, e);

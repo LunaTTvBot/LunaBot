@@ -69,6 +69,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Forms\TabControls\InformationPageFolder\InformationPage.xaml.cs">
+      <DependentUpon>InformationPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Forms\TabControls\StartPageFolder\ConnectionDetails.cs" />
     <Compile Include="Forms\TabControls\StartPageFolder\ConnectionDetailsViewModel.cs" />
     <Compile Include="Forms\TabControls\StartPageFolder\StartPage.xaml.cs">
@@ -114,6 +117,10 @@
       <DependentUpon>TreshCanIcon.xaml</DependentUpon>
     </Compile>
     <Page Include="Forms\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\TabControls\InformationPageFolder\InformationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
