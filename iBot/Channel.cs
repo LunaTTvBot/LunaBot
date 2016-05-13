@@ -2,7 +2,7 @@
 
 namespace IBot
 {
-    internal class Channel
+    internal class Channel : IExtendable
     {
         public Channel()
         {
@@ -18,5 +18,9 @@ namespace IBot
         public string Name { get; set; }
 
         public HashSet<User> Users { get; set; }
+
+        public string Id => Name;
+
+        public string ClassName => GetType().FullName;
     }
 }
