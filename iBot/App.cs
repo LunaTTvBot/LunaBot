@@ -22,6 +22,8 @@ namespace IBot
 
         public void StartApp()
         {
+            AppDomain.CurrentDomain.SetData("DataDirectory", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("de-DE");
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
 
@@ -46,6 +48,8 @@ namespace IBot
 
             if (_connection.Connect())
             {
+                UserDatabaseManager.Initialise();
+
                 var consoleAssembly = Assembly.GetExecutingAssembly();
                 var pluginTypes = GetTypesByInterface<IPlugin>(consoleAssembly);
 
