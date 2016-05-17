@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using IBot.Core;
 using IBot.Events;
 using IBot.Events.Commands;
-using IBot.Misc;
 using IBot.Plugins;
 using IBot.Resources;
 using NLog;

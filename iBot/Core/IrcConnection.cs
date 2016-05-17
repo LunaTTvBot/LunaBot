@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using IBot.Events.Args.Users;
-using IBot.Misc;
 
 namespace IBot.Core
 {

@@ -5,7 +5,7 @@ using System.IO.IsolatedStorage;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace IBot.Misc
+namespace IBot.Core
 {
     public class AppSettings
     {

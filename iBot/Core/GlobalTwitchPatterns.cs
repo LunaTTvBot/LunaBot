@@ -1,4 +1,4 @@
-﻿namespace IBot.Misc
+﻿namespace IBot.Core
 {
     internal static class GlobalTwitchPatterns
     {
