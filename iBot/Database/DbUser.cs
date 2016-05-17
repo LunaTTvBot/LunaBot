@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using IBot.Models;
 
-namespace IBot
+namespace IBot.Database
 {
     internal class DbUser
     {

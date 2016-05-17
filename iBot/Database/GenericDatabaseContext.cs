@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Data.SQLite;
 using NLog;
 using SQLite.CodeFirst;
-using System.Data.SQLite;
 
-namespace IBot
+namespace IBot.Database
 {
     internal class GenericDatabaseContext<T> : DbContext
         where T : class
@@ -32,7 +32,7 @@ namespace IBot
             try
             {
                 var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<GenericDatabaseContext<T>>(modelBuilder);
-                Database.SetInitializer(sqliteConnectionInitializer);
+                System.Data.Entity.Database.SetInitializer(sqliteConnectionInitializer);
             }
             catch (Exception e)
             {

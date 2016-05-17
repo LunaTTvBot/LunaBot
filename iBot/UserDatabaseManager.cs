@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Timers;
+using IBot.Database;
+using IBot.Models;
 using IBot.Events.Args.UserList;
 using NLog;
 using Timer = System.Timers.Timer;

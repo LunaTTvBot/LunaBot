@@ -1,7 +1,8 @@
 ﻿using System.Data.Entity;
+using IBot.Models;
 using SQLite.CodeFirst;
 
-namespace IBot
+namespace IBot.Database
 {
     internal class DatabaseContext : DbContext
     {
@@ -18,7 +19,7 @@ namespace IBot
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<DatabaseContext>(modelBuilder);
-            Database.SetInitializer(sqliteConnectionInitializer);
+            System.Data.Entity.Database.SetInitializer(sqliteConnectionInitializer);
         }
 
         public static DatabaseContext Get()

@@ -6,7 +6,7 @@ using System.Timers;
 using IBot.Events;
 using IBot.Events.Args.UserList;
 using IBot.Events.Args.Users;
-using IBot.Misc;
+using IBot.Models;
 using IBot.TmiApi.ChannelChattersEndpoint;
 using NLog;
 using Timer = System.Timers.Timer;

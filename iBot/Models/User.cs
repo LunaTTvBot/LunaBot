@@ -1,4 +1,4 @@
-﻿namespace IBot
+﻿namespace IBot.Models
 {
     internal class User : IExtendable
     {

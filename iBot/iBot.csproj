@@ -88,14 +88,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="Channel.cs" />
-    <Compile Include="DatabaseContext.cs" />
-    <Compile Include="GenericDatabaseContext.cs" />
-    <Compile Include="DbChannel.cs" />
-    <Compile Include="DbUser.cs" />
-    <Compile Include="ExtendableExtensions.cs" />
-    <Compile Include="Extension.cs" />
-    <Compile Include="IExtendable.cs" />
+    <Compile Include="Models\Channel.cs" />
+    <Compile Include="Database\DatabaseContext.cs" />
+    <Compile Include="Database\GenericDatabaseContext.cs" />
+    <Compile Include="Database\DbChannel.cs" />
+    <Compile Include="Database\DbUser.cs" />
+    <Compile Include="Models\ExtendableExtensions.cs" />
+    <Compile Include="Models\Extension.cs" />
+    <Compile Include="Models\IExtendable.cs" />
     <Compile Include="UserDatabaseManager.cs" />
     <Compile Include="Events\ChannelEventManager.cs" />
     <Compile Include="Events\CommandManager.cs" />
@@ -150,7 +150,7 @@
     <Compile Include="TmiApi\ChannelChattersEndpoint\Chatters.cs" />
     <Compile Include="TmiApi\TmiApi.cs" />
     <Compile Include="TmiApi\TmiUriProvider.cs" />
-    <Compile Include="User.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="UserList.cs" />
   </ItemGroup>
   <ItemGroup>

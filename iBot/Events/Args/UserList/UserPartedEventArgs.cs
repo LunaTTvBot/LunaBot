@@ -1,4 +1,5 @@
 ﻿using System;
+using IBot.Models;
 
 namespace IBot.Events.Args.UserList
 {

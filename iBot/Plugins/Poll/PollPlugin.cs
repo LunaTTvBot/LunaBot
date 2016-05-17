@@ -7,7 +7,6 @@ using System.Threading;
 using IBot.Events;
 using IBot.Events.Args.Users;
 using IBot.Events.Commands;
-using IBot.Misc;
 using NLog;
 using PollLocale = IBot.Resources.Plugins.Poll.poll;
 using Timer = System.Timers.Timer;

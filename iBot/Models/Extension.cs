@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IBot.Database;
 using NLog;
 
-namespace IBot
+namespace IBot.Models
 {
     internal class Extension
     {

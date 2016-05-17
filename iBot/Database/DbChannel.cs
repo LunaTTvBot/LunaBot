@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using IBot.Models;
 
-namespace IBot
+namespace IBot.Database
 {
     internal class DbChannel
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace IBot
+namespace IBot.Models
 {
     internal class Channel : IExtendable
     {
