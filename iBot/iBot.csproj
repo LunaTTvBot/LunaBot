@@ -96,7 +96,7 @@
     <Compile Include="Models\ExtendableExtensions.cs" />
     <Compile Include="Models\Extension.cs" />
     <Compile Include="Models\IExtendable.cs" />
-    <Compile Include="UserDatabaseManager.cs" />
+    <Compile Include="Core\UserDatabaseManager.cs" />
     <Compile Include="Events\ChannelEventManager.cs" />
     <Compile Include="Events\CommandManager.cs" />
     <Compile Include="Events\Commands\GlobalCommand.cs" />
@@ -116,7 +116,7 @@
     <Compile Include="Events\Misc\RoomStateTags.cs" />
     <Compile Include="Events\Misc\UserStateTags.cs" />
     <Compile Include="Events\UserEventManager.cs" />
-    <Compile Include="IrcConnection.cs" />
+    <Compile Include="Core\IrcConnection.cs" />
     <Compile Include="Events\Args\Users\MessageEventArgs.cs" />
     <Compile Include="Misc\AppSettings.cs" />
     <Compile Include="Misc\GlobalTwitchPatterns.cs" />
@@ -151,7 +151,7 @@
     <Compile Include="TmiApi\TmiApi.cs" />
     <Compile Include="TmiApi\TmiUriProvider.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="UserList.cs" />
+    <Compile Include="Core\UserList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

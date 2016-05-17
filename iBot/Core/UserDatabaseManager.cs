@@ -5,12 +5,12 @@ using System.Linq;
 using System.Threading;
 using System.Timers;
 using IBot.Database;
-using IBot.Models;
 using IBot.Events.Args.UserList;
+using IBot.Models;
 using NLog;
 using Timer = System.Timers.Timer;
 
-namespace IBot
+namespace IBot.Core
 {
     internal class UserDatabaseManager
     {

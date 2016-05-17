@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using IBot.Core;
 using IBot.Events;
 using IBot.Events.Commands;
 using IBot.Misc;

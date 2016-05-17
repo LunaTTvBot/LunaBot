@@ -11,7 +11,7 @@ using IBot.TmiApi.ChannelChattersEndpoint;
 using NLog;
 using Timer = System.Timers.Timer;
 
-namespace IBot
+namespace IBot.Core
 {
     internal static class UserList
     {

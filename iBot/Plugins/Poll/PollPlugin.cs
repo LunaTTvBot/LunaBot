@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using IBot.Core;
 using IBot.Events;
 using IBot.Events.Args.Users;
 using IBot.Events.Commands;

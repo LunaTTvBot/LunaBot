@@ -8,7 +8,7 @@ using System.Threading;
 using IBot.Events.Args.Users;
 using IBot.Misc;
 
-namespace IBot
+namespace IBot.Core
 {
     internal enum ConnectionType
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using IBot.Core;
 using IBot.Events.Args.RoomState;
 using IBot.Events.Args.UserList;
 using IBot.Events.Args.Users;
