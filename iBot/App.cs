@@ -36,16 +36,30 @@ namespace IBot
 
             BotChannelList = settings.ChannelList;
 
-            _connection = new IrcConnection(
-                settings.Username,
-                settings.TwitchApiKey,
-                settings.Nickname,
+            IrcConnectionManager.RegisterHandler(ConnectionType.BotCon, (sender, args) => _logger.Error("bot: " + args.Message));
+            IrcConnectionManager.RegisterHandler(ConnectionType.ChatCon, (sender, args) => _logger.Error("chat: " + args.Message));
+
+            IrcConnectionManager.RegisterConnection(
+                settings.BotUsername,
+                settings.BotTwitchApiKey,
+                settings.BotNickname,
                 settings.Url,
                 settings.Port,
                 ConnectionType.BotCon
-                );
+            );
 
-            if (_connection.Connect())
+            IrcConnectionManager.RegisterConnection(
+                settings.OwnerUsername,
+                settings.OwnerTwitchApiKey,
+                settings.OwnerNickname,
+                settings.Url,
+                settings.Port,
+                ConnectionType.ChatCon
+            );
+
+            IrcConnectionManager.ConnectAll();
+
+            if (IrcConnectionManager.ConnectAll())
             {
                 UserDatabaseManager.Initialise();
 
@@ -67,14 +81,14 @@ namespace IBot
                     Action = (command, matches, mArgs) =>
                     {
                         IrcConnection.Write(ConnectionType.BotCon, mArgs.Channel,
-                            $"Ja, Test ({matches.Groups[1].Value})!");
+                                            $"Ja, Test ({matches.Groups[1].Value})!");
                     }
                 });
 
                 RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
                 settings.Save(settingsFileName);
                 Console.WriteLine(app.app_connected);
-                _connection.RaiseMessageEvent += (sender, args) => _logger.Trace(args.Message);
+                _connection = IrcConnectionManager.GetConnection(ConnectionType.BotCon);
                 BotChannelList.ForEach(channel => _connection.Join(channel));
                 RegisterChannelEvents();
                 RegisterUserEvents();

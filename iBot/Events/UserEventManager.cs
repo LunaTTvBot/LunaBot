@@ -39,7 +39,7 @@ namespace IBot.Events
 
         static UserEventManager()
         {
-            IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += CheckAndRaiseMessageEvent;
+            IrcConnectionManager.RegisterHandler(ConnectionType.BotCon, CheckAndRaiseMessageEvent);
         }
 
         public static void CheckAndRaiseMessageEvent(object sender, MessageEventArgs msgEvArgs)

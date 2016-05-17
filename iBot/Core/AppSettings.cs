@@ -9,20 +9,29 @@ namespace IBot.Core
 {
     public class AppSettings
     {
-        [JsonProperty("nickname")]
-        public string Nickname { get; set; }
+        [JsonProperty("owner_nickname")]
+        public string OwnerNickname { get; set; }
+
+        [JsonProperty("owner_username")]
+        public string OwnerUsername { get; set; }
+
+        [JsonProperty("owner_apikey")]
+        public string OwnerTwitchApiKey { get; set; }
+
+        [JsonProperty("bot_nickname")]
+        public string BotNickname { get; set; }
+
+        [JsonProperty("bot_username")]
+        public string BotUsername { get; set; }
+
+        [JsonProperty("bot_apikey")]
+        public string BotTwitchApiKey { get; set; }
 
         [JsonProperty("port")]
         public int Port { get; set; }
 
-        [JsonProperty("apikey")]
-        public string TwitchApiKey { get; set; }
-
         [JsonProperty("url")]
         public string Url { get; set; }
-
-        [JsonProperty("username")]
-        public string Username { get; set; }
 
         [JsonProperty("channel_list")]
         public List<string> ChannelList { get; set; }
