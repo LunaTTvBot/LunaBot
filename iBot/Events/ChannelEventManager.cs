@@ -54,8 +54,8 @@ namespace IBot.Events
         private static readonly Regex RegExOpMod = new Regex(OperatorPattern);
         private static readonly Regex RegExUserList = new Regex(UserListPattern);
 
-        static ChannelEventManager()
-        {                     
+        public static void BindToMessageEvent() 
+        {
             IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += CheckAndRaiseChannelEvents;
         }
 
@@ -65,6 +65,20 @@ namespace IBot.Events
             RaiseRoomStateEvents(eArgs.Message);
             RaiseOperatorEvents(eArgs.Message);
             RaiseUserListEvent(eArgs.Message);
+        }
+
+        public static void RemoveEventHandlers()
+        {
+            UserJoinEvent = null;
+            UserPartEvent = null;
+            RoomStateAllEvent = null;
+            RoomStateSlowModeEvent = null;
+            RoomStateSlowModeEvent = null;
+            RoomStateR9KModeEvent = null;
+            RoomStateLangModeEvent = null;
+            OperatorGrantedEvent = null;
+            OperatorRevokedEvent = null;
+            UserListEvent = null;
         }
 
         public static event EventHandler<UserEventArgs> UserJoinEvent;
@@ -104,19 +118,24 @@ namespace IBot.Events
             var match = RegExUserList.Match(message);
             if (!match.Success) return;
 
-            var userArray = match.Groups[3].Value.Split(' ');           
+            var userArray = match.Groups[3].Value.Split(' ');
             OnUserListEvent(new UserListEventArgs(userArray.ToList(), match.Groups[1].Value, match.Groups[2].Value));
         }
 
         private static void RaiseOperatorEvents(string message)
         {
             var match = RegExOpMod.Match(message);
-            if(!match.Success) return;
+            if (!match.Success) return;
 
-            if(match.Groups[2].Value == "+o") {
-                OnOperatorGrantedEvent(new OperatorModeEventArgs(match.Groups[1].Value, match.Groups[3].Value, OperatorType.Granted));
-            } else {
-                OnOperatorRevokedEvent(new OperatorModeEventArgs(match.Groups[1].Value, match.Groups[3].Value, OperatorType.Revoked));
+            if (match.Groups[2].Value == "+o")
+            {
+                OnOperatorGrantedEvent(new OperatorModeEventArgs(match.Groups[1].Value, match.Groups[3].Value,
+                    OperatorType.Granted));
+            }
+            else
+            {
+                OnOperatorRevokedEvent(new OperatorModeEventArgs(match.Groups[1].Value, match.Groups[3].Value,
+                    OperatorType.Revoked));
             }
         }
 

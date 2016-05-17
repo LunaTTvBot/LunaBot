@@ -38,6 +38,13 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
@@ -102,6 +109,8 @@
     <Compile Include="Events\Commands\GlobalCommand.cs" />
     <Compile Include="Events\Commands\PublicChannelCommand.cs" />
     <Compile Include="Events\Commands\WhisperCommand.cs" />
+    <Compile Include="Events\CustomEventArgs\CommandCalledEvenArgs.cs" />
+    <Compile Include="Events\CustomEventArgs\ErrorEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\UserList\UserJoinEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\UserList\UserPartedEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\OperatorModeEventArgs.cs" />
@@ -112,14 +121,25 @@
     <Compile Include="Events\CustomEventArgs\RoomStateSubscriberModeEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\UserListEventArgs.cs" />
     <Compile Include="Events\CustomEventArgs\UserStateEventArgs.cs" />
+    <Compile Include="Events\ErrorManager.cs" />
     <Compile Include="Events\EventManager.cs" />
     <Compile Include="Events\Misc\RoomStateTags.cs" />
     <Compile Include="Events\Misc\UserStateTags.cs" />
     <Compile Include="Events\UserEventManager.cs" />
+    <Compile Include="Facades\Events\CommandManagerFacade.cs" />
+    <Compile Include="Facades\Events\CustomArgs\CommandCalledEventArgsFacade.cs" />
+    <Compile Include="Facades\Events\CustomArgs\PublicMessageEventArgsfacade.cs" />
+    <Compile Include="Facades\Events\MessageEventFacade.cs" />
     <Compile Include="IrcConnection.cs" />
     <Compile Include="Events\CustomEventArgs\MessageEventArgs.cs" />
-    <Compile Include="Misc\AppSettings.cs" />
+    <Compile Include="Events\CustomEventArgs\ConnectionEventArgs.cs" />
+    <Compile Include="Misc\ConnectionManager.cs" />
+    <Compile Include="Misc\ErrorHandler.cs" />
     <Compile Include="Misc\GlobalTwitchPatterns.cs" />
+    <Compile Include="Misc\PluginManager.cs" />
+    <Compile Include="Misc\SettingsManager.cs" />
+    <Compile Include="Misc\Settings\ConnectionSettings.cs" />
+    <Compile Include="Misc\Settings\SettingsBase.cs" />
     <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\Poll\Poll.cs" />
     <Compile Include="Plugins\Poll\PollOption.cs" />
@@ -184,7 +204,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)settings.json" "$(TargetDir)settings.json" /y</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.101.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.101.0\build\net45\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

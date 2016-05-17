@@ -120,6 +120,9 @@
   <data name="app_connected" xml:space="preserve">
     <value>##### Connected! #####</value>
   </data>
+  <data name="app_disconnected" xml:space="preserve">
+    <value>##### Disconnected! #####</value>
+  </data>
   <data name="app_language" xml:space="preserve">
     <value>Locale set to English. OS language is: {0}.</value>
   </data>

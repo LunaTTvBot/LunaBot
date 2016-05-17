@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using IBot.Events;
-using IBot.Events.Commands;
 using IBot.Misc;
-using IBot.Plugins;
 using IBot.Resources;
 using NLog;
 
@@ -17,71 +11,31 @@ namespace IBot
     internal class App
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
-        public static List<string> BotChannelList;
-        private IrcConnection _connection;
 
         public void StartApp()
         {
             AppDomain.CurrentDomain.SetData("DataDirectory", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
 
-            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("de-DE");
-            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
+            RuntimeHelpers.RunClassConstructor(typeof(CommandManager).TypeHandle);
+            RuntimeHelpers.RunClassConstructor(typeof(EventManager).TypeHandle);
+            RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
 
-            const string settingsFileName = "settings.json";
-            AppSettings settings;
-
-            if (!AppSettings.TryLoad(settingsFileName, out settings))
-            {
-                settings = AppSettings.LoadLocal(settingsFileName);
-            }
-
-            BotChannelList = settings.ChannelList;
-
-            _connection = new IrcConnection(
-                settings.Username,
-                settings.TwitchApiKey,
-                settings.Nickname,
-                settings.Url,
-                settings.Port,
-                ConnectionType.BotCon
-                );
-
-            if (_connection.Connect())
+            ThreadPool.QueueUserWorkItem(_ =>
             {
                 UserDatabaseManager.Initialise();
+            });
+            
+            ConnectionManager.BotConnectedEvent += (s, a) =>
+            {				
+                Console.WriteLine(app.app_connected);			
+				
+                PluginManager.BindEvents();
 
-                var consoleAssembly = Assembly.GetExecutingAssembly();
-                var pluginTypes = GetTypesByInterface<IPlugin>(consoleAssembly);
+                // RegisterChannelEvents();
+                // RegisterUserEvents();
+            };
 
-                // List<IPlugin> plugins = new List<IPlugin>();
-                foreach (var pluginType in pluginTypes)
-                {
-                    var plugin = Activator.CreateInstance(pluginType) as IPlugin;
-                    // plugins.Add(plugin);
-                    plugin?.Execute();
-                }
-
-                CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
-                {
-                    RegEx = @"!test\s?(.*)",
-                    Name = "Test",
-                    Action = (command, matches, mArgs) =>
-                    {
-                        IrcConnection.Write(ConnectionType.BotCon, mArgs.Channel,
-                            $"Ja, Test ({matches.Groups[1].Value})!");
-                    }
-                });
-
-                RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
-                settings.Save(settingsFileName);
-                Console.WriteLine(app.app_connected);
-                _connection.RaiseMessageEvent += (sender, args) => _logger.Trace(args.Message);
-                BotChannelList.ForEach(channel => _connection.Join(channel));
-                RegisterChannelEvents();
-                RegisterUserEvents();
-            }
-
-            Console.ReadLine();
+            ConnectionManager.BotDisconnectedEvent += (s, a) => { Console.WriteLine(app.app_disconnected); };
         }
 
         private static void RegisterUserEvents()
@@ -111,18 +65,9 @@ namespace IBot
                 (sender, args) => Console.WriteLine($"Operator {args.OpType}: {args.User}@{args.Channel}");
         }
 
-        public static List<Type> GetTypesByInterface<T>(Assembly assembly)
-        {
-            if (!typeof(T).IsInterface)
-                throw new ArgumentException("T must be an interface");
-
-            return assembly.GetTypes()
-                .Where(x => x.GetInterface(typeof(T).Name) != null)
-                .ToList();
-        }
-
         public void StopApp()
         {
+            ConnectionManager.DisconnectFromBotAccount();
         }
     }
 }

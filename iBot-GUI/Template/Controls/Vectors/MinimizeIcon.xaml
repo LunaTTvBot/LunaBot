@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="iBot_GUI.Template.Controls.Vectors.MinimizeIcon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             x:Name="MinimizeIconUserControl"
+             d:DesignHeight="300" d:DesignWidth="300" Width="34" Height="26">
+    <Grid x:Name="LayoutRoot">
+        <Grid Width="10" Height="10">
+            <Rectangle Fill="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}"
+                       Margin="0,0,1,0"
+                       Width="9"
+                       Height="3"
+                       VerticalAlignment="Bottom"
+                       d:LayoutOverrides="Height" />
+        </Grid>
+        <Rectangle Fill="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}}" Opacity="0" />
+    </Grid>
+</UserControl>

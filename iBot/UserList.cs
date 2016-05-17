@@ -15,7 +15,7 @@ namespace IBot
 {
     internal static class UserList
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private static readonly HashSet<Channel> Channels = new HashSet<Channel>();
         private static readonly HashSet<Channel> ApiChannels = new HashSet<Channel>();
         private static Timer _myTimer;
@@ -38,37 +38,46 @@ namespace IBot
 
         private static void Start(object o)
         {
-            ChannelEventManager.UserListEvent += AddListUsersToSet;
-            ChannelEventManager.UserJoinEvent += AddJoinedUsersToSet;
-            ChannelEventManager.UserPartEvent += RemovePartingUsersFromSet;
-            UserEventManager.UserPublicMessageEvent += AddChattingUsersToSet;
-
-            if (_myTimer == null)
+            ConnectionManager.BotConnectedEvent += (s, e) =>
             {
-                _myTimer = new Timer(60*1000*1); // 1 minute
-                _myTimer.Elapsed += UpdateRegisteredChannelsFromApi;
-                _myTimer.AutoReset = true;
-            }
+                ChannelEventManager.UserListEvent += AddListUsersToSet;
+                ChannelEventManager.UserJoinEvent += AddJoinedUsersToSet;
+                ChannelEventManager.UserPartEvent += RemovePartingUsersFromSet;
+                UserEventManager.UserPublicMessageEvent += AddChattingUsersToSet;
 
-            _myTimer.Enabled = true;
-
-            // get chatters count from tmi
-            foreach (var channelName in App.BotChannelList)
-            {
-                var channel = new Channel(channelName);
-
-                if (!Channels.Contains(channel))
-                    Channels.Add(channel);
-
-                var chatters = TmiApi.TmiApi.GetChannelChatters(channel.Name);
-                if (chatters?.Count > 400)
+                if (_myTimer == null)
                 {
-                    /**
-                     * If there are more then 400 chatters we request chatters from tmi in 1 minute interval
-                     */
-                    UseApi(chatters, channel);
+                    _myTimer = new Timer(60*1000*1); // 1 minute
+                    _myTimer.Elapsed += UpdateRegisteredChannelsFromApi;
+                    _myTimer.AutoReset = true;
                 }
-            }
+
+                _myTimer.Enabled = true;
+
+                // get chatters count from tmi
+                foreach (var channelName in SettingsManager.GetConnectionSettings().ChannelList)
+                {
+                    var channel = new Channel(channelName);
+
+                    if (!Channels.Contains(channel))
+                        Channels.Add(channel);
+
+                    var chatters = TmiApi.TmiApi.GetChannelChatters(channel.Name);
+                    if (chatters?.Count > 400)
+                    {
+                        /**
+                         * If there are more then 400 chatters we request chatters from tmi in 1 minute interval
+                         */
+                        UseApi(chatters, channel);
+                    }
+                }
+            };
+
+            ConnectionManager.BotDisconnectedEvent += (s, e) =>
+            {
+                _myTimer.Stop();
+                _myTimer = null;
+            };
         }
 
         private static void UseApi(ChannelChatters chatters, Channel channel)

@@ -120,6 +120,9 @@
   <data name="app_connected" xml:space="preserve">
     <value>##### Verbunden! #####</value>
   </data>
+  <data name="app_disconnected" xml:space="preserve">
+    <value>##### Verbindung getrennt! #####</value>
+  </data>
   <data name="app_language" xml:space="preserve">
     <value>Die Sprache wurde auf deutsch gestellt. Betriebssystem Sprache ist: {0}</value>
   </data>

@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="iBot_GUI.Template.Controls.Vectors.LogoModel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:iBot_GUI.Template.Controls.Vectors"
+             mc:Ignorable="d" 
+             x:Name="LogoUserControl"
+             d:DesignWidth="640" d:DesignHeight="480" Width="41" Height="40">
+    <Grid>
+        <Canvas Width="40" Height="40" HorizontalAlignment="Left">
+            <Canvas.RenderTransform>
+                <MatrixTransform Matrix="0.9999999 0 0 1.1764115 -274.63065 -1196.5078" />
+            </Canvas.RenderTransform>
+            <Canvas>
+                <Canvas.RenderTransform>
+                    <MatrixTransform Matrix="0.23930484 0 0 -0.19937915 302.98682 1040.8979" />
+                </Canvas.RenderTransform>
+                <Path Fill="#FF6441A5"
+                      Data="m -1.4274639 0 -13.6520011 -13.651 -21.445 0 -11.699 -11.697 0 11.697 -17.548 0 0 56.544 64.3440011 0 0 -42.893 z m -72.1460011 50.692 -3.899 -15.599 0 -70.19 17.55 0 0 -9.751 9.746 0 9.752 9.751 15.596 0 31.1960006 31.192 0 54.597 -79.9410006 0 z" />
+            </Canvas>
+            <Path Fill="#FF6441A5"
+                  Data="m 857.5585 839.75611 1.49307 0 0 3.73253 -1.49307 0 0 -3.73253 z m 4.1057 0 1.49308 0 0 3.73253 -1.49308 0 0 -3.73253 z">
+                <Path.RenderTransform>
+                    <MatrixTransform Matrix="1.25 0 0 -1.25 -779.56837 2089.8162" />
+                </Path.RenderTransform>
+            </Path>
+            <Path Fill="#FFFF7B00"
+                  Data="m 288.61562 1025.2657 2.52983 2.1078 c 1.78461 1.4869 2.91956 2.9353 2.54473 3.2476 l -2.50822 2.0897 c -0.37484 0.3123 -2.11332 -0.6332 -3.89794 -2.1201 l -2.52983 -2.1078 c -1.78462 -1.4868 -2.91957 -2.9353 -2.54473 -3.2476 l 2.50822 -2.0897 c 0.37484 -0.3123 2.11332 0.6333 3.89794 2.1201 z" />
+            <Canvas Opacity="1">
+                <Canvas.RenderTransform>
+                    <MatrixTransform Matrix="0.04269988 0 0 -0.03557582 250.62431 1076.8461" />
+                </Canvas.RenderTransform>
+                <Path Fill="#FFFF7B00"
+                      Data="m 231.68359 509.22852 c -22.48986 0.0328 -44.98207 0.20434 -67.46875 0.0586 -33.07995 0.14962 -66.418412 2.02583 -98.798824 9.1582 -12.01415 3.8965 -29.821591 5.31702 -34.564454 18.85352 l 0 52.05469 371.458988 0 0 -42.34961 c 1.00337 -8.49788 -0.82773 -17.93091 -10.44727 -20.62891 -29.14069 -12.45437 -61.49833 -14.1918 -92.72461 -16.37305 -22.47775 -0.70031 -44.96521 -0.80623 -67.45508 -0.77343 z">
+                    <Path.RenderTransform>
+                        <MatrixTransform Matrix="0.8 0 0 -0.8 623.6547 1671.853" />
+                    </Path.RenderTransform>
+                </Path>
+            </Canvas>
+            <Path Fill="#FFFF7B00"
+                  Data="m 297.17817 1024.3936 0 2.9808 c 0 2.1027 -0.42676 3.7956 -0.95686 3.7956 l -3.54716 0 c -0.5301 0 -0.95685 -1.6929 -0.95685 -3.7956 l 0 -2.9808 c 0 -2.1028 0.42675 -3.7956 0.95685 -3.7956 l 3.54716 0 c 0.5301 0 0.95686 1.6928 0.95686 3.7956 z" />
+            <Path Fill="#FFFF7B00"
+                  Data="m 300.77881 1025.6461 -2.52982 2.1077 c -1.78462 1.4869 -2.91957 2.9353 -2.54474 3.2476 l 2.50822 2.0898 c 0.37484 0.3123 2.11332 -0.6333 3.89794 -2.1202 l 2.52983 -2.1077 c 1.78462 -1.4869 2.91957 -2.9353 2.54473 -3.2476 l -2.50822 -2.0898 c -0.37484 -0.3123 -2.11332 0.6333 -3.89794 2.1202 z" />
+            <Path Fill="#FFFF7B00"
+                  Data="m 303.73492 1031.8578 c 0.76825 9e-4 1.53658 0.01 2.30472 0 1.13001 0 2.26885 0.058 3.37496 0.2606 0.4104 0.1109 1.0187 0.1514 1.18072 0.5366 l 0 1.4815 -12.68901 0 0 -1.2053 c -0.0343 -0.2418 0.0283 -0.5103 0.35688 -0.5871 0.99545 -0.3544 2.10078 -0.4039 3.16747 -0.466 0.76783 -0.02 1.536 -0.023 2.30426 -0.022 z" />
+            <Path Fill="#FFFF7B00"
+                  StrokeThickness="1.34956074" StrokeLineJoin="Miter" StrokeStartLineCap="Flat"
+                  StrokeEndLineCap="Flat"
+                  Data="m 283.46607 1034.1405 a 10.983085 9.1506642 0 0 1 10.98309 -9.1507 10.983085 9.1506642 0 0 1 10.98308 9.1507" />
+            <Path Fill="#FFFF7B00"
+                  Data="m 136.62038 200.95609 c -0.30759 0.53275 -149.183175 0.53275 -149.490762 -1e-5 C -13.177969 200.42333 61.259826 71.493286 61.875 71.493286 c 0.615174 0 75.05297 128.930044 74.74538 129.462804 z">
+                <Path.RenderTransform>
+                    <MatrixTransform Matrix="0.00812702 -0.00677111 0.05136155 0.04279237 271.18068 1015.0264" />
+                </Path.RenderTransform>
+            </Path>
+            <Ellipse Canvas.Left="274.6" Width="4.7"
+                     Canvas.Top="1017.1" Height="3.9" Fill="#FFFF7B00" />
+            <Path Fill="#FFFF7B00"
+                  Data="m 136.62038 200.95609 c -0.30759 0.53275 -149.183175 0.53275 -149.490762 -1e-5 C -13.177969 200.42333 61.259826 71.493286 61.875 71.493286 c 0.615174 0 75.05297 128.930044 74.74538 129.462804 z">
+                <Path.RenderTransform>
+                    <MatrixTransform
+                        Matrix="-0.00812702 -0.00677111 -0.05136155 0.04279237 318.09433 1015.2629" />
+                </Path.RenderTransform>
+            </Path>
+            <Ellipse Canvas.Left="310" Width="5"
+                     Canvas.Top="1017" Height="4" Fill="#FFFF7B00">
+            </Ellipse>
+        </Canvas>
+    </Grid>
+</UserControl>

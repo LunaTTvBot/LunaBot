@@ -9,6 +9,9 @@
 //------------------------------------------------------------------------------
 
 namespace IBot.Resources {
+    using System;
+    
+    
     /// <summary>
     ///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
     /// </summary>
@@ -63,6 +66,15 @@ namespace IBot.Resources {
         internal static string app_connected {
             get {
                 return ResourceManager.GetString("app_connected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ##### Disconnected! ##### ähnelt.
+        /// </summary>
+        internal static string app_disconnected {
+            get {
+                return ResourceManager.GetString("app_disconnected", resourceCulture);
             }
         }
         

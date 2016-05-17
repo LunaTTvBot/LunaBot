@@ -7,7 +7,6 @@ using System.Threading;
 using IBot.Events;
 using IBot.Events.Commands;
 using IBot.Events.CustomEventArgs;
-using IBot.Misc;
 using NLog;
 using PollLocale = IBot.Resources.Plugins.Poll.poll;
 using Timer = System.Timers.Timer;
@@ -71,9 +70,10 @@ namespace IBot.Plugins.Poll
 
         public string PluginName => PollLocale.poll_plugin_name;
 
-        public void Execute()
+        public void BindEvents()
         {
             _logger.Debug("{0} {1}", PluginName, PollLocale.poll_plugin_loaded);
+			
             CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
             {
                 RegEx = "!poll(.*)",
@@ -96,6 +96,11 @@ namespace IBot.Plugins.Poll
             });
         }
 
+        public void Init()
+        {
+            _logger.Trace($"{PluginName} {PollLocale.poll_plugin_loaded}");
+        }
+
         private static void SendMessage(string msg, AnswerType aType, string target)
         {
             IrcConnection.Write(ConnectionType.BotCon, aType, target, msg);
@@ -105,14 +110,13 @@ namespace IBot.Plugins.Poll
         {
             if (pollParams != "") return false;
 
-            SendMessage(Thread.CurrentThread.CurrentUICulture.Name, AnswerType.Public, "ipaat");
             SendMessage(PollLocale.poll_help, answerT, answerTarget);
 
             return true;
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_created"/>
+        ///     Prints: <see cref="PollLocale.poll_created" />
         /// </summary>
         /// <param name="pollParams"></param>
         /// <param name="answerType"></param>
@@ -151,7 +155,7 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_created"/>
+        ///     Prints: <see cref="PollLocale.poll_created" />
         /// </summary>
         /// <param name="pollParams"></param>
         /// <param name="answerType"></param>
@@ -190,7 +194,7 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: #ID [- TITLE] (STATE) 1:Opt1, 2:Opt2
+        ///     Prints: #ID [- TITLE] (STATE) 1:Opt1, 2:Opt2
         /// </summary>
         /// <param name="pollParams"></param>
         /// <param name="answerType"></param>
@@ -284,7 +288,7 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_removed"/>
+        ///     Prints: <see cref="PollLocale.poll_removed" />
         /// </summary>
         /// <param name="p"></param>
         /// <param name="answerType"></param>
@@ -303,7 +307,7 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_aborted"/>
+        ///     Prints: <see cref="PollLocale.poll_aborted" />
         /// </summary>
         /// <param name="p"></param>
         /// <param name="answerType"></param>
@@ -329,7 +333,7 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_resetted"/>
+        ///     Prints: <see cref="PollLocale.poll_resetted" />
         /// </summary>
         /// <param name="p"></param>
         /// <param name="answerType"></param>
@@ -359,7 +363,7 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_result"/>
+        ///     Prints: <see cref="PollLocale.poll_result" />
         /// </summary>
         /// <param name="p"></param>
         /// <param name="answerType"></param>
@@ -513,7 +517,7 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_voted"/>
+        ///     Prints: <see cref="PollLocale.poll_voted" />
         /// </summary>
         /// <param name="voteParams"></param>
         /// <param name="aType"></param>
@@ -557,8 +561,8 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_started"/> after start and
-        /// <see cref="PollLocale.poll_finished"/> after minutes in <paramref name="time"/> expired.
+        ///     Prints: <see cref="PollLocale.poll_started" /> after start and
+        ///     <see cref="PollLocale.poll_finished" /> after minutes in <paramref name="time" /> expired.
         /// </summary>
         /// <param name="poll"></param>
         /// <param name="time"></param>
@@ -595,10 +599,11 @@ namespace IBot.Plugins.Poll
 
                     var max = res.VotesPerOption.Values.Max();
                     var percent = 0D;
-                    if (max > 0) percent = max / (double) res.All;
+                    if (max > 0) percent = max/(double) res.All;
 
                     var text = string.Format(PollLocale.poll_finished, prefix,
-                        res.VotesPerOption.FirstOrDefault(x => x.Value == max).Key.Name, max, percent.ToString("0.00%"), res.All, poll.Id);
+                        res.VotesPerOption.FirstOrDefault(x => x.Value == max).Key.Name, max, percent.ToString("0.00%"),
+                        res.All, poll.Id);
 
                     SendMessage(text, answerType, answerTarget);
                 };
