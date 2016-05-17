@@ -113,13 +113,13 @@
     <Compile Include="Events\Args\UserList\UserListEventArgs.cs" />
     <Compile Include="Events\Args\Users\UserStateEventArgs.cs" />
     <Compile Include="Events\EventManager.cs" />
-    <Compile Include="Events\Misc\RoomStateTags.cs" />
-    <Compile Include="Events\Misc\UserStateTags.cs" />
+    <Compile Include="Events\Tags\RoomStateTags.cs" />
+    <Compile Include="Events\Tags\UserStateTags.cs" />
     <Compile Include="Events\UserEventManager.cs" />
     <Compile Include="Core\IrcConnection.cs" />
     <Compile Include="Events\Args\Users\MessageEventArgs.cs" />
-    <Compile Include="Misc\AppSettings.cs" />
-    <Compile Include="Misc\GlobalTwitchPatterns.cs" />
+    <Compile Include="Core\AppSettings.cs" />
+    <Compile Include="Core\GlobalTwitchPatterns.cs" />
     <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\Poll\Poll.cs" />
     <Compile Include="Plugins\Poll\PollOption.cs" />
@@ -128,7 +128,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Events\Args\Users\UserEventArgs.cs" />
-    <Compile Include="Events\Misc\UserMessageTags.cs" />
+    <Compile Include="Events\Tags\UserMessageTags.cs" />
     <Compile Include="Events\Args\Users\UserPublicMessageEventArgs.cs" />
     <Compile Include="Events\Args\Users\UserWhisperMessageEventArgs.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

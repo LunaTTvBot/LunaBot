@@ -1,4 +1,4 @@
-﻿using IBot.Events.Misc;
+﻿using IBot.Events.Tags;
 
 namespace IBot.Events.Args.Users
 {

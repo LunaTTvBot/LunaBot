@@ -1,26 +1,30 @@
-﻿namespace IBot.Events.Misc
+﻿namespace IBot.Events.Tags
 {
-    internal class UserStateTags
+    internal class UserMessageTags
     {
-        public UserStateTags(string color, string displayName, string emoteSets, bool moderator,
+        public UserMessageTags(string color, string displayName, string emotes, bool moderator, long roomId,
             bool subscriber,
-            bool turbo, string userType)
+            bool turbo, long userId, string userType)
         {
             Color = color;
             DisplayName = displayName;
-            EmoteSets = emoteSets;
+            Emotes = emotes;
             Moderator = moderator;
+            RoomId = roomId;
             Subscriber = subscriber;
             Turbo = turbo;
+            UserId = userId;
             UserType = userType;
         }
 
         public string Color { get; }
         public string DisplayName { get; }
-        public string EmoteSets { get; }
+        public string Emotes { get; }
         public bool Moderator { get; }
+        public long RoomId { get; }
         public bool Subscriber { get; }
         public bool Turbo { get; }
+        public long UserId { get; }
         public string UserType { get; }
     }
 }

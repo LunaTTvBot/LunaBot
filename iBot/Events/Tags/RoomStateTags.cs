@@ -1,4 +1,4 @@
-﻿namespace IBot.Events.Misc
+﻿namespace IBot.Events.Tags
 {
     internal class RoomStateTags
     {

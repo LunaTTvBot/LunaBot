@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using IBot.Core;
 using IBot.Events.Args.Users;
-using IBot.Events.Misc;
+using IBot.Events.Tags;
 
 namespace IBot.Events
 {
