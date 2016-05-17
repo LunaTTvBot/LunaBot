@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
+using IBot.Core;
+using IBot.Events.Args.Users;
 using IBot.Events.Commands;
-using IBot.Events.CustomEventArgs;
 
 namespace IBot.Events
 {

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using IBot.Events.CustomEventArgs;
-using IBot.Events.Misc;
-using IBot.Misc;
+using IBot.Core;
+using IBot.Events.Args.RoomState;
+using IBot.Events.Args.UserList;
+using IBot.Events.Args.Users;
+using IBot.Events.Tags;
 
 namespace IBot.Events
 {
