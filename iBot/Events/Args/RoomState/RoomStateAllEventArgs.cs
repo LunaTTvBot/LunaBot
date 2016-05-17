@@ -1,6 +1,6 @@
 ﻿using IBot.Events.Misc;
 
-namespace IBot.Events.CustomEventArgs
+namespace IBot.Events.Args.RoomState
 {
     internal class RoomStateAllEventArgs
     {

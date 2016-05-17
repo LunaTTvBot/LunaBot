@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IBot.Events.CustomEventArgs.UserList
+namespace IBot.Events.Args.UserList
 {
     internal class UserPartedEventArgs
     {

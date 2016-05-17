@@ -1,4 +1,4 @@
-﻿namespace IBot.Events.CustomEventArgs
+﻿namespace IBot.Events.Args.Users
 {
     internal class OperatorModeEventArgs
     {

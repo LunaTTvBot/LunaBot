@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using IBot.Events.CustomEventArgs;
+using IBot.Events.Args.Users;
 using IBot.Events.Misc;
 using IBot.Misc;
 

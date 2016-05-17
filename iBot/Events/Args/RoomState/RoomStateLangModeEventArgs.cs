@@ -1,4 +1,4 @@
-﻿namespace IBot.Events.CustomEventArgs
+﻿namespace IBot.Events.Args.RoomState
 {
     internal class RoomStateLangModeEventArgs
     {

@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
-using IBot.Events.CustomEventArgs;
+using IBot.Events.Args.Users;
 using IBot.Misc;
 
 namespace IBot

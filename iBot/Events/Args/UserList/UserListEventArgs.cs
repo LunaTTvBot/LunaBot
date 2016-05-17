@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace IBot.Events.CustomEventArgs
+namespace IBot.Events.Args.UserList
 {
     internal class UserListEventArgs
     {

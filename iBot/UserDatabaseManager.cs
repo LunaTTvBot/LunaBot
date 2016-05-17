@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Timers;
-using IBot.Events.CustomEventArgs.UserList;
+using IBot.Events.Args.UserList;
 using NLog;
 using Timer = System.Timers.Timer;
 

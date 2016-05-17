@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IBot.Events.CustomEventArgs
+namespace IBot.Events.Args.Users
 {
     internal class MessageEventArgs : EventArgs
     {
