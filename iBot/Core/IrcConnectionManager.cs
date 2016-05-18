@@ -85,13 +85,11 @@ namespace IBot.Core
             {
                 var type = kvp.Key;
                 var con = kvp.Value;
-                _connectionHandlers[type].ForEach(e => con.RaiseMessageEvent += e);
-                var success = con.Connect();
-                // wait a little so that this connection can initialize properly
-                if (success)
-                    System.Threading.Thread.Sleep(1000);
 
-                return success;
+                if (_connectionHandlers.ContainsKey(type))
+                    _connectionHandlers[type].ForEach(e => con.RaiseMessageEvent += e);
+
+                return con.Connect();
             });
         }
 

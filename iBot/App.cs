@@ -36,8 +36,8 @@ namespace IBot
 
             BotChannelList = settings.ChannelList;
 
-            IrcConnectionManager.RegisterHandler(ConnectionType.BotCon, (sender, args) => _logger.Error("bot: " + args.Message));
-            IrcConnectionManager.RegisterHandler(ConnectionType.ChatCon, (sender, args) => _logger.Error("chat: " + args.Message));
+            IrcConnectionManager.RegisterHandler(ConnectionType.BotCon, (sender, args) => _logger.Debug("bot: " + args.Message));
+            IrcConnectionManager.RegisterHandler(ConnectionType.ChatCon, (sender, args) => _logger.Debug("chat: " + args.Message));
 
             IrcConnectionManager.RegisterConnection(
                 settings.BotUsername,
@@ -56,8 +56,6 @@ namespace IBot
                 settings.Port,
                 ConnectionType.ChatCon
             );
-
-            IrcConnectionManager.ConnectAll();
 
             if (IrcConnectionManager.ConnectAll())
             {

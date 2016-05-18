@@ -44,6 +44,7 @@ namespace IBot.Core
 
         internal IrcConnection(string user, string password, string nick, string url, int port, ConnectionType conType)
         {
+            _logger.Error("IrcConnection created");
             _user = user;
             _password = password;
             _nick = nick;
