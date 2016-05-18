@@ -17,7 +17,6 @@ namespace IBot
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         public static List<string> BotChannelList;
-        private IrcConnection _connection;
 
         public void StartApp()
         {
@@ -36,26 +35,30 @@ namespace IBot
 
             BotChannelList = settings.ChannelList;
 
-            IrcConnectionManager.RegisterHandler(ConnectionType.BotCon, (sender, args) => _logger.Debug("bot: " + args.Message));
-            IrcConnectionManager.RegisterHandler(ConnectionType.ChatCon, (sender, args) => _logger.Debug("chat: " + args.Message));
+            IrcConnectionManager.RegisterMessageHandler(ConnectionType.BotCon, (sender, args) => _logger.Debug("bot: " + args.Message));
+            IrcConnectionManager.RegisterMessageHandler(ConnectionType.ChatCon, (sender, args) => _logger.Debug("chat: " + args.Message));
+
+            BotChannelList.ForEach(channel =>
+            {
+                IrcConnectionManager.RegisterOnConnectedHandler(ConnectionType.BotCon, (sender, args) => args.Connection.Join(channel));
+                IrcConnectionManager.RegisterOnConnectedHandler(ConnectionType.ChatCon, (sender, args) => args.Connection.Join(channel));
+            });
 
             IrcConnectionManager.RegisterConnection(
-                settings.BotUsername,
-                settings.BotTwitchApiKey,
-                settings.BotNickname,
-                settings.Url,
-                settings.Port,
-                ConnectionType.BotCon
-            );
+                user: settings.BotUsername,
+                password: settings.BotTwitchApiKey,
+                nickname: settings.BotNickname,
+                url: settings.Url,
+                port: settings.Port,
+                type: ConnectionType.BotCon);
 
             IrcConnectionManager.RegisterConnection(
-                settings.OwnerUsername,
-                settings.OwnerTwitchApiKey,
-                settings.OwnerNickname,
-                settings.Url,
-                settings.Port,
-                ConnectionType.ChatCon
-            );
+                user: settings.OwnerUsername,
+                password: settings.OwnerTwitchApiKey,
+                nickname: settings.OwnerNickname,
+                url: settings.Url,
+                port: settings.Port,
+                type: ConnectionType.ChatCon);
 
             if (IrcConnectionManager.ConnectAll())
             {
@@ -86,8 +89,6 @@ namespace IBot
                 RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
                 settings.Save(settingsFileName);
                 Console.WriteLine(app.app_connected);
-                _connection = IrcConnectionManager.GetConnection(ConnectionType.BotCon);
-                BotChannelList.ForEach(channel => _connection.Join(channel));
                 RegisterChannelEvents();
                 RegisterUserEvents();
             }

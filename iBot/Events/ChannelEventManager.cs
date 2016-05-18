@@ -58,7 +58,7 @@ namespace IBot.Events
 
         static ChannelEventManager()
         {
-            IrcConnectionManager.RegisterHandler(ConnectionType.BotCon, CheckAndRaiseChannelEvents);
+            IrcConnectionManager.RegisterMessageHandler(ConnectionType.BotCon, CheckAndRaiseChannelEvents);
         }
 
         public static void CheckAndRaiseChannelEvents(object sender, MessageEventArgs eArgs)
