@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using IBot.Events.Args.Users;
+using NLog;
 
 namespace IBot.Core
 {
@@ -22,6 +23,8 @@ namespace IBot.Core
 
     internal class IrcConnection
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+
         private static readonly Dictionary<ConnectionType, IrcConnection> ConType =
             new Dictionary<ConnectionType, IrcConnection>();
 
@@ -30,18 +33,18 @@ namespace IBot.Core
         private readonly string _password;
         private readonly int _port;
         private readonly string _url;
-
         private readonly string _user;
-        private TcpClient _client;
 
+        private TcpClient _client;
         private StreamReader _reader;
         private NetworkStream _stream;
-
         private Thread _thread;
         private StreamWriter _writer;
+        private bool _work;
 
-        public IrcConnection(string user, string password, string nick, string url, int port, ConnectionType conType)
+        internal IrcConnection(string user, string password, string nick, string url, int port, ConnectionType conType)
         {
+            _logger.Error("IrcConnection created");
             _user = user;
             _password = password;
             _nick = nick;
@@ -55,16 +58,11 @@ namespace IBot.Core
             catch (Exception)
             {
                 throw new InvalidOperationException(
-                    "This type of connection already exists. Use GetIrcConnection(conType) to get the instance.");
+                    "This type of connection already exists. Use IrcConnectionManager.GetConnection(ConnectionType) to get the instance.");
             }
         }
 
         public event EventHandler<MessageEventArgs> RaiseMessageEvent;
-
-        public static IrcConnection GetIrcConnection(ConnectionType conType)
-        {
-            return ConType[conType];
-        }
 
         public bool Connect()
         {
@@ -101,10 +99,36 @@ namespace IBot.Core
                 _channelList.ForEach(Join);
             }
 
+            _work = true;
             _thread = new Thread(ReadConnection);
             _thread.Start();
 
             return true;
+        }
+
+        public bool Close()
+        {
+            try
+            {
+                _work = false;
+
+                _client?.Close();
+                _stream?.Close();
+                _reader?.Close();
+                _writer?.Close();
+
+                _client = null;
+                _stream = null;
+                _reader = null;
+                _writer = null;
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.Warn(e);
+                return false;
+            }
         }
 
         public void Join(string channel)
@@ -155,6 +179,9 @@ namespace IBot.Core
         {
             while (_client.Connected)
             {
+                if (!_work)
+                    return;
+
                 if (!_stream.DataAvailable) continue;
 
                 var data = _reader.ReadLine();

@@ -22,7 +22,7 @@ namespace IBot.Events
 
         private static void Start()
         {
-            IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += CheckAndRaiseGlobalCommands;
+            IrcConnectionManager.RegisterMessageHandler(ConnectionType.BotCon, CheckAndRaiseGlobalCommands);
             UserEventManager.UserPublicMessageEvent += CheckAndRaisePublicCommands;
             UserEventManager.UserWhisperMessageEvent += CheckAndRaiseWhisperCommands;
         }

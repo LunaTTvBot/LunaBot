@@ -57,8 +57,8 @@ namespace IBot.Events
         private static readonly Regex RegExUserList = new Regex(UserListPattern);
 
         static ChannelEventManager()
-        {                     
-            IrcConnection.GetIrcConnection(ConnectionType.BotCon).RaiseMessageEvent += CheckAndRaiseChannelEvents;
+        {
+            IrcConnectionManager.RegisterMessageHandler(ConnectionType.BotCon, CheckAndRaiseChannelEvents);
         }
 
         public static void CheckAndRaiseChannelEvents(object sender, MessageEventArgs eArgs)
