@@ -92,7 +92,7 @@ namespace IBot.Core.Settings
             }
         }
 
-        public bool Save(string settingsFileName)
+        public static bool Save(T settings, string settingsFileName)
         {
             var p = Path.Combine(SettingsPath, settingsFileName);
             try
@@ -101,7 +101,7 @@ namespace IBot.Core.Settings
                 if (File.Exists(p))
                     File.Delete(p);
 
-                var json = JsonConvert.SerializeObject(this);
+                var json = JsonConvert.SerializeObject(settings);
 
                 using (var stream = File.Open(p, FileMode.CreateNew))
                 {

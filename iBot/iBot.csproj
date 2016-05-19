@@ -89,6 +89,9 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="Core\IrcConnectionManager.cs" />
+    <Compile Include="Core\SettingsManager.cs" />
+    <Compile Include="Core\Settings\ConnectionSettings.cs" />
+    <Compile Include="Core\Settings\SettingsBase.cs" />
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Database\DatabaseContext.cs" />

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace IBot.Core.Settings
 {
-    internal class ConnectionSettings : SettingsBase<ConnectionSettings>
+    internal class ConnectionSettings
     {
         [JsonProperty("owner_nickname")]
         public string OwnerNickname { get; set; } = "";
