@@ -57,6 +57,7 @@ namespace IBot
             if (IrcConnectionManager.ConnectAll())
             {
                 UserDatabaseManager.Initialise();
+                PermissionManager.Initialise();
 
                 var consoleAssembly = Assembly.GetExecutingAssembly();
                 var pluginTypes = GetTypesByInterface<IPlugin>(consoleAssembly);
