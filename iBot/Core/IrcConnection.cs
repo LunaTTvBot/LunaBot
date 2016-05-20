@@ -224,7 +224,7 @@ namespace IBot.Core
             }
         }
 
-        internal void EnqueueMessage(string message, bool hasPriority = false) {
+        private void EnqueueMessage(string message, bool hasPriority = false) {
             (hasPriority ? _prioritySendQueue : _sendQueue).Enqueue(message);
         }
 
