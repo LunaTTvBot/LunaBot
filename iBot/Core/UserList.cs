@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Timers;
+using IBot.Core.Settings;
 using IBot.Events;
 using IBot.Events.Args.UserList;
 using IBot.Events.Args.Users;
@@ -53,7 +54,7 @@ namespace IBot.Core
             _myTimer.Enabled = true;
 
             // get chatters count from tmi
-            foreach (var channelName in App.BotChannelList)
+            foreach (var channelName in SettingsManager.GetSettings<ConnectionSettings>().ChannelList)
             {
                 var channel = new Channel(channelName);
 

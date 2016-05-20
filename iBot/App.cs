@@ -23,6 +23,9 @@ namespace IBot
         {
             AppDomain.CurrentDomain.SetData("DataDirectory", Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
 
+            RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
+            RuntimeHelpers.RunClassConstructor(typeof(PluginManager).TypeHandle);
+
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("de-DE");
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
             var settings = SettingsManager.GetSettings<ConnectionSettings>();
@@ -62,17 +65,6 @@ namespace IBot
             {
                 UserDatabaseManager.Initialise();
 
-                var consoleAssembly = Assembly.GetExecutingAssembly();
-                var pluginTypes = GetTypesByInterface<IPlugin>(consoleAssembly);
-
-                // List<IPlugin> plugins = new List<IPlugin>();
-                foreach (var pluginType in pluginTypes)
-                {
-                    var plugin = Activator.CreateInstance(pluginType) as IPlugin;
-                    // plugins.Add(plugin);
-                    plugin?.Execute();
-                }
-
                 CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
                 {
                     RegEx = @"!test\s?(.*)",
@@ -84,7 +76,6 @@ namespace IBot
                     }
                 });
 
-                RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
                 Console.WriteLine(app.app_connected);
                 RegisterChannelEvents();
                 RegisterUserEvents();
