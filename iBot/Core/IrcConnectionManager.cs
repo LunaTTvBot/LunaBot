@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Common.CommandTrees;
 using System.Linq;
 using IBot.Events.Args.Connections;
 using IBot.Events.Args.Users;
@@ -29,7 +28,7 @@ namespace IBot.Core
                 new Dictionary<ConnectionType, List<EventHandler<ConnectionEventArgs>>>();
 
         private static readonly Dictionary<ConnectionType, List<EventHandler<ConnectionEventArgs>>>
-            DisconnectionConnectedHandlers =
+            ConnectionDisconnectedHandlers =
                 new Dictionary<ConnectionType, List<EventHandler<ConnectionEventArgs>>>();
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -112,6 +111,26 @@ namespace IBot.Core
             ConnectionConnectedHandlers[type].Add(handler);
         }
 
+        public static void RemoveOnDisconnectedHandler(ConnectionType type, EventHandler<ConnectionEventArgs> handler) {
+            if(!ConnectionDisconnectedHandlers.ContainsKey(type))
+                return;
+
+            if(ConnectionDisconnectedHandlers[type].Contains(handler)) {
+                ConnectionDisconnectedHandlers[type].Remove(handler);
+            }
+        }
+
+        public static void RegisterOnDisconnectedHandler(ConnectionType type, EventHandler<ConnectionEventArgs> handler) {
+            if(!ConnectionDisconnectedHandlers.ContainsKey(type))
+                ConnectionDisconnectedHandlers.Add(type, new List<EventHandler<ConnectionEventArgs>>());
+
+            // don't register methods twice
+            if(ConnectionDisconnectedHandlers[type].Contains(handler))
+                return;
+
+            ConnectionDisconnectedHandlers[type].Add(handler);
+        }
+
         public static bool ReconnectAll()
         {
             DisconnectAll();
@@ -146,6 +165,9 @@ namespace IBot.Core
                 var connection = kvp.Value;
                 ConnectionMessageHandlers[type].ForEach(e => connection.RaiseMessageEvent -= e);
                 connection.Close();
+
+                if(ConnectionDisconnectedHandlers.ContainsKey(type))
+                    ConnectionDisconnectedHandlers[type].ForEach(e => e.Invoke(null, new ConnectionEventArgs(connection)));
             }
         }
     }
