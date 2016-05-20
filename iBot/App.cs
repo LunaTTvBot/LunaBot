@@ -44,6 +44,8 @@ namespace IBot
                 nickname: settings.BotNickname,
                 url: settings.Url,
                 port: settings.Port,
+                caps: new [] { TwitchCaps.Commands, TwitchCaps.Membership, TwitchCaps.Tags },
+                secure: false,
                 type: ConnectionType.BotCon);
 
             IrcConnectionManager.RegisterConnection(
@@ -52,6 +54,8 @@ namespace IBot
                 nickname: settings.OwnerNickname,
                 url: settings.Url,
                 port: settings.Port,
+                caps: null,
+                secure: true,
                 type: ConnectionType.ChatCon);
 
             if (IrcConnectionManager.ConnectAll())

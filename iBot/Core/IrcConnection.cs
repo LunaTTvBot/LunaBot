@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Threading;
 using IBot.Events.Args.Users;
@@ -16,40 +18,54 @@ namespace IBot.Core
         ChatCon
     }
 
-    internal enum AnswerType {
+    internal enum AnswerType
+    {
         Public,
         Private
     }
 
     internal class IrcConnection
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         private static readonly Dictionary<ConnectionType, IrcConnection> ConType =
             new Dictionary<ConnectionType, IrcConnection>();
+
+        private readonly TwitchCaps[] _caps;
 
         private readonly List<string> _channelList = new List<string>();
         private readonly string _nick;
         private readonly string _password;
         private readonly int _port;
+        private readonly int _rateLimit;
+        private readonly bool _secure;
         private readonly string _url;
         private readonly string _user;
 
         private TcpClient _client;
+        private ConcurrentQueue<string> _prioritySendQueue = new ConcurrentQueue<string>();
         private StreamReader _reader;
+
+        private ConcurrentQueue<string> _sendQueue = new ConcurrentQueue<string>();
+        private SslStream _sslstream;
         private NetworkStream _stream;
         private Thread _thread;
-        private StreamWriter _writer;
         private bool _work;
+        private StreamWriter _writer;
 
-        internal IrcConnection(string user, string password, string nick, string url, int port, ConnectionType conType)
+        internal IrcConnection(string user, string password, string nick, string url, int port, ConnectionType conType,
+            TwitchCaps[] caps, bool secure, int rateLimit)
         {
-            _logger.Error("IrcConnection created");
+            _logger.Debug("IrcConnection created");
+
             _user = user;
             _password = password;
             _nick = nick;
             _url = url;
             _port = port;
+            _caps = caps;
+            _secure = secure;
+            _rateLimit = rateLimit;
 
             try
             {
@@ -68,7 +84,17 @@ namespace IBot.Core
         {
             if (_client == null)
             {
-                _client = new TcpClient(_url, _port);
+                try
+                {
+                    _client = new TcpClient(_url, _port);
+                }
+                catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                {
+                    Close();
+                    return false;
+                }
+
+                _sslstream = null;
                 _stream = null;
                 _reader = null;
                 _writer = null;
@@ -78,6 +104,20 @@ namespace IBot.Core
 
             if (_stream == null)
                 _stream = _client.GetStream();
+
+            if(_secure && _sslstream == null) {
+                try 
+                {
+                    var sslstream = new SslStream(_stream);
+                    sslstream.AuthenticateAsClient(_url);
+                    _sslstream = sslstream;
+                } 
+                catch(ObjectDisposedException) 
+                {
+                    Close();
+                    return false;
+                }
+            }
 
             if (_reader == null && _stream.CanRead)
                 _reader = new StreamReader(_stream);
@@ -159,11 +199,13 @@ namespace IBot.Core
             ConType[conType].Write(string.Format(GlobalTwitchPatterns.WritePublicFormat, channel, msg));
         }
 
-        public static void Write(ConnectionType conType, AnswerType aType, string target, string msg) {
-            if(!ConType.ContainsKey(conType))
+        public static void Write(ConnectionType conType, AnswerType aType, string target, string msg)
+        {
+            if (!ConType.ContainsKey(conType))
                 return;
 
-            switch(aType) {
+            switch (aType)
+            {
                 case AnswerType.Private:
                     Write(ConnectionType.BotCon, App.BotChannelList.First(), $"/w {target} {msg}");
                     break;
