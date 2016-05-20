@@ -258,6 +258,9 @@ namespace IBot.Core
         {
             while (_client.Connected)
             {
+                if(!_work)
+                    return;
+
                 string message;
                 if (!_prioritySendQueue.IsEmpty && _prioritySendQueue.TryDequeue(out message))
                 {
