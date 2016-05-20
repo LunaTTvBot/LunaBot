@@ -24,6 +24,8 @@ namespace IBot.Core
             }
         }
 
+        public static bool IsPluginLoaded(string name) => Plugins.Find(p => p.PluginName == name) != null;        
+
         private static IEnumerable<Type> GetTypesByInterface<T>(Assembly assembly) {
             if(!typeof(T).IsInterface)
                 throw new ArgumentException("T must be an interface");
