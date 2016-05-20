@@ -1,0 +1,13 @@
+﻿{
+  "owner_nickname": "",
+  "owner_username": "", 
+  "owner_apikey": "",
+  "bot_nickname": "",
+  "bot_username": "",
+  "bot_apikey": "",
+  "port": 6667,
+  "url": "irc.chat.twitch.tv",
+  "channel_list": [
+    "twitch"
+  ]
+}
