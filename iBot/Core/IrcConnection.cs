@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading;
 using IBot.Events.Args.Users;
 using NLog;
@@ -26,7 +27,8 @@ namespace IBot.Core
 
     internal class IrcConnection
     {
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly string[] MessageSeparators = {"\r\n"};
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static readonly Dictionary<ConnectionType, IrcConnection> ConType =
             new Dictionary<ConnectionType, IrcConnection>();
@@ -37,26 +39,25 @@ namespace IBot.Core
         private readonly string _nick;
         private readonly string _password;
         private readonly int _port;
+        private readonly ConcurrentQueue<string> _prioritySendQueue = new ConcurrentQueue<string>();
         private readonly int _rateLimit;
         private readonly bool _secure;
+
+        private readonly ConcurrentQueue<string> _sendQueue = new ConcurrentQueue<string>();
         private readonly string _url;
         private readonly string _user;
 
         private TcpClient _client;
-        private ConcurrentQueue<string> _prioritySendQueue = new ConcurrentQueue<string>();
-        private StreamReader _reader;
-
-        private ConcurrentQueue<string> _sendQueue = new ConcurrentQueue<string>();
+        private Thread _readerThread;
+        private Thread _senderThread;
         private SslStream _sslstream;
         private NetworkStream _stream;
-        private Thread _thread;
         private bool _work;
-        private StreamWriter _writer;
 
         internal IrcConnection(string user, string password, string nick, string url, int port, ConnectionType conType,
             TwitchCaps[] caps, bool secure, int rateLimit)
         {
-            _logger.Debug("IrcConnection created");
+            Logger.Debug("IrcConnection created");
 
             _user = user;
             _password = password;
@@ -80,6 +81,20 @@ namespace IBot.Core
 
         public event EventHandler<MessageEventArgs> RaiseMessageEvent;
 
+        public static bool ValidateServerCertificate(
+            object sender,
+            X509Certificate certificate,
+            X509Chain chain,
+            SslPolicyErrors sslPolicyErrors)
+        {
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
+            Console.WriteLine($"Certificate error: {sslPolicyErrors}");
+
+            return false;
+        }
+
         public bool Connect()
         {
             if (_client == null)
@@ -88,16 +103,15 @@ namespace IBot.Core
                 {
                     _client = new TcpClient(_url, _port);
                 }
-                catch (Exception ex) when (ex is SocketException || ex is ObjectDisposedException)
+                catch (Exception ex)
                 {
+                    Logger.Error(ex);
                     Close();
                     return false;
                 }
 
                 _sslstream = null;
                 _stream = null;
-                _reader = null;
-                _writer = null;
             }
 
             if (!_client.Connected) return false;
@@ -105,43 +119,50 @@ namespace IBot.Core
             if (_stream == null)
                 _stream = _client.GetStream();
 
-            if(_secure && _sslstream == null) {
-                try 
+            if (_secure && _sslstream == null)
+            {
+                try
                 {
-                    var sslstream = new SslStream(_stream);
-                    sslstream.AuthenticateAsClient(_url);
-                    _sslstream = sslstream;
-                } 
-                catch(ObjectDisposedException) 
+                    var sslStream = new SslStream(
+                        _client.GetStream(),
+                        false,
+                        ValidateServerCertificate,
+                        null
+                        );
+                    sslStream.AuthenticateAsClient(_url);
+                    _sslstream = sslStream;
+                }
+                catch (Exception ex)
                 {
+                    Logger.Error(ex);
                     Close();
                     return false;
                 }
             }
 
-            if (_reader == null && _stream.CanRead)
-                _reader = new StreamReader(_stream);
+            _work = true;
+            _readerThread = new Thread(Reader);
+            _readerThread.Start();
 
-            if (_writer == null && _stream.CanWrite)
-                _writer = new StreamWriter(_stream);
+            _senderThread = new Thread(Sender);
+            _senderThread.Start();
 
-            if (_writer == null || _reader == null) return false;
+            EnqueueMessage(@"USER " + _user, true);
+            EnqueueMessage(@"PASS " + _password, true);
+            EnqueueMessage(@"NICK " + _nick, true);
 
-            Write(@"USER " + _user);
-            Write(@"PASS " + _password);
-            Write(@"NICK " + _nick);
-            Write(@"CAP REQ :twitch.tv/membership");
-            Write(@"CAP REQ :twitch.tv/commands");
-            Write(@"CAP REQ :twitch.tv/tags");
+            if (_caps != null)
+            {
+                foreach (var cap in _caps)
+                {
+                    EnqueueMessage(@"CAP REQ :twitch.tv/" + cap.ToString().ToLower(), true);
+                }
+            }
 
             if (_channelList.Count != 0)
             {
                 _channelList.ForEach(Join);
             }
-
-            _work = true;
-            _thread = new Thread(ReadConnection);
-            _thread.Start();
 
             return true;
         }
@@ -154,41 +175,57 @@ namespace IBot.Core
 
                 _client?.Close();
                 _stream?.Close();
-                _reader?.Close();
-                _writer?.Close();
+                _sslstream?.Close();
 
                 _client = null;
                 _stream = null;
-                _reader = null;
-                _writer = null;
+                _sslstream = null;
 
                 return true;
             }
             catch (Exception e)
             {
-                _logger.Warn(e);
+                Logger.Warn(e);
                 return false;
             }
         }
 
         public void Join(string channel)
         {
-            Write(@"JOIN #" + channel);
+            EnqueueMessage(@"JOIN #" + channel, true);
 
             if (_channelList.FindIndex(c => c == channel) == 0)
                 _channelList.Add(channel);
         }
 
-        public void Write(string msg)
+        private void Write(string message)
         {
-            if (_client == null || !_client.Connected)
-                Connect();
+            message = message.Replace("\r\n", " ");
 
-            if (_writer == null)
-                return;
+            var buffer = Encoding.UTF8.GetBytes(message + "\r\n");
+            try
+            {
+                if (_secure)
+                {
+                    _sslstream.Write(buffer, 0, buffer.Length);
+                }
+                else
+                {
+                    _stream.Write(buffer, 0, buffer.Length);
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                Close();
+            }
+            catch (IOException)
+            {
+                Close();
+            }
+        }
 
-            _writer.WriteLine(msg);
-            _writer.Flush();
+        internal void EnqueueMessage(string message, bool hasPriority = false) {
+            (hasPriority ? _prioritySendQueue : _sendQueue).Enqueue(message);
         }
 
         public static void Write(ConnectionType conType, string channel, string msg)
@@ -196,7 +233,7 @@ namespace IBot.Core
             if (!ConType.ContainsKey(conType))
                 return;
 
-            ConType[conType].Write(string.Format(GlobalTwitchPatterns.WritePublicFormat, channel, msg));
+            ConType[conType].EnqueueMessage(string.Format(GlobalTwitchPatterns.WritePublicFormat, channel, msg));
         }
 
         public static void Write(ConnectionType conType, AnswerType aType, string target, string msg)
@@ -217,8 +254,41 @@ namespace IBot.Core
             }
         }
 
-        private void ReadConnection()
+        private void Sender()
         {
+            while (_client.Connected)
+            {
+                string message;
+                if (!_prioritySendQueue.IsEmpty && _prioritySendQueue.TryDequeue(out message))
+                {
+                    Write(message);
+                }
+                else if (!_sendQueue.IsEmpty && _sendQueue.TryDequeue(out message))
+                {
+                    Write(message);
+
+                    Thread.Sleep(_rateLimit);
+                }
+            }
+        }
+
+        private void Reader()
+        {
+            var buffer = new byte[1024];
+            var msg = new StringBuilder();
+
+            var badMessagesReceived = 0;
+
+            Stream stream;
+            if (_secure)
+            {
+                stream = _sslstream;
+            }
+            else
+            {
+                stream = _stream;
+            }
+
             while (_client.Connected)
             {
                 if (!_work)
@@ -226,29 +296,53 @@ namespace IBot.Core
 
                 if (!_stream.DataAvailable) continue;
 
-                var data = _reader.ReadLine();
+                Array.Clear(buffer, 0, buffer.Length);
 
-                if (data == null) continue;
+                stream.Read(buffer, 0, buffer.Length);
+                var data = Encoding.UTF8.GetString(buffer).TrimEnd('\0');
 
-                // check for PING and PONG back
-                if (data.StartsWith("PING"))
+                msg.Append(data);
+
+                var msgstr = msg.ToString();
+                if (!msgstr.EndsWith("\r\n"))
                 {
-                    Write("PONG :tmi.twitch.tv");
-                    Trace.WriteLine("PING RECEIVED - PONG SENT!");
+                    var all0 = buffer.All(b => b == 0);
+
+                    if (all0)
+                    {
+                        if (++badMessagesReceived <= 2)
+                            continue;
+
+                        Close();
+                        break;
+                    }
+
+                    var idx = msgstr.LastIndexOf("\r\n", StringComparison.Ordinal);
+                    if (idx != -1)
+                    {
+                        idx += 2;
+                        msg.Remove(0, idx);
+                        msgstr = msgstr.Substring(0, idx);
+                    }
+                    else
+                        continue;
                 }
+                else
+                    msg.Clear();
 
-                OnRaiseMessageEvent(new MessageEventArgs(data));
+                var messages = msgstr.Split(MessageSeparators, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var message in messages)
+                {
+                    if (message.StartsWith("PING"))
+                    {
+                        EnqueueMessage("PONG :tmi.twitch.tv", true);
+                        Logger.Debug("PING received -> Send PONG!");
+                    }
+
+                    OnRaiseMessageEvent(new MessageEventArgs(message));
+                }
             }
-        }
-
-        public StreamReader GetReader()
-        {
-            return _reader;
-        }
-
-        public NetworkStream GetStream()
-        {
-            return _stream;
         }
 
         protected virtual void OnRaiseMessageEvent(MessageEventArgs e) => RaiseMessageEvent?.Invoke(this, e);

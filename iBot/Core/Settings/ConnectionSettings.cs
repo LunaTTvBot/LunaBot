@@ -26,6 +26,9 @@ namespace IBot.Core.Settings
         [JsonProperty("port")]
         public int Port { get; set; } = 80;
 
+        [JsonProperty("ssl_port")]
+        public int SslPort { get; set; } = 443;
+
         [JsonProperty("url")]
         public string Url { get; set; } = "irc.chat.twitch.tv";
 
