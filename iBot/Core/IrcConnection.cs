@@ -336,7 +336,7 @@ namespace IBot.Core
                 {
                     if (message.StartsWith("PING"))
                     {
-                        EnqueueMessage("PONG :tmi.twitch.tv", true);
+                        EnqueueMessage(message.Replace("PING", "PONG"), true);
                         Logger.Debug("PING received -> Send PONG!");
                     }
 
