@@ -101,7 +101,7 @@ namespace IBot.Core.Settings
                 if (File.Exists(p))
                     File.Delete(p);
 
-                var json = JsonConvert.SerializeObject(settings);
+                var json = JsonConvert.SerializeObject(settings, Formatting.Indented);
 
                 using (var stream = File.Open(p, FileMode.CreateNew))
                 {

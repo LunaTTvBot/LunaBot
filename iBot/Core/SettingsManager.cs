@@ -20,10 +20,10 @@ namespace IBot.Core
                 LoadedSettings.Add(name, setting);
                 return setting;
             }
-
-            LoadedSettings.Add(name, setting);
+            
             setting = SettingsBase<T>.LoadLocal(name);
             SettingsBase<T>.Save(setting, name);
+            LoadedSettings.Add(name, setting);
 
             return setting;
         }
