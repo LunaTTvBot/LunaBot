@@ -47,8 +47,8 @@ namespace IBot
                 nickname: settings.BotNickname,
                 url: settings.Url,
                 caps: new[] { TwitchCaps.Commands, TwitchCaps.Membership, TwitchCaps.Tags },
-                secure: false,
-                port: settings.Port,
+                secure: settings.BotSecure,
+                port: settings.BotSecure ? settings.SslPort : settings.Port,
                 type: ConnectionType.BotCon                                                
                 );
 
@@ -58,8 +58,8 @@ namespace IBot
                 nickname: settings.OwnerNickname,
                 url: settings.Url,
                 caps: null,
-                secure: true,
-                port: settings.SslPort,                                
+                secure: settings.OwnerSecure,
+                port: settings.OwnerSecure ? settings.SslPort : settings.Port,
                 type: ConnectionType.ChatCon
                 );
 
