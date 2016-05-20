@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using IBot.Core;
+using IBot.Core.Settings;
 using IBot.Events;
 using IBot.Events.Commands;
 using IBot.Plugins;
@@ -24,14 +25,7 @@ namespace IBot
 
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("de-DE");
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
-
-            const string settingsFileName = "settings.json";
-            AppSettings settings;
-
-            if (!AppSettings.TryLoad(settingsFileName, out settings))
-            {
-                settings = AppSettings.LoadLocal(settingsFileName);
-            }
+            var settings = SettingsManager.GetSettings<ConnectionSettings>();
 
             BotChannelList = settings.ChannelList;
 
@@ -87,7 +81,6 @@ namespace IBot
                 });
 
                 RuntimeHelpers.RunClassConstructor(typeof(UserList).TypeHandle);
-                settings.Save(settingsFileName);
                 Console.WriteLine(app.app_connected);
                 RegisterChannelEvents();
                 RegisterUserEvents();
