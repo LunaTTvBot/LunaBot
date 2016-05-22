@@ -8,9 +8,9 @@ using IBot.Core;
 using IBot.Core.Settings;
 using IBot.Events;
 using IBot.Events.Commands;
-using IBot.Plugins;
 using IBot.Resources;
 using NLog;
+using IrcConnection = IBot.Core.IrcConnection;
 
 namespace IBot
 {

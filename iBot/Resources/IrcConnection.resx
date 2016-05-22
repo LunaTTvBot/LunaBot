@@ -117,7 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="bad_messages" xml:space="preserve">
+    <value>Received to many bad messages</value>
+  </data>
+  <data name="lost_connection" xml:space="preserve">
+    <value>Connection closed</value>
+  </data>
   <data name="ssl_stream_error" xml:space="preserve">
     <value>Error while building ssl stream</value>
+  </data>
+  <data name="tcp_client_error" xml:space="preserve">
+    <value>Could not connect to the given irc server</value>
   </data>
 </root>

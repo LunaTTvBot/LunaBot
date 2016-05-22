@@ -94,6 +94,7 @@
     <Compile Include="Core\Settings\ConnectionSettings.cs" />
     <Compile Include="Core\Settings\SettingsHelper.cs" />
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
+    <Compile Include="Events\Args\Connections\ConnectionUnexpectedCloseEventArgs.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Database\GenericDatabaseContext.cs" />
@@ -146,6 +147,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>app.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\IrcConnection.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IrcConnection.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\Plugins\Poll\poll.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -179,6 +185,11 @@
     <EmbeddedResource Include="Resources\app.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>app.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\IrcConnection.de.resx" />
+    <EmbeddedResource Include="Resources\IrcConnection.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>IrcConnection.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Plugins\Poll\poll.de.resx" />
     <EmbeddedResource Include="Resources\Plugins\Poll\poll.resx">
