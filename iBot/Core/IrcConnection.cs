@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using IBot.Events.Args.Connections;
 using IBot.Events.Args.Users;
 using NLog;
 
@@ -46,6 +47,7 @@ namespace IBot.Core
         private readonly ConcurrentQueue<string> _sendQueue = new ConcurrentQueue<string>();
         private readonly string _url;
         private readonly string _user;
+        private readonly ConnectionType _type;
 
         private TcpClient _client;
         private Thread _readerThread;
@@ -67,6 +69,7 @@ namespace IBot.Core
             _caps = caps;
             _secure = secure;
             _rateLimit = rateLimit;
+            _type = conType;
 
             try
             {
@@ -80,8 +83,9 @@ namespace IBot.Core
         }
 
         public event EventHandler<MessageEventArgs> RaiseMessageEvent;
+        public event EventHandler<ConnectionUnexpectedCloseEventArgs> UnexpectedCloseEvent;
 
-        public static bool ValidateServerCertificate(
+        private static bool ValidateServerCertificate(
             object sender,
             X509Certificate certificate,
             X509Chain chain,
@@ -90,7 +94,7 @@ namespace IBot.Core
             if (sslPolicyErrors == SslPolicyErrors.None)
                 return true;
 
-            Console.WriteLine($"Certificate error: {sslPolicyErrors}");
+            Logger.Error($"Certificate error: {sslPolicyErrors}");
 
             return false;
         }
@@ -106,7 +110,7 @@ namespace IBot.Core
                 catch (Exception ex)
                 {
                     Logger.Error(ex);
-                    Close();
+                    UnexpectedClose(Resources.IrcConnection.tcp_client_error);
                     return false;
                 }
 
@@ -135,7 +139,7 @@ namespace IBot.Core
                 catch (Exception ex)
                 {
                     Logger.Error(ex);
-                    Close();
+                    UnexpectedClose(Resources.IrcConnection.ssl_stream_error);
                     return false;
                 }
             }
@@ -167,6 +171,28 @@ namespace IBot.Core
             return true;
         }
 
+        private void UnexpectedClose(string reason)
+        {
+            try
+            {
+                _work = false;
+
+                _client?.Close();
+                _stream?.Close();
+                _sslstream?.Close();
+
+                _client = null;
+                _stream = null;
+                _sslstream = null;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+
+            OnUnexpectedCloseEvent(new ConnectionUnexpectedCloseEventArgs(reason, _type));
+        }
+
         public bool Close()
         {
             try
@@ -185,7 +211,7 @@ namespace IBot.Core
             }
             catch (Exception e)
             {
-                Logger.Warn(e);
+                Logger.Error(e);
                 return false;
             }
         }
@@ -216,15 +242,16 @@ namespace IBot.Core
             }
             catch (ObjectDisposedException)
             {
-                Close();
+                UnexpectedClose(Resources.IrcConnection.lost_connection);
             }
             catch (IOException)
             {
-                Close();
+                UnexpectedClose(Resources.IrcConnection.lost_connection);
             }
         }
 
-        private void EnqueueMessage(string message, bool hasPriority = false) {
+        private void EnqueueMessage(string message, bool hasPriority = false)
+        {
             (hasPriority ? _prioritySendQueue : _sendQueue).Enqueue(message);
         }
 
@@ -258,7 +285,7 @@ namespace IBot.Core
         {
             while (_client.Connected)
             {
-                if(!_work)
+                if (!_work)
                     return;
 
                 string message;
@@ -316,7 +343,7 @@ namespace IBot.Core
                         if (++badMessagesReceived <= 2)
                             continue;
 
-                        Close();
+                        UnexpectedClose(Resources.IrcConnection.bad_messages);
                         break;
                     }
 
@@ -349,5 +376,6 @@ namespace IBot.Core
         }
 
         protected virtual void OnRaiseMessageEvent(MessageEventArgs e) => RaiseMessageEvent?.Invoke(this, e);
+        protected virtual void OnUnexpectedCloseEvent(ConnectionUnexpectedCloseEventArgs e) => UnexpectedCloseEvent?.Invoke(this, e);
     }
 }
