@@ -98,6 +98,12 @@
     <Compile Include="Core\Settings\SettingsHelper.cs" />
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
     <Compile Include="Events\Args\Connections\ConnectionUnexpectedCloseEventArgs.cs" />
+    <Compile Include="Facades\Connection\Connection.cs" />
+    <Compile Include="Facades\Resources\Connection.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Connection.resx</DependentUpon>
+    </Compile>
     <Compile Include="Facades\Result.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
@@ -221,6 +227,11 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <EmbeddedResource Include="Facades\Resources\Connection.de.resx" />
+    <EmbeddedResource Include="Facades\Resources\Connection.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Connection.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\app.de.resx" />
     <EmbeddedResource Include="Resources\app.resx">
       <Generator>ResXFileCodeGenerator</Generator>
