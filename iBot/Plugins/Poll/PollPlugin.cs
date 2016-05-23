@@ -71,7 +71,7 @@ namespace IBot.Plugins.Poll
 
         public string PluginName => PollLocale.poll_plugin_name;
 
-        public void Execute()
+        public void Init()
         {
             _logger.Debug("{0} {1}", PluginName, PollLocale.poll_plugin_loaded);
             CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
