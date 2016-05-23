@@ -99,6 +99,14 @@
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
     <Compile Include="Events\Args\Connections\ConnectionUnexpectedCloseEventArgs.cs" />
     <Compile Include="Facades\Connection\Connection.cs" />
+    <Compile Include="Facades\Events\Args\Channel\JoinPartEventArgs.cs" />
+    <Compile Include="Facades\Events\Args\User\PrivateMessageEventArgs.cs" />
+    <Compile Include="Facades\Events\Args\User\PublicMessageEventArgs.cs" />
+    <Compile Include="Facades\Events\Args\User\UserStateEventArgs.cs" />
+    <Compile Include="Facades\Events\ChannelEvents.cs" />
+    <Compile Include="Facades\Events\Tags\UserMessageTags.cs" />
+    <Compile Include="Facades\Events\Tags\UserStateTags.cs" />
+    <Compile Include="Facades\Events\UserEvents.cs" />
     <Compile Include="Facades\Resources\Connection.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
