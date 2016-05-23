@@ -35,7 +35,7 @@ namespace IBot.TwitchAPI
             var request = new RestRequest(url, Method.GET);
             request.AddHeader("accept", "application/vnd.twitchtv.v3+json");
             //request.AddHeader("Client-ID", SettingsManager.GetSettings<ConnectionSettings>().ApplicationId);
-            request.AddHeader("Client-ID", "");
+            request.AddHeader("Authorization", SettingsManager.GetSettings<ConnectionSettings>().OwnerTwitchApiKey.Replace("oauth:", "OAuth "));
 
             var response = Client.Execute(request);
 
