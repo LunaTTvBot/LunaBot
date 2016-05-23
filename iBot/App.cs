@@ -8,15 +8,15 @@ using IBot.Core;
 using IBot.Core.Settings;
 using IBot.Events;
 using IBot.Events.Commands;
-using IBot.Plugins;
 using IBot.Resources;
 using NLog;
+using IrcConnection = IBot.Core.IrcConnection;
 
 namespace IBot
 {
     internal class App
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public static List<string> BotChannelList;
 
         public void StartApp()
@@ -32,8 +32,8 @@ namespace IBot
 
             BotChannelList = settings.ChannelList;
 
-            IrcConnectionManager.RegisterMessageHandler(ConnectionType.BotCon, (sender, args) => _logger.Debug("bot: " + args.Message));
-            IrcConnectionManager.RegisterMessageHandler(ConnectionType.ChatCon, (sender, args) => _logger.Debug("chat: " + args.Message));
+            IrcConnectionManager.RegisterMessageHandler(ConnectionType.BotCon, (sender, args) => Logger.Debug("bot: " + args.Message));
+            IrcConnectionManager.RegisterMessageHandler(ConnectionType.ChatCon, (sender, args) => Logger.Debug("chat: " + args.Message));
 
             BotChannelList.ForEach(channel =>
             {
@@ -46,16 +46,22 @@ namespace IBot
                 password: settings.BotTwitchApiKey,
                 nickname: settings.BotNickname,
                 url: settings.Url,
-                port: settings.Port,
-                type: ConnectionType.BotCon);
+                caps: new[] { TwitchCaps.Commands, TwitchCaps.Membership, TwitchCaps.Tags },
+                secure: settings.BotSecure,
+                port: settings.BotSecure ? settings.SslPort : settings.Port,
+                type: ConnectionType.BotCon                                                
+                );
 
             IrcConnectionManager.RegisterConnection(
                 user: settings.OwnerUsername,
                 password: settings.OwnerTwitchApiKey,
                 nickname: settings.OwnerNickname,
                 url: settings.Url,
-                port: settings.Port,
-                type: ConnectionType.ChatCon);
+                caps: null,
+                secure: settings.OwnerSecure,
+                port: settings.OwnerSecure ? settings.SslPort : settings.Port,
+                type: ConnectionType.ChatCon
+                );
 
             if (IrcConnectionManager.ConnectAll())
             {

@@ -7,30 +7,44 @@ using NLog;
 
 namespace IBot.Core
 {
+    internal enum TwitchCaps 
+    {
+        Membership,
+        Commands,
+        Tags
+    }
+
     internal static class IrcConnectionManager
     {
-        private static Dictionary<ConnectionType, IrcConnection> _connections =
+        private static readonly Dictionary<ConnectionType, IrcConnection> Connections =
             new Dictionary<ConnectionType, IrcConnection>();
 
-        private static Dictionary<ConnectionType, List<EventHandler<MessageEventArgs>>> _connectionMessageHandlers =
-            new Dictionary<ConnectionType, List<EventHandler<MessageEventArgs>>>();
+        private static readonly Dictionary<ConnectionType, List<EventHandler<MessageEventArgs>>>
+            ConnectionMessageHandlers =
+                new Dictionary<ConnectionType, List<EventHandler<MessageEventArgs>>>();
 
-        private static Dictionary<ConnectionType, List<EventHandler<ConnectionEventArgs>>> _connectionConnectedHandlers =
-            new Dictionary<ConnectionType, List<EventHandler<ConnectionEventArgs>>>();
+        private static readonly Dictionary<ConnectionType, List<EventHandler<ConnectionEventArgs>>>
+            ConnectionConnectedHandlers =
+                new Dictionary<ConnectionType, List<EventHandler<ConnectionEventArgs>>>();
+
+        private static readonly Dictionary<ConnectionType, List<EventHandler<ConnectionEventArgs>>>
+            ConnectionDisconnectedHandlers =
+                new Dictionary<ConnectionType, List<EventHandler<ConnectionEventArgs>>>();
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static IrcConnection GetConnection(ConnectionType type) => _connections.ContainsKey(type)
-                                                                              ? _connections[type]
-                                                                              : null;
+        public static IrcConnection GetConnection(ConnectionType type) => Connections.ContainsKey(type)
+            ? Connections[type]
+            : null;
 
-        public static bool RegisterConnection(string user, string password, string nickname, string url, int port, ConnectionType type)
+        public static bool RegisterConnection(string user, string password, string nickname, string url, TwitchCaps[] caps, bool secure, int port,
+            ConnectionType type)
         {
             try
             {
-                var connection = new IrcConnection(user, password, nickname, url, port, type);
+                var connection = new IrcConnection(user, password, nickname, url, port, type, caps, secure, 1500);
 
-                _connections[type] = connection;
+                Connections[type] = connection;
 
                 return true;
             }
@@ -43,58 +57,78 @@ namespace IBot.Core
 
         public static void RemoveMessageHandler(ConnectionType type, EventHandler<MessageEventArgs> handler)
         {
-            if (!_connectionMessageHandlers.ContainsKey(type))
+            if (!ConnectionMessageHandlers.ContainsKey(type))
                 return;
 
-            if (!_connectionMessageHandlers[type].Contains(handler))
+            if (!ConnectionMessageHandlers[type].Contains(handler))
                 return;
 
-            _connectionMessageHandlers[type].Remove(handler);
+            ConnectionMessageHandlers[type].Remove(handler);
 
-            if (_connections.ContainsKey(type))
+            if (Connections.ContainsKey(type))
             {
-                _connections[type].RaiseMessageEvent -= handler;
+                Connections[type].RaiseMessageEvent -= handler;
             }
         }
 
         public static void RegisterMessageHandler(ConnectionType type, EventHandler<MessageEventArgs> handler)
         {
-            if (!_connectionMessageHandlers.ContainsKey(type))
-                _connectionMessageHandlers.Add(type, new List<EventHandler<MessageEventArgs>>());
+            if (!ConnectionMessageHandlers.ContainsKey(type))
+                ConnectionMessageHandlers.Add(type, new List<EventHandler<MessageEventArgs>>());
 
             // don't register methods twice
-            if (_connectionMessageHandlers[type].Contains(handler))
+            if (ConnectionMessageHandlers[type].Contains(handler))
                 return;
 
-            _connectionMessageHandlers[type].Add(handler);
+            ConnectionMessageHandlers[type].Add(handler);
 
-            if (_connections.ContainsKey(type))
+            if (Connections.ContainsKey(type))
             {
-                _connections[type].RaiseMessageEvent += handler;
+                Connections[type].RaiseMessageEvent += handler;
             }
         }
 
         public static void RemoveOnConnectedHandler(ConnectionType type, EventHandler<ConnectionEventArgs> handler)
         {
-            if (!_connectionConnectedHandlers.ContainsKey(type))
+            if (!ConnectionConnectedHandlers.ContainsKey(type))
                 return;
 
-            if (_connectionConnectedHandlers[type].Contains(handler))
+            if (ConnectionConnectedHandlers[type].Contains(handler))
             {
-                _connectionConnectedHandlers[type].Remove(handler);
+                ConnectionConnectedHandlers[type].Remove(handler);
             }
         }
 
         public static void RegisterOnConnectedHandler(ConnectionType type, EventHandler<ConnectionEventArgs> handler)
         {
-            if (!_connectionConnectedHandlers.ContainsKey(type))
-                _connectionConnectedHandlers.Add(type, new List<EventHandler<ConnectionEventArgs>>());
+            if (!ConnectionConnectedHandlers.ContainsKey(type))
+                ConnectionConnectedHandlers.Add(type, new List<EventHandler<ConnectionEventArgs>>());
 
             // don't register methods twice
-            if (_connectionConnectedHandlers[type].Contains(handler))
+            if (ConnectionConnectedHandlers[type].Contains(handler))
                 return;
 
-            _connectionConnectedHandlers[type].Add(handler);
+            ConnectionConnectedHandlers[type].Add(handler);
+        }
+
+        public static void RemoveOnDisconnectedHandler(ConnectionType type, EventHandler<ConnectionEventArgs> handler) {
+            if(!ConnectionDisconnectedHandlers.ContainsKey(type))
+                return;
+
+            if(ConnectionDisconnectedHandlers[type].Contains(handler)) {
+                ConnectionDisconnectedHandlers[type].Remove(handler);
+            }
+        }
+
+        public static void RegisterOnDisconnectedHandler(ConnectionType type, EventHandler<ConnectionEventArgs> handler) {
+            if(!ConnectionDisconnectedHandlers.ContainsKey(type))
+                ConnectionDisconnectedHandlers.Add(type, new List<EventHandler<ConnectionEventArgs>>());
+
+            // don't register methods twice
+            if(ConnectionDisconnectedHandlers[type].Contains(handler))
+                return;
+
+            ConnectionDisconnectedHandlers[type].Add(handler);
         }
 
         public static bool ReconnectAll()
@@ -105,19 +139,19 @@ namespace IBot.Core
 
         public static bool ConnectAll()
         {
-            return _connections.All(kvp =>
+            return Connections.All(kvp =>
             {
                 var type = kvp.Key;
                 var con = kvp.Value;
 
-                if (_connectionMessageHandlers.ContainsKey(type))
-                    _connectionMessageHandlers[type].ForEach(e => con.RaiseMessageEvent += e);
+                if (ConnectionMessageHandlers.ContainsKey(type))
+                    ConnectionMessageHandlers[type].ForEach(e => con.RaiseMessageEvent += e);
 
                 if (!con.Connect())
                     return false;
 
-                if (_connectionConnectedHandlers.ContainsKey(type))
-                    _connectionConnectedHandlers[type].ForEach(e => e.Invoke(null, new ConnectionEventArgs(con)));
+                if (ConnectionConnectedHandlers.ContainsKey(type))
+                    ConnectionConnectedHandlers[type].ForEach(e => e.Invoke(null, new ConnectionEventArgs(con)));
 
                 return true;
             });
@@ -125,12 +159,15 @@ namespace IBot.Core
 
         public static void DisconnectAll()
         {
-            foreach (var kvp in _connections)
+            foreach (var kvp in Connections)
             {
                 var type = kvp.Key;
                 var connection = kvp.Value;
-                _connectionMessageHandlers[type].ForEach(e => connection.RaiseMessageEvent -= e);
+                ConnectionMessageHandlers[type].ForEach(e => connection.RaiseMessageEvent -= e);
                 connection.Close();
+
+                if(ConnectionDisconnectedHandlers.ContainsKey(type))
+                    ConnectionDisconnectedHandlers[type].ForEach(e => e.Invoke(null, new ConnectionEventArgs(connection)));
             }
         }
     }
