@@ -20,7 +20,7 @@ namespace IBot.Facades.Connection
         private static Result<string> WriteMessage(string message, string target, ConnectionType con, AnswerType type)
         {
             var msg = message.Trim();
-            var result = new Result<string>("Message could not be sent.", 400, msg);
+            var result = new Result<string>(Resources.Connection.sending_error, 400, msg);
 
             var connection = IrcConnectionManager.GetConnection(con);
             if (connection == null)
@@ -33,7 +33,7 @@ namespace IBot.Facades.Connection
             }
 
             IrcConnection.Write(con, type, target, msg);
-            return new Result<string>("Message has been sent successfully.", 0, msg);
+            return new Result<string>(Resources.Connection.sending_success, 0, msg);
         }
     }
 }
