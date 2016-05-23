@@ -98,6 +98,7 @@
     <Compile Include="Core\Settings\SettingsHelper.cs" />
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
     <Compile Include="Events\Args\Connections\ConnectionUnexpectedCloseEventArgs.cs" />
+    <Compile Include="Facades\Result.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Database\GenericDatabaseContext.cs" />
