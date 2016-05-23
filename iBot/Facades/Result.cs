@@ -12,12 +12,18 @@ namespace IBot.Facades
             Exception = exception;
         }
 
+        public Result(string message, int code, T value)
+        {
+            Message = message;
+            Code = code;
+            Value = value;
+            Exception = null;
+        }
+
+        public bool Success => Code == 0;
         public string Message { get; }
-
         public int Code { get; }
-
         public T Value { get; }
-
         public Exception Exception { get; }
     }
 }
