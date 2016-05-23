@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using IBot.Core.Settings;
 using IBot.Events.Args.Connections;
 using IBot.Events.Args.Users;
 using NLog;
@@ -97,6 +98,11 @@ namespace IBot.Core
             Logger.Error($"Certificate error: {sslPolicyErrors}");
 
             return false;
+        }
+
+        public IEnumerable<string> GetChannels()
+        {
+            return new List<string>(_channelList);
         }
 
         public bool Connect()
@@ -271,7 +277,7 @@ namespace IBot.Core
             switch (aType)
             {
                 case AnswerType.Private:
-                    Write(ConnectionType.BotCon, App.BotChannelList.First(), $"/w {target} {msg}");
+                    Write(ConnectionType.BotCon, SettingsManager.GetSettings<ConnectionSettings>().ChannelList.First(), $"/w {target} {msg}");
                     break;
                 case AnswerType.Public:
                     Write(ConnectionType.BotCon, target, msg);
