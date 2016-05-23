@@ -5,17 +5,17 @@ namespace IBot.Facades.Events.Args.User
     public class PrivateMessageEventArgs
     {
         public PrivateMessageEventArgs(string userName, string toUserName, string message,
-            UserMessageTags userMessageTags)
+            UserMessageTags tags)
         {
             UserName = userName;
             ToUserName = toUserName;
             Message = message;
-            UserMessageTags = userMessageTags;
+            Tags = tags;
         }
 
         public string UserName { get; }
         public string ToUserName { get; }
         public string Message { get; }
-        public UserMessageTags UserMessageTags { get; }
+        public UserMessageTags Tags { get; }
     }
 }

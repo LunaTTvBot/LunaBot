@@ -4,13 +4,13 @@ namespace IBot.Facades.Events.Args.User
 {
     public class UserStateEventArgs
     {
-        public UserStateEventArgs(string channel, UserStateTags userStateTags)
+        public UserStateEventArgs(string channel, UserStateTags tags)
         {
             Channel = channel;
-            UserStateTags = userStateTags;
+            Tags = tags;
         }
 
         public string Channel { get; set; }
-        public UserStateTags UserStateTags { get; set; }
+        public UserStateTags Tags { get; set; }
     }
 }
