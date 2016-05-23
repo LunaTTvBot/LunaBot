@@ -88,12 +88,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Core\EnumExtensions.cs" />
     <Compile Include="Core\IrcConnectionManager.cs" />
     <Compile Include="Core\Rights.cs" />
     <Compile Include="Core\SettingsManager.cs" />
     <Compile Include="Core\Settings\ConnectionSettings.cs" />
     <Compile Include="Core\Settings\SettingsHelper.cs" />
-    <Compile Include="Core\PermissionManager.cs" />
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
@@ -181,6 +181,8 @@
     <Compile Include="TwitchAPI\Models\Post.cs" />
     <Compile Include="TwitchAPI\Models\Preview.cs" />
     <Compile Include="TwitchAPI\Models\Reactions.cs" />
+    <Compile Include="TwitchAPI\Models\Scope.cs" />
+    <Compile Include="TwitchAPI\Models\ScopeDefinitionAttribute.cs" />
     <Compile Include="TwitchAPI\Models\Staff.cs" />
     <Compile Include="TwitchAPI\Models\Stream.cs" />
     <Compile Include="TwitchAPI\Models\Subscriber.cs" />
@@ -188,6 +190,7 @@
     <Compile Include="TwitchAPI\Models\Token.cs" />
     <Compile Include="TwitchAPI\Models\Top.cs" />
     <Compile Include="TwitchAPI\Models\Turbo.cs" />
+    <Compile Include="TwitchAPI\ScopeExtensions.cs" />
     <Compile Include="TwitchAPI\Twitch.cs" />
     <Compile Include="TwitchAPI\Models\User.cs" />
     <Compile Include="TwitchAPI\Models\Video.cs" />
