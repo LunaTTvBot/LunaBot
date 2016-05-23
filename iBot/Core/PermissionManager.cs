@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using IBot.Core.Settings;
+using IBot.Events;
 using IBot.Events.Args.UserList;
 using IBot.Events.Args.Users;
 using IBot.Models;
@@ -24,7 +25,8 @@ namespace IBot.Core
 
             UserList.UserJoined += OnUserJoined;
             UserList.UserParted += OnUserParted;
-            IrcConnectionManager.RegisterMessageHandler(ConnectionType.BotCon, OnMessageReceived);
+            ChannelEventManager.OperatorGrantedEvent += OnUserGrantedOperator;
+            ChannelEventManager.OperatorRevokedEvent += OnUserRevokedOperator;
 
             InitializeUsers();
             StartApiTimer();
@@ -50,7 +52,7 @@ namespace IBot.Core
             _apiRightsTimer = new Timer()
             {
                 AutoReset = false,
-                Interval = 10 * 1000,
+                Interval = 60 * 1000 * 1,
             };
             _apiRightsTimer.Elapsed += UpdateApiRights;
             _apiRightsTimer.Start();
@@ -108,7 +110,9 @@ namespace IBot.Core
 
         public static void Start() {}
 
-        private static string GetUniqueIdentifier(User u) => $"{u.ChannelName ?? u.Channel.Name}#{u.Username}";
+        private static string GetUniqueIdentifier(User u) => GetUniqueIdentifier(u.ChannelName ?? u.Channel.Name, u.Username);
+
+        private static string GetUniqueIdentifier(string channel, string username) => $"{channel}#{username}";
 
         private static void InitializeUsers()
         {
@@ -118,44 +122,41 @@ namespace IBot.Core
                 .AsParallel()
                 .SelectMany(UserList.GetUserList)
                 .AsParallel()
-                .ForAll(AddUser);
+                .ForAll(u => AddUser(u, Rights.Viewer));
         }
 
-        private static void AddUser(User user)
+        private static void AddUser(User user, Rights rights) => AddUser(user.ChannelName ?? user.Channel.Name, user.Username, rights);
+
+        private static void AddUser(string channel, string username, Rights rights)
         {
-            var identifier = GetUniqueIdentifier(user);
+            var identifier = GetUniqueIdentifier(channel, username);
             var ownerName = SettingsManager.GetSettings<ConnectionSettings>().OwnerUsername;
 
             if (UserRights.ContainsKey(identifier))
                 return;
 
-            UserRights.Add(identifier, user.Username == ownerName
+            UserRights.Add(identifier, username == ownerName
                                            ? GetEffectiveRights(Rights.Owner)
-                                           : GetEffectiveRights(Rights.Viewer));
+                                           : GetEffectiveRights(rights));
         }
 
-        private static void RemoveUser(User user)
+        private static void RemoveUser(User user) => RemoveUser(user.ChannelName ?? user.Channel.Name, user.Username);
+
+        private static void RemoveUser(string channel, string username)
         {
-            var identifier = GetUniqueIdentifier(user);
+            var identifier = GetUniqueIdentifier(channel, username);
 
             if (UserRights.ContainsKey(identifier))
                 UserRights.Remove(identifier);
         }
 
-        private static void AnalyzeMessage(string message)
-        {
-            // TODO: obviously, implement the real method
-            if (message.IndexOf("grant", StringComparison.InvariantCultureIgnoreCase) >= 0)
-            {
-                Logger.Debug("found a grant");
-            }
-        }
-
-        private static void OnUserJoined(object sender, UserJoinEventArgs eventArgs) => AddUser(eventArgs.JoinedUser);
+        private static void OnUserJoined(object sender, UserJoinEventArgs eventArgs) => AddUser(eventArgs.JoinedUser, Rights.Viewer);
 
         private static void OnUserParted(object sender, UserPartedEventArgs eventArgs) => RemoveUser(eventArgs.PartedUser);
 
-        private static void OnMessageReceived(object sender, MessageEventArgs eventArgs) => AnalyzeMessage(eventArgs.Message);
+        private static void OnUserRevokedOperator(object sender, OperatorModeEventArgs eventArgs) => AddUser(eventArgs.Channel, eventArgs.User, Rights.Moderator);
+
+        private static void OnUserGrantedOperator(object sender, OperatorModeEventArgs eventArgs) => RemoveUser(eventArgs.Channel, eventArgs.User);
 
         public static Rights GetEffectiveRights(Rights baseRights)
         {
