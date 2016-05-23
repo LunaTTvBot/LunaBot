@@ -90,7 +90,9 @@
     <Compile Include="App.cs" />
     <Compile Include="Core\EnumExtensions.cs" />
     <Compile Include="Core\IrcConnectionManager.cs" />
+    <Compile Include="Core\PermissionManager.cs" />
     <Compile Include="Core\PluginManager.cs" />
+    <Compile Include="Core\Rights.cs" />
     <Compile Include="Core\SettingsManager.cs" />
     <Compile Include="Core\Settings\ConnectionSettings.cs" />
     <Compile Include="Core\Settings\SettingsHelper.cs" />
