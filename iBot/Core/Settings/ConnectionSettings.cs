@@ -29,6 +29,9 @@ namespace IBot.Core.Settings
         [JsonProperty("url")]
         public string Url { get; set; } = "irc.chat.twitch.tv";
 
+        [JsonProperty("application_id")]
+        public string ApplicationId { get; set; } = "610a6pmvpmv3nmfgpsu8qgkuze09o9n";
+
         [JsonProperty("channel_list")]
         public List<string> ChannelList { get; set; } = new List<string>();
     }

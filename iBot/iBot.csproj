@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Core\EnumExtensions.cs" />
     <Compile Include="Core\IrcConnectionManager.cs" />
     <Compile Include="Core\PluginManager.cs" />
     <Compile Include="Core\SettingsManager.cs" />
@@ -157,6 +158,42 @@
     <Compile Include="TmiApi\TmiUriProvider.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Core\UserList.cs" />
+    <Compile Include="TwitchAPI\Models\Admin.cs" />
+    <Compile Include="TwitchAPI\Models\Authorization.cs" />
+    <Compile Include="TwitchAPI\Models\Badge.cs" />
+    <Compile Include="TwitchAPI\Models\Block.cs" />
+    <Compile Include="TwitchAPI\Models\Box.cs" />
+    <Compile Include="TwitchAPI\Models\Broadcaster.cs" />
+    <Compile Include="TwitchAPI\Models\Channel.cs" />
+    <Compile Include="TwitchAPI\Models\ChannelSubscribers.cs" />
+    <Compile Include="TwitchAPI\Models\Emoticon.cs" />
+    <Compile Include="TwitchAPI\Models\Endorse.cs" />
+    <Compile Include="TwitchAPI\Models\Error.cs" />
+    <Compile Include="TwitchAPI\Models\Featured.cs" />
+    <Compile Include="TwitchAPI\Models\Follow.cs" />
+    <Compile Include="TwitchAPI\Models\Game.cs" />
+    <Compile Include="TwitchAPI\Models\Global_Mod.cs" />
+    <Compile Include="TwitchAPI\Models\Image.cs" />
+    <Compile Include="TwitchAPI\Models\Ingest.cs" />
+    <Compile Include="TwitchAPI\Models\Links.cs" />
+    <Compile Include="TwitchAPI\Models\Logo.cs" />
+    <Compile Include="TwitchAPI\Models\Mod.cs" />
+    <Compile Include="TwitchAPI\Models\Post.cs" />
+    <Compile Include="TwitchAPI\Models\Preview.cs" />
+    <Compile Include="TwitchAPI\Models\Reactions.cs" />
+    <Compile Include="TwitchAPI\Models\Scope.cs" />
+    <Compile Include="TwitchAPI\Models\ScopeDefinitionAttribute.cs" />
+    <Compile Include="TwitchAPI\Models\Staff.cs" />
+    <Compile Include="TwitchAPI\Models\Stream.cs" />
+    <Compile Include="TwitchAPI\Models\Subscriber.cs" />
+    <Compile Include="TwitchAPI\Models\Team.cs" />
+    <Compile Include="TwitchAPI\Models\Token.cs" />
+    <Compile Include="TwitchAPI\Models\Top.cs" />
+    <Compile Include="TwitchAPI\Models\Turbo.cs" />
+    <Compile Include="TwitchAPI\ScopeExtensions.cs" />
+    <Compile Include="TwitchAPI\Twitch.cs" />
+    <Compile Include="TwitchAPI\Models\User.cs" />
+    <Compile Include="TwitchAPI\Models\Video.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
