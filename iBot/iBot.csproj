@@ -104,7 +104,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Connection.resx</DependentUpon>
     </Compile>
+    <Compile Include="Facades\Core\User.cs" />
+    <Compile Include="Facades\Core\UserList.cs" />
+    <Compile Include="Facades\Events\Args\UserJoinEventArgs.cs" />
+    <Compile Include="Facades\Events\Args\UserPartedEventArgs.cs" />
     <Compile Include="Facades\Result.cs" />
+    <Compile Include="Facades\TranslationExtensions\UserExtensions.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Database\GenericDatabaseContext.cs" />
