@@ -66,6 +66,7 @@ namespace IBot
             if (IrcConnectionManager.ConnectAll())
             {
                 UserDatabaseManager.Initialise();
+                PermissionManager.Initialise();
 
                 CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
                 {

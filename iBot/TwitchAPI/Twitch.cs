@@ -33,7 +33,7 @@ namespace IBot.TwitchAPI
             Client = new RestClient(TwitchApiBase);
         }
 
-        public static string GetAuthenticationUrl(string clientId, string redirectUrl, Scope scope) 
+        public static string GetAuthenticationUrl(string clientId, string redirectUrl, Scope scope)
             => string.Format(UserAuth, clientId, redirectUrl, scope.Concat("+"));
 
         private static void CallTwitch(string url,
@@ -122,7 +122,11 @@ namespace IBot.TwitchAPI
                                retVal.AddRange(content.subscriptions.Select(s => s.Name));
 
                                if (content.subscriptions.Count > 0)
-                                   retVal.AddRange(GetChannelSubscribers(channel, content._links.Next));
+                               {
+                                   retVal.AddRange(content._links.Next.StartsWith(Client.BaseUrl.AbsoluteUri)
+                                                       ? GetChannelSubscribers(channel, content._links.Next.Replace(Client.BaseUrl.AbsoluteUri, ""))
+                                                       : GetChannelSubscribers(channel, content._links.Next));
+                               }
                            }
                            catch (JsonException e)
                            {
@@ -169,7 +173,11 @@ namespace IBot.TwitchAPI
                                retVal.AddRange(content.follows.Select(f => f.User.Name));
 
                                if (content.follows.Count > 0)
-                                   retVal.AddRange(GetChannelFollowers(channel, content._links.Next));
+                               {
+                                   retVal.AddRange(content._links.Next.StartsWith(Client.BaseUrl.AbsoluteUri)
+                                                       ? GetChannelFollowers(channel, content._links.Next.Replace(Client.BaseUrl.AbsoluteUri, ""))
+                                                       : GetChannelFollowers(channel, content._links.Next));
+                               }
                            }
                            catch (JsonException e)
                            {
