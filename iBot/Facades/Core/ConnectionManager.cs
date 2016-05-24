@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using IBot.Events.Args.Connections;
 using IBot.Facades.Events.Args;
 using CoreConnectionType = IBot.Core.ConnectionType;
 using CoreManager = IBot.Core.IrcConnectionManager;
+using CoreTwitchCaps = IBot.Core.TwitchCaps;
 using FacadeConnectionType = IBot.Facades.Core.ConnectionType;
+using FacadeTwitchCaps = IBot.Facades.Core.TwitchCaps;
 
 namespace IBot.Facades.Core
 {
@@ -22,6 +25,20 @@ namespace IBot.Facades.Core
             CoreManager.RegisterOnDisconnectedHandler(CoreConnectionType.BotCon, OnBotDisconnectedHandler);
             CoreManager.RegisterOnDisconnectedHandler(CoreConnectionType.ChatCon, OnChatDisconnectedHandler);
         }
+
+        public static bool ConnectAll() => CoreManager.ConnectAll();
+
+        public static void DisconnectAll() => CoreManager.DisconnectAll();
+
+        public static bool RegisterConnection(string user,
+                                              string password,
+                                              string nickname,
+                                              string url,
+                                              FacadeTwitchCaps[] caps,
+                                              bool secure,
+                                              int port,
+                                              FacadeConnectionType type)
+            => CoreManager.RegisterConnection(user, password, nickname, url, caps.Select(c => (CoreTwitchCaps) c).ToArray(), secure, port, (CoreConnectionType) type);
 
         private static void OnBotConnectedHandler(object sender, ConnectionEventArgs connectionEventArgs)
         {

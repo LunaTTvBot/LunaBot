@@ -7,11 +7,11 @@ using NLog;
 
 namespace IBot.Core
 {
-    internal enum TwitchCaps 
+    internal enum TwitchCaps : short
     {
-        Membership,
-        Commands,
-        Tags
+        Membership = 1 << 0,
+        Commands = 1 << 1,
+        Tags = 1 << 2,
     }
 
     internal static class IrcConnectionManager
