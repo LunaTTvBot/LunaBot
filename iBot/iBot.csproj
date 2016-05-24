@@ -107,6 +107,11 @@
     <Compile Include="Facades\Events\Tags\UserMessageTags.cs" />
     <Compile Include="Facades\Events\Tags\UserStateTags.cs" />
     <Compile Include="Facades\Events\UserEvents.cs" />
+    <Compile Include="Facades\Core\ConnectionChangeType.cs" />
+    <Compile Include="Facades\Core\ConnectionManager.cs" />
+    <Compile Include="Facades\Core\ConnectionType.cs" />
+    <Compile Include="Facades\Core\TwitchCaps.cs" />
+    <Compile Include="Facades\Events\Args\ConnectionChangedEventArgs.cs" />
     <Compile Include="Facades\Resources\Connection.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
