@@ -20,6 +20,14 @@ namespace IBot.Facades
             Exception = null;
         }
 
+        public Result()
+        {
+            Message = "Unexcpected Error";
+            Code = 400;
+            Value = default(T);
+            Exception = null;
+        }
+
         public bool Success => Code == 0;
         public string Message { get; }
         public int Code { get; }
