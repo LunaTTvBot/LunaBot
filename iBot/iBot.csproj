@@ -107,6 +107,8 @@
     <Compile Include="Facades\Events\Tags\UserMessageTags.cs" />
     <Compile Include="Facades\Events\Tags\UserStateTags.cs" />
     <Compile Include="Facades\Events\UserEvents.cs" />
+    <Compile Include="Facades\Core\PermissionManager.cs" />
+    <Compile Include="Facades\Core\Rights.cs" />
     <Compile Include="Facades\Core\ConnectionChangeType.cs" />
     <Compile Include="Facades\Core\ConnectionManager.cs" />
     <Compile Include="Facades\Core\ConnectionType.cs" />
