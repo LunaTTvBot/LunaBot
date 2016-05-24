@@ -22,14 +22,7 @@ namespace IBot.Core
         static PermissionManager()
         {
             UserRights = new Dictionary<string, Rights>();
-
-            UserList.UserJoined += OnUserJoined;
-            UserList.UserParted += OnUserParted;
-            ChannelEventManager.OperatorGrantedEvent += OnUserGrantedOperator;
-            ChannelEventManager.OperatorRevokedEvent += OnUserRevokedOperator;
-
-            InitializeUsers();
-            StartApiTimer();
+            Start();
         }
 
         public static Rights GetRights(User u) => GetRights(u.Username);
@@ -56,6 +49,11 @@ namespace IBot.Core
             };
             _apiRightsTimer.Elapsed += UpdateApiRights;
             _apiRightsTimer.Start();
+        }
+
+        private static void StopApiTimer()
+        {
+            _apiRightsTimer?.Stop();
         }
 
         private static void UpdateApiRights(object sender, ElapsedEventArgs eventArgs)
@@ -103,12 +101,29 @@ namespace IBot.Core
             }
         }
 
-        public static void Initialise()
+        public static void Initialise() {}
+
+        public static void Start()
         {
-            Start();
+            UserList.UserJoined += OnUserJoined;
+            UserList.UserParted += OnUserParted;
+            ChannelEventManager.OperatorGrantedEvent += OnUserGrantedOperator;
+            ChannelEventManager.OperatorRevokedEvent += OnUserRevokedOperator;
+
+            InitializeUsers();
+
+            StartApiTimer();
         }
 
-        public static void Start() {}
+        public static void Stop()
+        {
+            UserList.UserJoined -= OnUserJoined;
+            UserList.UserParted -= OnUserParted;
+            ChannelEventManager.OperatorGrantedEvent -= OnUserGrantedOperator;
+            ChannelEventManager.OperatorRevokedEvent -= OnUserRevokedOperator;
+
+            StopApiTimer();
+        }
 
         private static string GetUniqueIdentifier(User u) => GetUniqueIdentifier(u.ChannelName ?? u.Channel.Name, u.Username);
 

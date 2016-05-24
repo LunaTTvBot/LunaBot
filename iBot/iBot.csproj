@@ -99,6 +99,8 @@
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
     <Compile Include="Events\Args\Connections\ConnectionUnexpectedCloseEventArgs.cs" />
     <Compile Include="Facades\Connection\Connection.cs" />
+    <Compile Include="Facades\Core\PermissionManager.cs" />
+    <Compile Include="Facades\Core\Rights.cs" />
     <Compile Include="Facades\Core\ConnectionChangeType.cs" />
     <Compile Include="Facades\Core\ConnectionManager.cs" />
     <Compile Include="Facades\Core\ConnectionType.cs" />
