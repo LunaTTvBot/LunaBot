@@ -99,6 +99,7 @@
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
     <Compile Include="Events\Args\Connections\ConnectionUnexpectedCloseEventArgs.cs" />
     <Compile Include="Facades\Connection\Connection.cs" />
+    <Compile Include="Facades\Core\GenericDatabase.cs" />
     <Compile Include="Facades\Events\Args\Channel\JoinPartEventArgs.cs" />
     <Compile Include="Facades\Events\Args\User\PrivateMessageEventArgs.cs" />
     <Compile Include="Facades\Events\Args\User\PublicMessageEventArgs.cs" />
