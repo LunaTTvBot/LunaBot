@@ -1,17 +1,17 @@
 ﻿using System;
-using IBot.Facades.Core;
+using FacadeUser = IBot.Facades.Core.User;
 
 namespace IBot.Facades.Events.Args
 {
     public class UserPartedEventArgs
     {
-        public UserPartedEventArgs(User user, DateTime time)
+        public UserPartedEventArgs(FacadeUser user, DateTime time)
         {
             User = user;
             Time = time;
         }
 
-        public User User { get; }
+        public FacadeUser User { get; }
         public DateTime Time { get; }
     }
 }
