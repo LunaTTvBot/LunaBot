@@ -101,6 +101,11 @@
     <Compile Include="Facades\Connection\Connection.cs" />
     <Compile Include="Facades\Core\PermissionManager.cs" />
     <Compile Include="Facades\Core\Rights.cs" />
+    <Compile Include="Facades\Core\ConnectionChangeType.cs" />
+    <Compile Include="Facades\Core\ConnectionManager.cs" />
+    <Compile Include="Facades\Core\ConnectionType.cs" />
+    <Compile Include="Facades\Core\TwitchCaps.cs" />
+    <Compile Include="Facades\Events\Args\ConnectionChangedEventArgs.cs" />
     <Compile Include="Facades\Resources\Connection.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
