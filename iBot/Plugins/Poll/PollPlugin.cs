@@ -75,7 +75,8 @@ namespace IBot.Plugins.Poll
 
         public void Init()
         {
-            Logger.Debug($"{PluginName} {PollLocale.poll_plugin_loaded}");
+            // ReSharper disable once PassStringInterpolation
+            Logger.Debug("{0} {1}", PluginName, PollLocale.poll_plugin_loaded);
             CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
             {
                 RegEx = "!poll(.*)",
