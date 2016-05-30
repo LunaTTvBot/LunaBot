@@ -1,6 +1,6 @@
 ﻿namespace IBot.Plugins
 {
-    public interface IPlugin
+    internal interface IPlugin
     {
         string PluginName { get; }
         void Init();
