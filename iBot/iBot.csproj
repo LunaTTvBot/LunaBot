@@ -119,6 +119,10 @@
     <Compile Include="Facades\Core\ConnectionType.cs" />
     <Compile Include="Facades\Core\TwitchCaps.cs" />
     <Compile Include="Facades\Events\Args\ConnectionChangedEventArgs.cs" />
+    <Compile Include="Facades\Plugins\Poll\Option.cs" />
+    <Compile Include="Facades\Plugins\Poll\Poll.cs" />
+    <Compile Include="Facades\Plugins\Poll\PollManager.cs" />
+    <Compile Include="Facades\Plugins\Poll\Result.cs" />
     <Compile Include="Facades\Resources\Connection.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
