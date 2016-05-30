@@ -36,7 +36,9 @@ namespace IBot.Core
             }
         }
 
-        public static bool IsPluginLoaded(string name) => Plugins.Find(p => p.PluginName == name) != null;        
+        public static bool IsPluginLoaded(string name) => Plugins.Find(p => p.PluginName == name) != null;
+
+        public static List<IPlugin> GetLoadedPlugins() => new List<IPlugin>(Plugins);
 
         private static IEnumerable<Type> GetTypesByInterface<T>(Assembly assembly) {
             if(!typeof(T).IsInterface)

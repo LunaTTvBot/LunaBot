@@ -100,6 +100,8 @@
     <Compile Include="Events\Args\Connections\ConnectionUnexpectedCloseEventArgs.cs" />
     <Compile Include="Facades\Connection\Connection.cs" />
     <Compile Include="Facades\Core\GenericDatabase.cs" />
+    <Compile Include="Facades\Core\Plugin.cs" />
+    <Compile Include="Facades\Core\PluginManager.cs" />
     <Compile Include="Facades\Core\SettingsManager.cs" />
     <Compile Include="Facades\Core\Settings\ConnectionSettings.cs" />
     <Compile Include="Facades\Events\Args\Channel\JoinPartEventArgs.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="Facades\Events\Args\UserPartedEventArgs.cs" />
     <Compile Include="Facades\Result.cs" />
     <Compile Include="Facades\TranslationExtensions\ConnectionSettingsExtension.cs" />
+    <Compile Include="Facades\TranslationExtensions\PluginExtensions.cs" />
     <Compile Include="Facades\TranslationExtensions\UserExtensions.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
