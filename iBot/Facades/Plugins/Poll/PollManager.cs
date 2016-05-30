@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using IBot.Core;
+using IBot.Facades.Core.Settings;
 using IBot.Facades.Plugins.Poll.EventArgs;
 using IBot.Plugins.Poll;
-using CorePoll = IBot.Plugins.Poll.Poll;
 
 namespace IBot.Facades.Plugins.Poll
 {
@@ -57,10 +58,81 @@ namespace IBot.Facades.Plugins.Poll
         {
             var res = new Result<Poll>("Unknown Error.", 400, null);
 
+            if (options.Length <= 1)
+                return new Result<Poll>("Poll makes no sense.", 400, null);
+
             var poll = PollPlugin.CreatePoll(title, options);
-            if(poll != null) {
+            if (poll != null)
+            {
                 res = new Result<Poll>(string.Empty, 0, new Poll(poll));
             }
+
+            return res;
+        }
+
+        public static Result<bool> DeletePoll(Poll poll)
+        {
+            var res = new Result<bool>("Unknown Error.", 400, false);
+
+            if (poll.State == State.Started)
+                return new Result<bool>("Could not delete poll because it is running.", 400, false);
+
+            var resPoll = PollPlugin.DeletePoll(poll.Id);
+            if (resPoll != null)
+                res = new Result<bool>(string.Empty, 0, true);
+
+            return res;
+        }
+
+        public static Result<bool> AbortPoll(Poll poll) {
+            var res = new Result<bool>("Unknown Error.", 400, false);
+
+            if(poll.State != State.Started)
+                return new Result<bool>("Only started polls can be aborted.", 400, false);
+
+            var resPoll = PollPlugin.AbortPoll(poll.Id);
+            if(resPoll != null)
+                res = new Result<bool>(string.Empty, 0, true);
+
+            return res;
+        }
+
+        public static Result<bool> ResetPoll(Poll poll) {
+            var res = new Result<bool>("Unknown Error.", 400, false);
+
+            // ReSharper disable once ConvertIfStatementToSwitchStatement
+            if(poll.State == State.Started)
+                return new Result<bool>("Running polls can not be resseted.", 400, false);
+
+            if(poll.State == State.Created)
+                return new Result<bool>(string.Empty, 0, true);
+
+            var resPoll = PollPlugin.ResetPoll(poll.Id);
+            if(resPoll != null)
+                res = new Result<bool>(string.Empty, 0, true);
+
+            return res;
+        }
+
+        public static Result<bool> StartPoll(Poll poll, string channel, int time = 5) 
+        {
+            var res = new Result<bool>("Unknown Error.", 400, false);
+
+            if(poll.State == State.Started)
+                return new Result<bool>("Poll is allready running.", 400, false);
+
+            if(poll.State != State.Created)
+                return new Result<bool>("Poll is not in created state. Please reset first or use restart.", 400, false);
+
+            if(time < 1)
+                return new Result<bool>("Poll can not be started for a negative or zero timespan.", 400, false);
+
+            if(!SettingsManager.GetSettings<ConnectionSettings>().ChannelList.Contains(channel))
+                return new Result<bool>("Invalid channel.", 400, false);
+
+            var resPoll = PollPlugin.StartPoll(poll.Id, channel, time);
+            if(resPoll != null)
+                res = new Result<bool>(string.Empty, 0, true);
 
             return res;
         }

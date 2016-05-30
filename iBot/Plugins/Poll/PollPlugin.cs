@@ -8,6 +8,7 @@ using IBot.Core;
 using IBot.Events;
 using IBot.Events.Args.Users;
 using IBot.Events.Commands;
+using IBot.Facades.Core.Settings;
 using IBot.Plugins.Poll.EventArgs;
 using NLog;
 using PollLocale = IBot.Resources.Plugins.Poll.poll;
@@ -116,7 +117,8 @@ namespace IBot.Plugins.Poll
         private static void OnPollAbortedEvent(PollChangedEventArgs e) => PollAbortedEvent?.Invoke(null, e);
 
         public static List<Poll> GetPollList() => PollsStack;
-        public static Poll CreatePoll(string title, string[] options) 
+
+        public static Poll CreatePoll(string title, string[] options)
         {
             var list = new List<PollOption>();
             foreach (var option in options)
@@ -125,7 +127,8 @@ namespace IBot.Plugins.Poll
             }
 
             var idx = 1;
-            if(PollsStack.Count > 0) {
+            if (PollsStack.Count > 0)
+            {
                 var lIdx = PollsStack[PollsStack.Count - 1].Id;
                 idx = lIdx + 1;
             }
@@ -134,6 +137,66 @@ namespace IBot.Plugins.Poll
             PollsStack.Add(p);
 
             OnPollCreatedEvent(new PollCreatedEventArgs(p));
+            return p;
+        }
+
+        public static Poll DeletePoll(int id)
+        {
+            var p = PollsStack.Find(poll => poll.Id == id);
+
+            if (p == null)
+                return null;
+
+            if (p.GetPollState() == PollState.Started)
+                return null;
+
+            PollsStack.Remove(p);
+
+            OnPollDeletedEvent(new PollChangedEventArgs(p, PollState.Started));
+            return p;
+        }
+
+        public static Poll AbortPoll(int id)
+        {
+            var p = PollsStack.Find(poll => poll.Id == id);
+
+            if (p == null)
+                return null;
+
+            p.AbortPoll();
+            if (TimerStack.ContainsKey(p))
+            {
+                TimerStack[p].Enabled = false;
+                TimerStack[p].Stop();
+                TimerStack.Remove(p);
+            }
+
+            OnPollAbortedEvent(new PollChangedEventArgs(p, PollState.Aborted));
+            return p;
+        }
+
+        public static Poll ResetPoll(int id)
+        {
+            var p = PollsStack.Find(poll => poll.Id == id);
+
+            if (p == null)
+                return null;
+
+            p.ResetPoll();
+
+            OnPollResettedEvent(new PollChangedEventArgs(p, PollState.Created));
+            return p;
+        }
+
+        public static Poll StartPoll(int id, string channel, int time = 5)
+        {
+            var p = PollsStack.Find(poll => poll.Id == id);
+
+            if (!SettingsManager.GetSettings<ConnectionSettings>().ChannelList.Contains(channel))
+                return null;
+
+            StartPoll(p, time, AnswerType.Public, channel);
+
             return p;
         }
 
@@ -146,7 +209,6 @@ namespace IBot.Plugins.Poll
         {
             if (pollParams != "") return false;
 
-            SendMessage(Thread.CurrentThread.CurrentUICulture.Name, AnswerType.Public, "ipaat");
             SendMessage(PollLocale.poll_help, answerT, answerTarget);
 
             return true;
@@ -287,7 +349,7 @@ namespace IBot.Plugins.Poll
             {
                 SendMessage(
                     string.Format(PollLocale.command_not_available_private,
-                        "!poll start:POLL-ID"), answerType,
+                        "!poll start POLL-ID"), answerType,
                     answerTarget);
                 return true;
             }
