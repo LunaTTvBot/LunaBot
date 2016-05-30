@@ -8,6 +8,7 @@ using IBot.Core;
 using IBot.Events;
 using IBot.Events.Args.Users;
 using IBot.Events.Commands;
+using IBot.Plugins.Poll.EventArgs;
 using NLog;
 using PollLocale = IBot.Resources.Plugins.Poll.poll;
 using Timer = System.Timers.Timer;
@@ -30,12 +31,12 @@ namespace IBot.Plugins.Poll
      * !poll create(_TITLE_) _OPTIONS_      - Creates a poll with _TITLE_ and given _OPTIONS_
      * !poll create _OPTIONS_               - Creates a poll with given _OPTIONS_
      * !poll list                           - Lists all created polls
-     * !poll delete:_ID_                    - Delete poll with _ID_
-     * !poll (re)start:_ID_ _TIME_          - Opens poll with _ID_ for _TIME_ minutes
-     * !poll (re)start:_ID_                 - Opens poll with _ID_ for 5 minutes
-     * !poll abort:_ID_                     - Stops poll with _ID_ directly
-     * !poll reset:_ID_                     - Resets poll with _ID_ to not runned
-     * !poll result:_ID_                    - Shows result of poll with _ID_
+     * !poll delete _ID_                    - Delete poll with _ID_
+     * !poll (re)start _ID_ _TIME_          - Opens poll with _ID_ for _TIME_ minutes
+     * !poll (re)start _ID_                 - Opens poll with _ID_ for 5 minutes
+     * !poll abort _ID_                     - Stops poll with _ID_ directly
+     * !poll reset _ID_                     - Resets poll with _ID_ to not runned
+     * !poll result _ID_                    - Shows result of poll with _ID_
      * 
      * !vote
      * -----
@@ -44,12 +45,11 @@ namespace IBot.Plugins.Poll
      * _OPTION_ int|string
      * 
      * Commands:
-     * !vote:_ID_ _OPTION_  - Vote in poll with _ID_ for _OPTION_
+     * !vote _ID_ _OPTION_  - Vote in poll with _ID_ for _OPTION_
      */
 
     internal class PollPlugin : IPlugin
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
         private const string PollCreateTitlePattern = @"^\screate\((.*)\)\s(.*)";
         private const string PollCreatePattern = @"^\screate\s(.*)";
         private const string PollOptionsPattern = @"([^|]+)\|?";
@@ -57,6 +57,7 @@ namespace IBot.Plugins.Poll
         private const string PollStartPattern = @"^\s(start|restart)[:\s]([0-9]+)\s?([0-9]*)";
         private const string PollActionsPattern = @"^\s(delete|abort|result|reset)[:\s]([0-9]+)";
         private const string VotePattern = @"^[:\s]([0-9]+)\s([0-9]+)";
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static readonly Regex PollCreateTitleRegEx = new Regex(PollCreateTitlePattern);
         private static readonly Regex PollCreateRegEx = new Regex(PollCreatePattern);
@@ -73,7 +74,7 @@ namespace IBot.Plugins.Poll
 
         public void Init()
         {
-            _logger.Debug("{0} {1}", PluginName, PollLocale.poll_plugin_loaded);
+            Logger.Debug($"{PluginName} {PollLocale.poll_plugin_loaded}");
             CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
             {
                 RegEx = "!poll(.*)",
@@ -96,6 +97,46 @@ namespace IBot.Plugins.Poll
             });
         }
 
+        public static event EventHandler<PollCreatedEventArgs> PollCreatedEvent;
+        private static void OnPollCreatedEvent(PollCreatedEventArgs e) => PollCreatedEvent?.Invoke(null, e);
+
+        public static event EventHandler<PollChangedEventArgs> PollDeletedEvent;
+        private static void OnPollDeletedEvent(PollChangedEventArgs e) => PollDeletedEvent?.Invoke(null, e);
+
+        public static event EventHandler<PollChangedEventArgs> PollStartedEvent;
+        private static void OnPollStartedEvent(PollChangedEventArgs e) => PollStartedEvent?.Invoke(null, e);
+
+        public static event EventHandler<PollChangedEventArgs> PollFinishedEvent;
+        private static void OnPollFinishedEvent(PollChangedEventArgs e) => PollFinishedEvent?.Invoke(null, e);
+
+        public static event EventHandler<PollChangedEventArgs> PollResettedEvent;
+        private static void OnPollResettedEvent(PollChangedEventArgs e) => PollResettedEvent?.Invoke(null, e);
+
+        public static event EventHandler<PollChangedEventArgs> PollAbortedEvent;
+        private static void OnPollAbortedEvent(PollChangedEventArgs e) => PollAbortedEvent?.Invoke(null, e);
+
+        public static List<Poll> GetPollList() => PollsStack;
+        public static Poll CreatePoll(string title, string[] options) 
+        {
+            var list = new List<PollOption>();
+            foreach (var option in options)
+            {
+                list.Add(new PollOption(list.Count + 1, option));
+            }
+
+            var idx = 1;
+            if(PollsStack.Count > 0) {
+                var lIdx = PollsStack[PollsStack.Count - 1].Id;
+                idx = lIdx + 1;
+            }
+
+            var p = new Poll(title, list, idx);
+            PollsStack.Add(p);
+
+            OnPollCreatedEvent(new PollCreatedEventArgs(p));
+            return p;
+        }
+
         private static void SendMessage(string msg, AnswerType aType, string target)
         {
             IrcConnection.Write(ConnectionType.BotCon, aType, target, msg);
@@ -112,7 +153,7 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_created"/>
+        ///     Prints: <see cref="PollLocale.poll_created" />
         /// </summary>
         /// <param name="pollParams"></param>
         /// <param name="answerType"></param>
@@ -146,12 +187,13 @@ namespace IBot.Plugins.Poll
             PollsStack.Add(p);
 
             SendMessage(string.Format(PollLocale.poll_created, p.Id), answerType, answerTarget);
+            OnPollCreatedEvent(new PollCreatedEventArgs(p));
 
             return true;
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_created"/>
+        ///     Prints: <see cref="PollLocale.poll_created" />
         /// </summary>
         /// <param name="pollParams"></param>
         /// <param name="answerType"></param>
@@ -185,12 +227,13 @@ namespace IBot.Plugins.Poll
             PollsStack.Add(p);
 
             SendMessage(string.Format(PollLocale.poll_created, p.Id), answerType, answerTarget);
+            OnPollCreatedEvent(new PollCreatedEventArgs(p));
 
             return true;
         }
 
         /// <summary>
-        /// Prints: #ID [- TITLE] (STATE) 1:Opt1, 2:Opt2
+        ///     Prints: #ID [- TITLE] (STATE) 1:Opt1, 2:Opt2
         /// </summary>
         /// <param name="pollParams"></param>
         /// <param name="answerType"></param>
@@ -284,7 +327,7 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_removed"/>
+        ///     Prints: <see cref="PollLocale.poll_removed" />
         /// </summary>
         /// <param name="p"></param>
         /// <param name="answerType"></param>
@@ -300,10 +343,11 @@ namespace IBot.Plugins.Poll
 
             PollsStack.Remove(p);
             SendMessage(string.Format(PollLocale.poll_removed, p.Id), answerType, answerTarget);
+            OnPollDeletedEvent(new PollChangedEventArgs(p, PollState.Started));
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_aborted"/>
+        ///     Prints: <see cref="PollLocale.poll_aborted" />
         /// </summary>
         /// <param name="p"></param>
         /// <param name="answerType"></param>
@@ -326,10 +370,11 @@ namespace IBot.Plugins.Poll
             }
 
             SendMessage(string.Format(PollLocale.poll_aborted, p.Id), answerType, answerTarget);
+            OnPollAbortedEvent(new PollChangedEventArgs(p, PollState.Aborted));
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_resetted"/>
+        ///     Prints: <see cref="PollLocale.poll_resetted" />
         /// </summary>
         /// <param name="p"></param>
         /// <param name="answerType"></param>
@@ -356,10 +401,11 @@ namespace IBot.Plugins.Poll
 
             p.ResetPoll();
             SendMessage(string.Format(PollLocale.poll_resetted, p.Id), answerType, answerTarget);
+            OnPollResettedEvent(new PollChangedEventArgs(p, PollState.Created));
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_result"/>
+        ///     Prints: <see cref="PollLocale.poll_result" />
         /// </summary>
         /// <param name="p"></param>
         /// <param name="answerType"></param>
@@ -513,7 +559,7 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_voted"/>
+        ///     Prints: <see cref="PollLocale.poll_voted" />
         /// </summary>
         /// <param name="voteParams"></param>
         /// <param name="aType"></param>
@@ -557,8 +603,8 @@ namespace IBot.Plugins.Poll
         }
 
         /// <summary>
-        /// Prints: <see cref="PollLocale.poll_started"/> after start and
-        /// <see cref="PollLocale.poll_finished"/> after minutes in <paramref name="time"/> expired.
+        ///     Prints: <see cref="PollLocale.poll_started" /> after start and
+        ///     <see cref="PollLocale.poll_finished" /> after minutes in <paramref name="time" /> expired.
         /// </summary>
         /// <param name="poll"></param>
         /// <param name="time"></param>
@@ -595,12 +641,14 @@ namespace IBot.Plugins.Poll
 
                     var max = res.VotesPerOption.Values.Max();
                     var percent = 0D;
-                    if (max > 0) percent = max / (double) res.All;
+                    if (max > 0) percent = max/(double) res.All;
 
                     var text = string.Format(PollLocale.poll_finished, prefix,
-                        res.VotesPerOption.FirstOrDefault(x => x.Value == max).Key.Name, max, percent.ToString("0.00%"), res.All, poll.Id);
+                        res.VotesPerOption.FirstOrDefault(x => x.Value == max).Key.Name, max, percent.ToString("0.00%"),
+                        res.All, poll.Id);
 
                     SendMessage(text, answerType, answerTarget);
+                    OnPollFinishedEvent(new PollChangedEventArgs(poll, PollState.Finished));
                 };
                 t.Enabled = true;
             });
@@ -623,6 +671,7 @@ namespace IBot.Plugins.Poll
             });
 
             SendMessage(stringB.ToString(), answerType, answerTarget);
+            OnPollStartedEvent(new PollChangedEventArgs(poll, PollState.Started));
         }
     }
 }

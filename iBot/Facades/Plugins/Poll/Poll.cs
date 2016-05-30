@@ -31,23 +31,7 @@ namespace IBot.Facades.Plugins.Poll
                 Votes.Add(new Option(keyValuePair.Key), keyValuePair.Value);
             }
 
-            switch (poll.GetPollState())
-            {
-                case PollState.Created:
-                    State = State.Created;
-                    break;
-                case PollState.Started:
-                    State = State.Started;
-                    break;
-                case PollState.Aborted:
-                    State = State.Aborted;
-                    break;
-                case PollState.Finished:
-                    State = State.Finished;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            State = PollManager.TranslatePollState(poll.GetPollState());
         }
 
         public string Title { get; }
