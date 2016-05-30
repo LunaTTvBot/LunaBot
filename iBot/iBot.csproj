@@ -101,7 +101,6 @@
     <Compile Include="Facades\Connection\Connection.cs" />
     <Compile Include="Facades\Core\SettingsManager.cs" />
     <Compile Include="Facades\Core\Settings\ConnectionSettings.cs" />
-    <Compile Include="Facades\Core\GenericDatabase.cs" />
     <Compile Include="Facades\Events\Args\Channel\JoinPartEventArgs.cs" />
     <Compile Include="Facades\Events\Args\User\PrivateMessageEventArgs.cs" />
     <Compile Include="Facades\Events\Args\User\PublicMessageEventArgs.cs" />
@@ -127,6 +126,7 @@
     <Compile Include="Facades\Events\Args\UserJoinEventArgs.cs" />
     <Compile Include="Facades\Events\Args\UserPartedEventArgs.cs" />
     <Compile Include="Facades\Result.cs" />
+    <Compile Include="Facades\TranslationExtensions\ConnectionSettingsExtension.cs" />
     <Compile Include="Facades\TranslationExtensions\UserExtensions.cs" />
     <Compile Include="Models\Channel.cs" />
     <Compile Include="Database\DatabaseContext.cs" />
@@ -170,11 +170,6 @@
     <Compile Include="Events\Tags\UserMessageTags.cs" />
     <Compile Include="Events\Args\Users\UserPublicMessageEventArgs.cs" />
     <Compile Include="Events\Args\Users\UserWhisperMessageEventArgs.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Resources\app.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -243,10 +238,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
