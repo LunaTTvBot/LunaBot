@@ -119,6 +119,24 @@
     <Compile Include="Facades\Core\ConnectionType.cs" />
     <Compile Include="Facades\Core\TwitchCaps.cs" />
     <Compile Include="Facades\Events\Args\ConnectionChangedEventArgs.cs" />
+    <Compile Include="Facades\Plugins\Poll\EventArgs\PollChangedEventArgs.cs" />
+    <Compile Include="Facades\Plugins\Poll\EventArgs\PollCreatedEventArgs.cs" />
+    <Compile Include="Facades\Resources\Plugins\Poll\Poll.de.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Poll.de.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Facades\Resources\Plugins\Poll\Poll.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Poll.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Plugins\Poll\EventArgs\PollChangedEventArgs.cs" />
+    <Compile Include="Plugins\Poll\EventArgs\PollCreatedEventArgs.cs" />
+    <Compile Include="Facades\Plugins\Poll\Option.cs" />
+    <Compile Include="Facades\Plugins\Poll\Poll.cs" />
+    <Compile Include="Facades\Plugins\Poll\PollManager.cs" />
+    <Compile Include="Facades\Plugins\Poll\Result.cs" />
     <Compile Include="Facades\Resources\Connection.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -249,6 +267,14 @@
     <EmbeddedResource Include="Facades\Resources\Connection.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Connection.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Facades\Resources\Plugins\Poll\Poll.de.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Poll.de.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Facades\Resources\Plugins\Poll\Poll.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Poll.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\app.de.resx" />
     <EmbeddedResource Include="Resources\app.resx">

@@ -22,7 +22,7 @@ namespace IBot.Plugins.Poll
 
         private PollState State { get; set; }
 
-        private Dictionary<PollOption, List<string>> Votes { get; set; }
+        public Dictionary<PollOption, List<string>> Votes { get; private set; }
 
         public PollState GetPollState()
         {
