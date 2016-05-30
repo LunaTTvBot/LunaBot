@@ -4,6 +4,7 @@ using IBot.Core;
 using IBot.Facades.Core.Settings;
 using IBot.Facades.Plugins.Poll.EventArgs;
 using IBot.Plugins.Poll;
+using PollLocale = IBot.Facades.Resources.Plugins.Poll.Poll;
 
 namespace IBot.Facades.Plugins.Poll
 {
@@ -56,10 +57,10 @@ namespace IBot.Facades.Plugins.Poll
 
         public static Result<Poll> CreatePoll(string title, string[] options)
         {
-            var res = new Result<Poll>("Unknown Error.", 400, null);
+            var res = new Result<Poll>(PollLocale.unknown_error, 400, null);
 
             if (options.Length <= 1)
-                return new Result<Poll>("Poll makes no sense.", 400, null);
+                return new Result<Poll>(PollLocale.poll_no_sense, 400, null);
 
             var poll = PollPlugin.CreatePoll(title, options);
             if (poll != null)
@@ -72,10 +73,10 @@ namespace IBot.Facades.Plugins.Poll
 
         public static Result<bool> DeletePoll(Poll poll)
         {
-            var res = new Result<bool>("Unknown Error.", 400, false);
+            var res = new Result<bool>(PollLocale.unknown_error, 400, false);
 
             if (poll.State == State.Started)
-                return new Result<bool>("Could not delete poll because it is running.", 400, false);
+                return new Result<bool>(PollLocale.poll_running_no_delete, 400, false);
 
             var resPoll = PollPlugin.DeletePoll(poll.Id);
             if (resPoll != null)
@@ -85,10 +86,10 @@ namespace IBot.Facades.Plugins.Poll
         }
 
         public static Result<bool> AbortPoll(Poll poll) {
-            var res = new Result<bool>("Unknown Error.", 400, false);
+            var res = new Result<bool>(PollLocale.unknown_error, 400, false);
 
             if(poll.State != State.Started)
-                return new Result<bool>("Only started polls can be aborted.", 400, false);
+                return new Result<bool>(PollLocale.poll_not_started_no_abort, 400, false);
 
             var resPoll = PollPlugin.AbortPoll(poll.Id);
             if(resPoll != null)
@@ -98,11 +99,11 @@ namespace IBot.Facades.Plugins.Poll
         }
 
         public static Result<bool> ResetPoll(Poll poll) {
-            var res = new Result<bool>("Unknown Error.", 400, false);
+            var res = new Result<bool>(PollLocale.unknown_error, 400, false);
 
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if(poll.State == State.Started)
-                return new Result<bool>("Running polls can not be resseted.", 400, false);
+                return new Result<bool>(PollLocale.poll_running_no_reset, 400, false);
 
             if(poll.State == State.Created)
                 return new Result<bool>(string.Empty, 0, true);
@@ -116,19 +117,19 @@ namespace IBot.Facades.Plugins.Poll
 
         public static Result<bool> StartPoll(Poll poll, string channel, int time = 5) 
         {
-            var res = new Result<bool>("Unknown Error.", 400, false);
+            var res = new Result<bool>(PollLocale.unknown_error, 400, false);
 
             if(poll.State == State.Started)
-                return new Result<bool>("Poll is allready running.", 400, false);
+                return new Result<bool>(PollLocale.poll_running, 400, false);
 
             if(poll.State != State.Created)
-                return new Result<bool>("Poll is not in created state. Please reset first or use restart.", 400, false);
+                return new Result<bool>(PollLocale.poll_not_created, 400, false);
 
             if(time < 1)
-                return new Result<bool>("Poll can not be started for a negative or zero timespan.", 400, false);
+                return new Result<bool>(PollLocale.poll_invalid_timespan, 400, false);
 
             if(!SettingsManager.GetSettings<ConnectionSettings>().ChannelList.Contains(channel))
-                return new Result<bool>("Invalid channel.", 400, false);
+                return new Result<bool>(PollLocale.invalid_channel, 400, false);
 
             var resPoll = PollPlugin.StartPoll(poll.Id, channel, time);
             if(resPoll != null)
@@ -139,7 +140,7 @@ namespace IBot.Facades.Plugins.Poll
 
         public static Result<List<Poll>> GetPollList()
         {
-            var res = new Result<List<Poll>>("Unknown Error.", 400, null);
+            var res = new Result<List<Poll>>(PollLocale.unknown_error, 400, null);
             var list = PollPlugin.GetPollList();
 
             if (list == null) return res;
