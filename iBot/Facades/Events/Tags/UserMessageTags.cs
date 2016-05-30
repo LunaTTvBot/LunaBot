@@ -19,15 +19,15 @@
 
         internal UserMessageTags(IBot.Events.Tags.UserMessageTags tags)
         {
-            Color = tags.Color;
-            DisplayName = tags.DisplayName;
-            Emotes = tags.Emotes;
-            Moderator = tags.Moderator;
-            RoomId = tags.RoomId;
-            Subscriber = tags.Subscriber;
-            Turbo = tags.Turbo;
-            UserId = tags.UserId;
-            UserType = tags.UserType;
+            Color = tags?.Color;
+            DisplayName = tags?.DisplayName;
+            Emotes = tags?.Emotes;
+            Moderator = tags?.Moderator ?? false;
+            RoomId = tags?.RoomId ?? 0;
+            Subscriber = tags?.Subscriber ?? false;
+            Turbo = tags?.Turbo ?? false;
+            UserId = tags?.UserId ?? 0;
+            UserType = tags?.UserType;
         }
 
         public string Color { get; }
