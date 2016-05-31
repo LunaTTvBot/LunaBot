@@ -4,6 +4,9 @@ namespace IBot.Plugins.UserPoints
 {
     internal class PointSettings
     {
+        [JsonProperty("start_on_application_startup")]
+        public bool StartOnApplicationStartup { get; set; } = false;
+
         [JsonProperty("name_singular")]
         public string PointNameSingular { get; set; } = "Point";
 

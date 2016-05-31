@@ -23,6 +23,8 @@ namespace IBot.Plugins.UserPoints
 
         public void Init()
         {
+            if (SettingsManager.GetSettings<PointSettings>().StartOnApplicationStartup)
+                Start();
         }
 
         private static void InitialiseTimer()
