@@ -39,10 +39,7 @@ namespace IBot.Facades.Core
         }
 
         #region Helpers
-        public static string GetOwnerChannel() {
-            var set = CoreSettingsManager.GetSettings<CoreConnectionSettings>();
-            return set.OwnerNickname.ToLower();
-        }
+        public static string GetOwnerChannel() => CoreSettingsManager.GetOwnerChannel();
         #endregion
 
         private static void CopyValues<T, T2>(T target, T2 source)
