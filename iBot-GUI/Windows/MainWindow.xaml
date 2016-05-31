@@ -46,7 +46,7 @@
                 <Grid x:Name="ContainerFrame">
                     <Grid x:Name="Header" Background="{DynamicResource PrimaryHueDarkBrush}" VerticalAlignment="Top"
                           HorizontalAlignment="Stretch" Height="50">
-                        <materialDesign:PackIcon Kind="Android" VerticalAlignment="Center" HorizontalAlignment="Left"
+                        <materialDesign:PackIcon Kind="Settings" VerticalAlignment="Center" HorizontalAlignment="Left"
                                                  Margin="15,0,0,0" />
 
                         <TextBlock x:Name="MainTitle" Text="iBot"

@@ -61,7 +61,7 @@ namespace iBot_GUI.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die iBot ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die LunaBot ähnelt.
         /// </summary>
         public static string app_name {
             get {
@@ -70,7 +70,7 @@ namespace iBot_GUI.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die iBot - {0} ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die LunaBot - {0} ähnelt.
         /// </summary>
         public static string app_title_format {
             get {
