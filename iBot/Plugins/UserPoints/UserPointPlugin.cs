@@ -1,31 +1,35 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Timers;
 using IBot.Core;
 using IBot.Core.Settings;
 using IBot.Models;
+using NLog;
 using Timer = System.Timers.Timer;
 
 namespace IBot.Plugins.UserPoints
 {
     internal class UserPointPlugin : IPlugin
     {
-        private readonly Dictionary<string, long> _pointDictionary;
+        private const string PointPropertyName = "UserPoints_Value";
+
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        private readonly object _transactionLock = new object();
+        private readonly Dictionary<User, long> _pointDictionary;
         private Timer _pointAwardTimer;
 
         public UserPointPlugin()
         {
-            _pointDictionary = new Dictionary<string, long>();
+            _pointDictionary = new Dictionary<User, long>();
         }
 
-        private void PointAwardTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        public string PluginName => "User Point Plugin";
+
+        public void Init()
         {
-            foreach (var channel in SettingsManager.GetSettings<ConnectionSettings>().ChannelList)
-            {
-                foreach (var user in UserList.GetUserList(channel))
-                {
-                    AddAmount(user, 1);
-                }
-            }
+            Start();
         }
 
         private void InitialiseTimer()
@@ -38,8 +42,21 @@ namespace IBot.Plugins.UserPoints
                 _pointAwardTimer = null;
             }
 
-            _pointAwardTimer = new Timer { AutoReset = true };
+            _pointAwardTimer = new Timer
+            {
+                AutoReset = false,
+                Interval = SettingsManager.GetSettings<PointSettings>().PointAwardIntervalSeconds * 1000
+            };
             _pointAwardTimer.Elapsed += PointAwardTimerOnElapsed;
+        }
+
+        private void PointAwardTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            foreach (var channel in SettingsManager.GetSettings<ConnectionSettings>().ChannelList)
+                foreach (var user in UserList.GetUserList(channel))
+                    AddPoints(user, SettingsManager.GetSettings<PointSettings>().PointsAwardedPerInterval);
+
+            _pointAwardTimer.Enabled = true;
         }
 
         public void Start()
@@ -58,53 +75,70 @@ namespace IBot.Plugins.UserPoints
             _pointAwardTimer = null;
         }
 
-        public string PluginName => "User Point Plugin";
-
-        public void Init()
+        private bool ChangeAmount(User user, long change, bool checkBalanceBeforeAction)
         {
-            Start();
-        }
+            try
+            {
+                if (checkBalanceBeforeAction && !UserHasPoints(user, change))
+                    return false;
 
-        public double CheckAmount(User user) => CheckAmount(user.Id);
+                lock (_transactionLock)
+                {
+                    if (!_pointDictionary.ContainsKey(user))
+                        AddUser(user);
 
-        public double CheckAmount(string username, string channel) => CheckAmount($"{channel}#{username}");
+                    var newValue = _pointDictionary[user] += change;
+                    user.Set(PointPropertyName, newValue);
+                }
 
-        public double CheckAmount(string userId) => _pointDictionary.ContainsKey(userId)
-                                                        ? _pointDictionary[userId]
-                                                        : 0.0d;
-
-        public bool UserHasAmount(User user, long amount) => UserHasAmount(user.Id, amount);
-
-        public bool UserHasAmount(string username, string channel, long amount) => UserHasAmount($"{channel}#{username}", amount);
-
-        public bool UserHasAmount(string userId, long amount) => _pointDictionary.ContainsKey(userId) && (_pointDictionary[userId] >= amount);
-
-        public void AddAmount(User user, long amount) => AddAmount(user.Id, amount);
-
-        public void AddAmount(string username, string channel, long amount) => AddAmount($"{channel}#{username}", amount);
-
-        public void AddAmount(string userId, long amount)
-        {
-            if (!_pointDictionary.ContainsKey(userId))
-                _pointDictionary.Add(userId, 0);
-
-            _pointDictionary[userId] += amount;
-        }
-
-        public bool RemoveAmount(User user, long amount) => RemoveAmount(user.Id, amount);
-
-        public bool RemoveAmount(string username, string channel, long amount) => RemoveAmount($"{channel}#{username}", amount);
-
-        public bool RemoveAmount(string userId, long amount)
-        {
-            if (!_pointDictionary.ContainsKey(userId))
-                _pointDictionary.Add(userId, 0);
-
-            if (!UserHasAmount(userId, amount))
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e);
                 return false;
-
-            _pointDictionary[userId] -= amount;
-            return true;
+            }
         }
+
+        private void AddUser(User user)
+        {
+            lock (_transactionLock)
+            {
+                if (_pointDictionary.ContainsKey(user))
+                    return;
+
+                _pointDictionary.Add(user, user.Get<long>(PointPropertyName));
+            }
+        }
+
+        public long GetPoints(User user)
+        {
+            try
+            {
+                return user.Get<long>(PointPropertyName);
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e);
+                return default(long);
+            }
+        }
+
+        public bool UserHasPoints(User user, long amount)
+        {
+            try
+            {
+                return user.Get<long>(PointPropertyName) >= amount;
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e);
+                return false;
+            }
+        }
+
+        public void AddPoints(User user, long amount) => ChangeAmount(user, Math.Abs(amount), false);
+
+        public bool RemovePoints(User user, long amount) => ChangeAmount(user, amount * -1, true);
     }
 }

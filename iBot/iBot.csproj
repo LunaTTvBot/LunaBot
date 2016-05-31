@@ -186,6 +186,7 @@
     <Compile Include="Plugins\Poll\PollOption.cs" />
     <Compile Include="Plugins\Poll\PollPlugin.cs" />
     <Compile Include="Plugins\Poll\PollResult.cs" />
+    <Compile Include="Plugins\UserPoints\PointSettings.cs" />
     <Compile Include="Plugins\UserPoints\UserPointPlugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
