@@ -18,5 +18,20 @@ namespace IBot.Plugins.UserPoints
 
         [JsonProperty("award_interval_amount")]
         public long PointsAwardedPerInterval { get; set; } = 1;
+
+        [JsonProperty("multiplier_owner")]
+        public long PointsMultiplierOwner { get; set; } = 4;
+
+        [JsonProperty("multiplier_moderator")]
+        public long PointsMultiplierMod { get; set; } = 2;
+
+        [JsonProperty("multiplier_subscriber")]
+        public long PointsMultiplierSub { get; set; } = 1;
+
+        [JsonProperty("multiplier_follower")]
+        public long PointsMultiplierFollower { get; set; } = 1;
+
+        [JsonProperty("multiplier_viewer")]
+        public long PointsMultiplierViewer { get; set; } = 1;
     }
 }

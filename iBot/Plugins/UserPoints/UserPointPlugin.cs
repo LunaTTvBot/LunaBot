@@ -39,7 +39,7 @@ namespace IBot.Plugins.UserPoints
 
             _pointAwardTimer = new Timer
             {
-                AutoReset = true,
+                AutoReset = false,
                 Interval = SettingsManager.GetSettings<PointSettings>().PointAwardIntervalSeconds * 1000
             };
             _pointAwardTimer.Elapsed += PointAwardTimerOnElapsed;
@@ -48,7 +48,25 @@ namespace IBot.Plugins.UserPoints
         private static void PointAwardTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             foreach (var user in UserList.GetUserList(SettingsManager.GetOwnerChannel()))
-                AddPoints(user, SettingsManager.GetSettings<PointSettings>().PointsAwardedPerInterval);
+            {
+                var settings = SettingsManager.GetSettings<PointSettings>();
+                var basePoints = settings.PointsAwardedPerInterval;
+                var multiplier = settings.PointsMultiplierViewer;
+
+                if (PermissionManager.GetRights(user).HasFlag(Rights.Owner))
+                    multiplier = settings.PointsMultiplierOwner;
+                else if (PermissionManager.GetRights(user).HasFlag(Rights.Moderator))
+                    multiplier = settings.PointsMultiplierMod;
+                else if (PermissionManager.GetRights(user).HasFlag(Rights.Subscriber))
+                    multiplier = settings.PointsMultiplierSub;
+                else if (PermissionManager.GetRights(user).HasFlag(Rights.Follower))
+                    multiplier = settings.PointsMultiplierFollower;
+
+                var awardedPoints = basePoints * multiplier;
+
+                AddPoints(user, awardedPoints);
+            }
+            _pointAwardTimer.Enabled = true;
         }
 
         public static void Start()
