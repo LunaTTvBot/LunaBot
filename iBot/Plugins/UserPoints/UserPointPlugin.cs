@@ -112,7 +112,14 @@ namespace IBot.Plugins.UserPoints
         {
             try
             {
-                return user.Get<long>(PointPropertyName);
+                lock (_pointDictionary)
+                {
+                    var savedUser = _pointDictionary.FirstOrDefault(u => u.Key.Id == user.Id);
+
+                    return savedUser.Key != null
+                               ? savedUser.Value
+                               : user.Get<long>(PointPropertyName);
+                }
             }
             catch (Exception e)
             {
