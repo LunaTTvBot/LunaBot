@@ -32,7 +32,7 @@ namespace IBot.Core
         public static Rights GetRights(string userId)
         {
             if (userId == GetUniqueIdentifier(SettingsManager.GetOwnerChannel(), SettingsManager.GetOwnerChannel()))
-                return Rights.Owner;
+                return GetEffectiveRights(Rights.Owner);
 
             return UserRights.ContainsKey(userId)
                        ? UserRights[userId]
