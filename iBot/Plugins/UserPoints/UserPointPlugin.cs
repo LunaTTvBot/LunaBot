@@ -23,7 +23,6 @@ namespace IBot.Plugins.UserPoints
 
         public void Init()
         {
-            Start();
         }
 
         private static void InitialiseTimer()
