@@ -6,5 +6,10 @@
         {
             return new IBot.Facades.Core.User(user.Username, user.ChannelName ?? user.Channel.Name);
         }
+
+        public static IBot.Models.User ToCoreUser(this IBot.Facades.Core.User user)
+        {
+            return new IBot.Models.User(user.Name) { ChannelName = user.Channel };
+        }
     }
 }

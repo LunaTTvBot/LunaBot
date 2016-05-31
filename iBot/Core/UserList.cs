@@ -199,7 +199,7 @@ namespace IBot.Core
 
             lock (channel)
             {
-                if (channel.Users.Any(c => c.Username == userName))
+                if (channel.Users.All(c => c.Username != userName))
                 {
                     var user = new User(userName)
                     {

@@ -4,12 +4,8 @@ using IBot.Events.Args.Users;
 
 namespace IBot.Events.Commands
 {
-    internal class PublicChannelCommand
+    internal class PublicChannelCommand : CommandBase
     {
-        public string Name { get; set; }
-
-        public string RegEx { get; set; }
-
         public Action<PublicChannelCommand, Match, UserPublicMessageEventArgs> Action { get; set; }
     }
 }

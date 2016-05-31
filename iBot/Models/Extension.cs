@@ -24,24 +24,27 @@ namespace IBot.Models
             {
                 var db = DatabaseContext.Get();
 
-                var result = db.ObjectExtensions
-                               .Where(e => e.ClassName == extendable.ClassName)
-                               .Where(e => e.Id == extendable.Id)
-                               .FirstOrDefault(e => e.PropertyName == propertyName);
-
-                if (result == null)
-                    throw new KeyNotFoundException($"{extendable.ClassName}::{extendable.Id} => {propertyName} not found");
-
-                var objVal = (object) result.Value;
-
-                try
+                lock (db)
                 {
-                    return (T) Convert.ChangeType(objVal, typeof(T));
-                }
-                catch (Exception e)
-                {
-                    _logger.Warn(e);
-                    return default(T);
+                    var result = db.ObjectExtensions
+                                   .Where(e => e.ClassName == extendable.ClassName)
+                                   .Where(e => e.Id == extendable.Id)
+                                   .FirstOrDefault(e => e.PropertyName == propertyName);
+
+                    if (result == null)
+                        throw new KeyNotFoundException($"{extendable.ClassName}::{extendable.Id} => {propertyName} not found");
+
+                    var objVal = (object) result.Value;
+
+                    try
+                    {
+                        return (T) Convert.ChangeType(objVal, typeof(T));
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Warn(e);
+                        return default(T);
+                    }
                 }
             }
             catch (Exception exception)
@@ -57,16 +60,30 @@ namespace IBot.Models
             {
                 var db = DatabaseContext.Get();
 
-                var extension = new Extension()
+                lock (db)
                 {
-                    ClassName = extendable.ClassName,
-                    Id = extendable.Id,
-                    PropertyName = propertyName,
-                    Value = Convert.ToString(value)
-                };
+                    var previousExtension = db.ObjectExtensions.FirstOrDefault(e => e.ClassName == extendable.ClassName
+                                                                                    && e.Id == extendable.Id
+                                                                                    && e.PropertyName == propertyName);
 
-                db.ObjectExtensions.Add(extension);
-                db.SaveChanges();
+                    if (previousExtension == null)
+                    {
+                        var extension = new Extension()
+                        {
+                            ClassName = extendable.ClassName,
+                            Id = extendable.Id,
+                            PropertyName = propertyName,
+                            Value = Convert.ToString(value)
+                        };
+                        db.ObjectExtensions.Add(extension);
+                    }
+                    else
+                    {
+                        previousExtension.Value = Convert.ToString(value);
+                    }
+
+                    db.SaveChanges();
+                }
             }
             catch (Exception e)
             {
