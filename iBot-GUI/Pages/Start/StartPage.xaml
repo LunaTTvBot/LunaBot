@@ -7,8 +7,16 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid x:Name="Root">
-        <TextBox x:Name="InfoBox" FontFamily="Consolas" BorderThickness="0" HorizontalAlignment="Stretch"
-                 TextWrapping="Wrap" Focusable="False" Height="auto" VerticalAlignment="Stretch" IsReadOnly="True"
-                 AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource PrimaryHueLightBrush}" />
+        <RichTextBox x:Name="InfoBox" BorderThickness="0" HorizontalAlignment="Stretch"
+                     Background="{DynamicResource PrimaryHueLightBrush}"
+                     Padding="5"
+                 Focusable="True" Height="auto" VerticalAlignment="Stretch" IsReadOnly="True"
+                 AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource PrimaryHueLightForegroundBrush}">
+            <RichTextBox.Resources>
+                <Style TargetType="{x:Type Paragraph}">
+                    <Setter Property="Margin" Value="0,10,0,0"/>
+                </Style>
+            </RichTextBox.Resources>
+        </RichTextBox>
     </Grid>
 </UserControl>

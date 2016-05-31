@@ -113,7 +113,7 @@
                                     </TabItem>
                                     <TabItem Header="About us">
                                         <Grid>
-                                            <aboutUsPage:AboutUs x:Name="AboutUs" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                            <aboutUsPage:AboutUs x:Name="AboutUs" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  />
                                         </Grid>
                                     </TabItem>                                    
                                 </dragablz:TabablzControl>
