@@ -57,16 +57,30 @@ namespace IBot.Models
             {
                 var db = DatabaseContext.Get();
 
-                var extension = new Extension()
-                {
-                    ClassName = extendable.ClassName,
-                    Id = extendable.Id,
-                    PropertyName = propertyName,
-                    Value = Convert.ToString(value)
-                };
+                var previousExtension = db.ObjectExtensions.FirstOrDefault(e => e.ClassName == extendable.ClassName
+                                                                                && e.Id == extendable.Id
+                                                                                && e.PropertyName == propertyName);
 
-                db.ObjectExtensions.Add(extension);
-                db.SaveChanges();
+                if (previousExtension == null)
+                {
+                    var extension = new Extension()
+                    {
+                        ClassName = extendable.ClassName,
+                        Id = extendable.Id,
+                        PropertyName = propertyName,
+                        Value = Convert.ToString(value)
+                    };
+                    db.ObjectExtensions.Add(extension);
+                }
+                else
+                {
+                    previousExtension.Value = Convert.ToString(value);
+                }
+
+                lock (db)
+                {
+                    db.SaveChanges();
+                }
             }
             catch (Exception e)
             {
