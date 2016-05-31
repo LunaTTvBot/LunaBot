@@ -25,12 +25,17 @@ namespace IBot.Core
             Start();
         }
 
-        public static Rights GetRights(User u) => GetRights(u.Username);
+        public static Rights GetRights(User u) => GetRights(u.Id);
 
-        public static Rights GetRights(string username)
+        public static Rights GetRights(string username, string channel) => GetRights(GetUniqueIdentifier(channel, username));
+
+        public static Rights GetRights(string userId)
         {
-            return UserRights.ContainsKey(username)
-                       ? UserRights[username]
+            if (userId == GetUniqueIdentifier(SettingsManager.GetOwnerChannel(), SettingsManager.GetOwnerChannel()))
+                return Rights.Owner;
+
+            return UserRights.ContainsKey(userId)
+                       ? UserRights[userId]
                        : Rights.Viewer;
         }
 
@@ -70,10 +75,11 @@ namespace IBot.Core
                     {
                         foreach (var subscriber in subscribers)
                         {
-                            if (UserRights.ContainsKey(subscriber))
-                                UserRights[subscriber] |= GetEffectiveRights(Rights.Subscriber);
+                            var id = GetUniqueIdentifier(channel, subscriber);
+                            if (UserRights.ContainsKey(id))
+                                UserRights[id] |= GetEffectiveRights(Rights.Subscriber);
                             else
-                                UserRights.Add(subscriber, GetEffectiveRights(Rights.Subscriber));
+                                UserRights.Add(id, GetEffectiveRights(Rights.Subscriber));
                         }
                     }
 
@@ -83,10 +89,11 @@ namespace IBot.Core
                     {
                         foreach (var follower in followers)
                         {
-                            if (UserRights.ContainsKey(follower))
-                                UserRights[follower] |= GetEffectiveRights(Rights.Follower);
+                            var id = GetUniqueIdentifier(channel, follower);
+                            if (UserRights.ContainsKey(id))
+                                UserRights[id] |= GetEffectiveRights(Rights.Follower);
                             else
-                                UserRights.Add(follower, GetEffectiveRights(Rights.Follower));
+                                UserRights.Add(id, GetEffectiveRights(Rights.Follower));
                         }
                     }
                 }
@@ -131,13 +138,13 @@ namespace IBot.Core
 
         private static void InitializeUsers()
         {
-            SettingsManager
+            foreach (var user in SettingsManager
                 .GetSettings<ConnectionSettings>()
                 .ChannelList
-                .AsParallel()
-                .SelectMany(UserList.GetUserList)
-                .AsParallel()
-                .ForAll(u => AddUser(u, Rights.Viewer));
+                .SelectMany(UserList.GetUserList))
+            {
+                AddUser(user, Rights.Viewer);
+            }
         }
 
         private static void AddUser(User user, Rights rights) => AddUser(user.ChannelName ?? user.Channel.Name, user.Username, rights);
