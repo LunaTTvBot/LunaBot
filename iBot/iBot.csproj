@@ -98,6 +98,7 @@
     <Compile Include="Core\Settings\SettingsHelper.cs" />
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
     <Compile Include="Events\Args\Connections\ConnectionUnexpectedCloseEventArgs.cs" />
+    <Compile Include="Events\Commands\CommandBase.cs" />
     <Compile Include="Facades\Connection\Connection.cs" />
     <Compile Include="Facades\Core\GenericDatabase.cs" />
     <Compile Include="Facades\Core\Plugin.cs" />
@@ -205,6 +206,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>IrcConnection.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Plugins\Points\PointLocale.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PointLocale.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\Plugins\Poll\poll.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -288,6 +294,10 @@
     <EmbeddedResource Include="Resources\IrcConnection.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>IrcConnection.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Plugins\Points\PointLocale.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>PointLocale.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Plugins\Poll\poll.de.resx" />
     <EmbeddedResource Include="Resources\Plugins\Poll\poll.resx">

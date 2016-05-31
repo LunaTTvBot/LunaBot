@@ -33,5 +33,8 @@ namespace IBot.Plugins.UserPoints
 
         [JsonProperty("multiplier_viewer")]
         public long PointsMultiplierViewer { get; set; } = 1;
+
+        [JsonProperty("command_regex")]
+        public string CommandRegex { get; set; } = "Points";
     }
 }

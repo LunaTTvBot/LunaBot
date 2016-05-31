@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Timers;
 using IBot.Core;
+using IBot.Events;
+using IBot.Events.Args.Users;
+using IBot.Events.Commands;
 using IBot.Models;
+using IBot.Resources.Plugins.Points;
 using NLog;
-using Timer = System.Timers.Timer;
 
 namespace IBot.Plugins.UserPoints
 {
+    // Loaded via PluginManager
+    // ReSharper disable once ClassNeverInstantiated.Global
     internal class UserPointPlugin : IPlugin
     {
         private const string PointPropertyName = "UserPoints_Value";
@@ -25,6 +31,138 @@ namespace IBot.Plugins.UserPoints
         {
             if (SettingsManager.GetSettings<PointSettings>().StartOnApplicationStartup)
                 Start();
+
+            RegisterCommands();
+        }
+
+        private void RegisterCommands()
+        {
+            var settings = SettingsManager.GetSettings<PointSettings>();
+
+            CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
+            {
+                Name = "CheckOwnPoints",
+                Description = string.Format(PointLocale.CheckOwnPointsDescription, settings.PointNamePlural),
+                RegEx = string.IsNullOrWhiteSpace(settings.CommandRegex)
+                            ? settings.PointNamePlural
+                            : settings.CommandRegex,
+                RegexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled,
+                Action = ShowOwnPointsCommand
+            });
+
+            CommandManager.RegisterWhisperCommand(new WhisperCommand()
+            {
+                Name = "CheckUsersPoints",
+                Description = string.Format(PointLocale.CheckUserPointsDescription, settings.PointNamePlural),
+                RegEx = @"!check\s(\w+)",
+                RegexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled,
+                Action = CheckUserPointsCommand
+            });
+
+            CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand()
+            {
+                Name = "TransferPoints",
+                Description = string.Format(PointLocale.TransferPointsDescription, settings.PointNamePlural),
+                RegEx = @"!transfer\s(\w+)\s([0-9]+)",
+                RegexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled,
+                Action = TransferPointsToUserCommand
+            });
+
+            CommandManager.RegisterWhisperCommand(new WhisperCommand()
+            {
+                Name = "GivePoints",
+                Description = string.Format(PointLocale.TransferPointsDescription),
+                RegEx = @"!give\s(\w+)\s([0-9]+)",
+                RegexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled,
+                Action = GivePointsToUserCommand
+            });
+        }
+
+        private void GivePointsToUserCommand(WhisperCommand publicChannelCommand, Match match, UserWhisperMessageEventArgs eArgs)
+        {
+            var settings = SettingsManager.GetSettings<PointSettings>();
+            var currentChannel = SettingsManager.GetOwnerChannel();
+
+            var targetUser = new User(match.Groups[1].Value) { ChannelName = currentChannel };
+            var mod = new User(eArgs.UserName) { ChannelName = currentChannel };
+            var amount = Convert.ToInt64(match.Groups[2].Value);
+
+            AddPoints(targetUser, amount);
+            IrcConnection.Write(ConnectionType.BotCon, AnswerType.Private, mod.Username,
+                                string.Format(PointLocale.GivePointsSuccess, targetUser.Username, amount, settings.PointNamePlural));
+
+            Logger.Trace("{0} gave {1} {2} points", mod.Username, targetUser.Username, amount);
+        }
+
+        private void TransferPointsToUserCommand(PublicChannelCommand publicChannelCommand, Match match, UserPublicMessageEventArgs eArgs)
+        {
+            var settings = SettingsManager.GetSettings<PointSettings>();
+            var currentChannel = SettingsManager.GetOwnerChannel();
+
+            var targetUser = new User(match.Groups[1].Value) { ChannelName = currentChannel };
+            var user = new User(eArgs.UserName) { ChannelName = currentChannel };
+            var amount = Convert.ToInt64(match.Groups[2].Value);
+
+            if (!UserHasPoints(user, amount))
+            {
+                IrcConnection.Write(ConnectionType.BotCon, AnswerType.Private, user.Username,
+                                    string.Format(PointLocale.NotEnoughPoints, settings.PointNamePlural));
+
+                Logger.Trace("{0} couldn't give {1} {2} points, not enough points", user.Username, targetUser.Username, amount);
+
+                return;
+            }
+
+            if (RemovePoints(user, amount))
+            {
+                AddPoints(targetUser, amount);
+                IrcConnection.Write(ConnectionType.BotCon, eArgs.Channel,
+                                    string.Format(PointLocale.UserGaveUserPoints, user.Username, targetUser.Username, amount, settings.PointNamePlural));
+
+                Logger.Trace("{0} gave {1} {2} points", user.Username, targetUser.Username, amount);
+            }
+            else
+            {
+                IrcConnection.Write(ConnectionType.BotCon, AnswerType.Private, user.Username,
+                                    String.Format(PointLocale.GenericTransferError, settings.PointNamePlural));
+
+                Logger.Trace("something went wrong while removing '{0}' points from '{1}' to give to '{2}'", amount, user.Username, targetUser.Username);
+            }
+        }
+
+        private static void CheckUserPointsCommand(WhisperCommand command, Match match, UserWhisperMessageEventArgs eArgs)
+        {
+            var settings = SettingsManager.GetSettings<PointSettings>();
+            var currentChannel = SettingsManager.GetOwnerChannel();
+
+            var requestedUser = new User(match.Groups[1].Value) { ChannelName = currentChannel };
+            var mod = new User(eArgs.UserName) { ChannelName = currentChannel };
+
+            if (!PermissionManager.GetRights(mod).HasFlag(Rights.Moderator))
+            {
+                IrcConnection.Write(ConnectionType.BotCon, AnswerType.Private, mod.Username, PointLocale.NoPermission);
+
+                Logger.Trace("{0} called a Mod-only command ({1}) without sufficient rights", mod.Username, command.Name);
+                return;
+            }
+
+            var points = GetPoints(requestedUser);
+
+            IrcConnection.Write(ConnectionType.BotCon, AnswerType.Private, mod.Username,
+                                String.Format(PointLocale.PointCheckSuccess, requestedUser.Username, points, settings.PointNamePlural));
+
+            Logger.Trace("{0} checked {1}'s points", mod.Username, requestedUser.Username);
+        }
+
+        private static void ShowOwnPointsCommand(PublicChannelCommand command, Match matches, UserPublicMessageEventArgs eArgs)
+        {
+            var settings = SettingsManager.GetSettings<PointSettings>();
+
+            var user = new User(eArgs.UserName) { ChannelName = eArgs.Channel };
+            IrcConnection.Write(ConnectionType.BotCon, eArgs.Channel,
+                                String.Format(PointLocale.CheckOwnPointsSuccess, eArgs.UserName, GetPoints(user), settings.PointNamePlural));
+
+            Logger.Trace("{0} looked at its own points", user.Username);
         }
 
         private static void InitialiseTimer()
