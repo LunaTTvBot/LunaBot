@@ -44,7 +44,7 @@ namespace IBot.Plugins.UserPoints
 
             _pointAwardTimer = new Timer
             {
-                AutoReset = false,
+                AutoReset = true,
                 Interval = SettingsManager.GetSettings<PointSettings>().PointAwardIntervalSeconds * 1000
             };
             _pointAwardTimer.Elapsed += PointAwardTimerOnElapsed;
@@ -52,11 +52,8 @@ namespace IBot.Plugins.UserPoints
 
         private void PointAwardTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            foreach (var channel in SettingsManager.GetSettings<ConnectionSettings>().ChannelList)
-                foreach (var user in UserList.GetUserList(channel))
-                    AddPoints(user, SettingsManager.GetSettings<PointSettings>().PointsAwardedPerInterval);
-
-            _pointAwardTimer.Enabled = true;
+            foreach (var user in UserList.GetUserList(SettingsManager.GetOwnerChannel()))
+                AddPoints(user, SettingsManager.GetSettings<PointSettings>().PointsAwardedPerInterval);
         }
 
         public void Start()
@@ -137,8 +134,18 @@ namespace IBot.Plugins.UserPoints
             }
         }
 
-        public void AddPoints(User user, long amount) => ChangeAmount(user, Math.Abs(amount), false);
+        public void AddPoints(User user, long amount)
+        {
+            ChangeAmount(user, Math.Abs(amount), false);
+            Logger.Trace("user {0} received {1} points", user.Id, amount);
+        }
 
-        public bool RemovePoints(User user, long amount) => ChangeAmount(user, amount * -1, true);
+        public bool RemovePoints(User user, long amount)
+        {
+            var success = ChangeAmount(user, amount * -1, true);
+            Logger.Trace("user {0} lost {1} points", user.Id, amount);
+
+            return success;
+        }
     }
 }
