@@ -34,7 +34,7 @@ namespace IBot.Events
                 WhisperCommandList.ForEach(command =>
                 {
                     if (!RegExStack.ContainsKey(command.Name))
-                        RegExStack.Add(command.Name, new Regex(command.RegEx));
+                        RegExStack.Add(command.Name, new Regex(command.RegEx, command.RegexOptions));
 
                     var m = RegExStack[command.Name].Match(eArgs.Message);
                     if (m.Success)
@@ -52,7 +52,7 @@ namespace IBot.Events
                 PublicCommandList.ForEach(command =>
                 {
                     if (!RegExStack.ContainsKey(command.Name))
-                        RegExStack.Add(command.Name, new Regex(command.RegEx));
+                        RegExStack.Add(command.Name, new Regex(command.RegEx, command.RegexOptions));
 
                     var m = RegExStack[command.Name].Match(eArgs.Message);
                     if (m.Success)
@@ -70,7 +70,7 @@ namespace IBot.Events
                 GlobalCommandList.ForEach(command =>
                 {
                     if (!RegExStack.ContainsKey(command.Name))
-                        RegExStack.Add(command.Name, new Regex(command.RegEx));
+                        RegExStack.Add(command.Name, new Regex(command.RegEx, command.RegexOptions));
 
                     var m = RegExStack[command.Name].Match(eArgs.Message);
                     if (m.Success)

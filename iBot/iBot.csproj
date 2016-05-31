@@ -98,6 +98,7 @@
     <Compile Include="Core\Settings\SettingsHelper.cs" />
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
     <Compile Include="Events\Args\Connections\ConnectionUnexpectedCloseEventArgs.cs" />
+    <Compile Include="Events\Commands\CommandBase.cs" />
     <Compile Include="Facades\Connection\Connection.cs" />
     <Compile Include="Facades\Core\GenericDatabase.cs" />
     <Compile Include="Facades\Core\Plugin.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Facades\Core\ConnectionType.cs" />
     <Compile Include="Facades\Core\TwitchCaps.cs" />
     <Compile Include="Facades\Events\Args\ConnectionChangedEventArgs.cs" />
+    <Compile Include="Facades\Plugins\Points\UserPoints.cs" />
     <Compile Include="Facades\Plugins\Poll\EventArgs\PollChangedEventArgs.cs" />
     <Compile Include="Facades\Plugins\Poll\EventArgs\PollCreatedEventArgs.cs" />
     <Compile Include="Facades\Resources\Plugins\Poll\Poll.de.Designer.cs">
@@ -186,6 +188,8 @@
     <Compile Include="Plugins\Poll\PollOption.cs" />
     <Compile Include="Plugins\Poll\PollPlugin.cs" />
     <Compile Include="Plugins\Poll\PollResult.cs" />
+    <Compile Include="Plugins\UserPoints\PointSettings.cs" />
+    <Compile Include="Plugins\UserPoints\UserPointPlugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Events\Args\Users\UserEventArgs.cs" />
@@ -201,6 +205,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>IrcConnection.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Plugins\Points\PointLocale.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PointLocale.resx</DependentUpon>
     </Compile>
     <Compile Include="Resources\Plugins\Poll\poll.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -285,6 +294,10 @@
     <EmbeddedResource Include="Resources\IrcConnection.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>IrcConnection.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Plugins\Points\PointLocale.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>PointLocale.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Plugins\Poll\poll.de.resx" />
     <EmbeddedResource Include="Resources\Plugins\Poll\poll.resx">

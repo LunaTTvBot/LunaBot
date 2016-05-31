@@ -20,6 +20,7 @@ namespace IBot.Database
         {
             var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<DatabaseContext>(modelBuilder);
             System.Data.Entity.Database.SetInitializer(sqliteConnectionInitializer);
+            modelBuilder.Entity<Extension>().HasKey(t => new { t.ClassName, t.Id, t.PropertyName });
         }
 
         public static DatabaseContext Get()
