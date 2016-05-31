@@ -63,25 +63,22 @@ namespace IBot
                 type: ConnectionType.ChatCon
                 );
 
-            if (IrcConnectionManager.ConnectAll())
-            {
-                UserDatabaseManager.Initialise();
-                PermissionManager.Initialise();
+            if(IrcConnectionManager.ConnectAll()) {
+                // UserDatabaseManager.Initialise();
+                // PermissionManager.Initialise();
 
-                CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
-                {
-                    RegEx = @"!test\s?(.*)",
-                    Name = "Test",
-                    Action = (command, matches, mArgs) =>
-                    {
-                        IrcConnection.Write(ConnectionType.BotCon, mArgs.Channel,
-                                            $"Ja, Test ({matches.Groups[1].Value})!");
-                    }
-                });
+                //CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand {
+                //    RegEx = @"!test\s?(.*)",
+                //    Name = "Test",
+                //    Action = (command, matches, mArgs) => {
+                //        IrcConnection.Write(ConnectionType.BotCon, mArgs.Channel,
+                //                            $"Ja, Test ({matches.Groups[1].Value})!");
+                //    }
+                //});
 
-                Console.WriteLine(app.app_connected);
-                RegisterChannelEvents();
-                RegisterUserEvents();
+                //Console.WriteLine(app.app_connected);
+                //RegisterChannelEvents();
+                //RegisterUserEvents();
             }
 
             Console.ReadLine();

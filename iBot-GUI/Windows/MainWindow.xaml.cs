@@ -5,18 +5,21 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Threading;
 using Application = System.Windows.Application;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using TabControl = System.Windows.Controls.TabControl;
 using Locale = iBot_GUI.Resources;
 
-namespace iBot_GUI.Forms
+namespace iBot_GUI.Windows
 {
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {
+        private readonly DispatcherTimer _statusUpdateTimer = new DispatcherTimer();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -41,6 +44,23 @@ namespace iBot_GUI.Forms
             var i = tab?.SelectedItem as TabItem;
 
             UpdateTitleText(i?.Header.ToString());
+        }
+
+        public void UpdateStatusText(string status) {
+            if(Dispatcher.CheckAccess()) {
+                Status.Text = status;
+            } else {
+                Dispatcher.Invoke(() => Status.Text = status);
+            }
+
+            _statusUpdateTimer.Stop();
+            _statusUpdateTimer.Interval = new TimeSpan(0, 0, 0, 4);
+            _statusUpdateTimer.Tick += statusUpdateCleaner_Clear;
+            _statusUpdateTimer.Start();
+        }
+
+        private void statusUpdateCleaner_Clear(object sender, EventArgs e) {
+            Status.Text = Locale.Main.status_base;
         }
 
         #region Window Handle Stuff

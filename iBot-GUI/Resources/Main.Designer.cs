@@ -122,5 +122,14 @@ namespace iBot_GUI.Resources {
                 return ResourceManager.GetString("start_tab", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ready ähnelt.
+        /// </summary>
+        public static string status_base {
+            get {
+                return ResourceManager.GetString("status_base", resourceCulture);
+            }
+        }
     }
 }
