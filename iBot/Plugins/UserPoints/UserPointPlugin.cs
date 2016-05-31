@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using IBot.Core;
-using IBot.Core.Settings;
 using IBot.Models;
 using NLog;
 using Timer = System.Timers.Timer;
@@ -16,14 +15,9 @@ namespace IBot.Plugins.UserPoints
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly object _transactionLock = new object();
-        private readonly Dictionary<User, long> _pointDictionary;
-        private Timer _pointAwardTimer;
-
-        public UserPointPlugin()
-        {
-            _pointDictionary = new Dictionary<User, long>();
-        }
+        private static readonly object TransactionLock = new object();
+        private static readonly Dictionary<string, long> PointDictionary = new Dictionary<string, long>();
+        private static Timer _pointAwardTimer;
 
         public string PluginName => "User Point Plugin";
 
@@ -32,7 +26,7 @@ namespace IBot.Plugins.UserPoints
             Start();
         }
 
-        private void InitialiseTimer()
+        private static void InitialiseTimer()
         {
             if (_pointAwardTimer != null)
             {
@@ -50,19 +44,19 @@ namespace IBot.Plugins.UserPoints
             _pointAwardTimer.Elapsed += PointAwardTimerOnElapsed;
         }
 
-        private void PointAwardTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        private static void PointAwardTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             foreach (var user in UserList.GetUserList(SettingsManager.GetOwnerChannel()))
                 AddPoints(user, SettingsManager.GetSettings<PointSettings>().PointsAwardedPerInterval);
         }
 
-        public void Start()
+        public static void Start()
         {
             InitialiseTimer();
             _pointAwardTimer?.Start();
         }
 
-        public void Stop()
+        public static void Stop()
         {
             if (_pointAwardTimer == null)
                 return;
@@ -72,19 +66,19 @@ namespace IBot.Plugins.UserPoints
             _pointAwardTimer = null;
         }
 
-        private bool ChangeAmount(User user, long change, bool checkBalanceBeforeAction)
+        private static bool ChangeAmount(User user, long change, bool checkBalanceBeforeAction)
         {
             try
             {
                 if (checkBalanceBeforeAction && !UserHasPoints(user, change))
                     return false;
 
-                lock (_transactionLock)
+                lock (TransactionLock)
                 {
-                    if (!_pointDictionary.ContainsKey(user))
+                    if (!PointDictionary.ContainsKey(user.Id))
                         AddUser(user);
 
-                    var newValue = _pointDictionary[user] += change;
+                    var newValue = PointDictionary[user.Id] += change;
                     user.Set(PointPropertyName, newValue);
                 }
 
@@ -97,24 +91,24 @@ namespace IBot.Plugins.UserPoints
             }
         }
 
-        private void AddUser(User user)
+        private static void AddUser(User user)
         {
-            lock (_transactionLock)
+            lock (TransactionLock)
             {
-                if (_pointDictionary.ContainsKey(user))
+                if (PointDictionary.ContainsKey(user.Id))
                     return;
 
-                _pointDictionary.Add(user, user.Get<long>(PointPropertyName));
+                PointDictionary.Add(user.Id, user.Get<long>(PointPropertyName));
             }
         }
 
-        public long GetPoints(User user)
+        public static long GetPoints(User user)
         {
             try
             {
-                lock (_pointDictionary)
+                lock (PointDictionary)
                 {
-                    var savedUser = _pointDictionary.FirstOrDefault(u => u.Key.Id == user.Id);
+                    var savedUser = PointDictionary.FirstOrDefault(u => u.Key == user.Id);
 
                     return savedUser.Key != null
                                ? savedUser.Value
@@ -128,7 +122,7 @@ namespace IBot.Plugins.UserPoints
             }
         }
 
-        public bool UserHasPoints(User user, long amount)
+        public static bool UserHasPoints(User user, long amount)
         {
             try
             {
@@ -141,13 +135,13 @@ namespace IBot.Plugins.UserPoints
             }
         }
 
-        public void AddPoints(User user, long amount)
+        public static void AddPoints(User user, long amount)
         {
             ChangeAmount(user, Math.Abs(amount), false);
             Logger.Trace("user {0} received {1} points", user.Id, amount);
         }
 
-        public bool RemovePoints(User user, long amount)
+        public static bool RemovePoints(User user, long amount)
         {
             var success = ChangeAmount(user, amount * -1, true);
             Logger.Trace("user {0} lost {1} points", user.Id, amount);
