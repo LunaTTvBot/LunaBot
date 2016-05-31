@@ -38,6 +38,13 @@ namespace IBot.Facades.Core
             return result;
         }
 
+        #region Helpers
+        public static string GetOwnerChannel() {
+            var set = CoreSettingsManager.GetSettings<CoreConnectionSettings>();
+            return set.OwnerNickname.ToLower();
+        }
+        #endregion
+
         private static void CopyValues<T, T2>(T target, T2 source)
         {
             var tTarget = typeof(T);
