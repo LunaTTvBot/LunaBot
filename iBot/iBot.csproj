@@ -119,6 +119,7 @@
     <Compile Include="Facades\Core\ConnectionType.cs" />
     <Compile Include="Facades\Core\TwitchCaps.cs" />
     <Compile Include="Facades\Events\Args\ConnectionChangedEventArgs.cs" />
+    <Compile Include="Facades\Plugins\Points\UserPoints.cs" />
     <Compile Include="Facades\Plugins\Poll\EventArgs\PollChangedEventArgs.cs" />
     <Compile Include="Facades\Plugins\Poll\EventArgs\PollCreatedEventArgs.cs" />
     <Compile Include="Facades\Resources\Plugins\Poll\Poll.de.Designer.cs">
