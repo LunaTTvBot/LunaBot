@@ -45,5 +45,13 @@ namespace IBot.Core
 
             return SettingsHelper<T>.Save(settings, name);
         }
+
+        #region Helpers
+        public static string GetOwnerChannel()
+        {
+            var set = GetSettings<ConnectionSettings>();
+            return set.OwnerNickname.ToLower();
+        }
+        #endregion
     }
 }
