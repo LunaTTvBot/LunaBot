@@ -305,6 +305,8 @@ namespace IBot.Core
 
                     Thread.Sleep(_rateLimit);
                 }
+
+                Thread.Sleep(1);
             }
         }
 
@@ -327,6 +329,8 @@ namespace IBot.Core
 
             while (_client.Connected)
             {
+                Thread.Sleep(1);
+
                 if (!_work)
                     return;
 
