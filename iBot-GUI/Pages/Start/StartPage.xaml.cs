@@ -19,8 +19,9 @@ namespace iBot_GUI.Pages.Start
         {
             InitializeComponent();
             UserEvents.UserPublicMessageEvent += ExtentInformationBox;
-
+            
             InfoBox.Document = new FlowDocument();
+            InfoBox.IsDocumentEnabled = true;
 
             CenterText();
 
@@ -110,7 +111,7 @@ namespace iBot_GUI.Pages.Start
                         UriKind.Absolute);
                     bitmap.EndInit();
 
-                    ReplaceTextRangeWithImage(range, new Image {Source = bitmap, Stretch = Stretch.None});
+                    ReplaceTextRangeWithImage(range, new Image {Source = bitmap, ToolTip = range.Text, Stretch = Stretch.None});
                 });
             }
         }

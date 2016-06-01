@@ -9,7 +9,7 @@
     <Grid x:Name="Root">
         <RichTextBox x:Name="InfoBox" BorderThickness="0" HorizontalAlignment="Stretch"
                      Background="{DynamicResource PrimaryHueLightBrush}"
-                     Padding="5"
+                     Padding="5"  
                  Focusable="True" Height="auto" VerticalAlignment="Stretch" IsReadOnly="True"
                  AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource PrimaryHueLightForegroundBrush}">
             <RichTextBox.Resources>
