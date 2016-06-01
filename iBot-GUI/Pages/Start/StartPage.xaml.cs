@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using iBot_GUI.Windows;
 using IBot.Facades.Events;
 using IBot.Facades.Events.Args.User;
 
@@ -13,19 +16,108 @@ namespace iBot_GUI.Pages.Start
 {
     public partial class StartPage
     {
+        private bool _copied;
         private Paragraph _paragraph;
 
         public StartPage()
         {
             InitializeComponent();
             UserEvents.UserPublicMessageEvent += ExtentInformationBox;
-            
+
             InfoBox.Document = new FlowDocument();
             InfoBox.IsDocumentEnabled = true;
 
             CenterText();
 
             DataContext = this;
+
+            MainWindow.OnClipboardChange += MainWindowOnOnClipboardChange;
+        }
+
+        private static bool IsUserVisible(FrameworkElement element, FrameworkElement container)
+        {
+            if (!element.IsVisible)
+                return false;
+
+            var bounds =
+                element.TransformToAncestor(container)
+                    .TransformBounds(new Rect(0.0, 0.0, element.ActualWidth, element.ActualHeight));
+            var rect = new Rect(0.0, 0.0, container.ActualWidth, container.ActualHeight);
+            return rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight);
+        }
+
+        private void MainWindowOnOnClipboardChange(ClipboardFormat format, object data)
+        {
+            if (_copied)
+            {
+                _copied = false;
+                return;
+            }
+
+            if (Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive) == null) return;
+            if (!IsUserVisible(this, Window.GetWindow(this))) return;
+
+            var ms = new MemoryStream();
+            var fd = new FlowDocument();
+
+            if (!string.IsNullOrEmpty(InfoBox.Selection.Text))
+                InfoBox.Selection.Save(ms, DataFormats.XamlPackage);
+
+            var finalPara = new Paragraph();
+            var fdRange = new TextRange(fd.ContentStart, fd.ContentEnd);
+            fdRange.Load(ms, DataFormats.XamlPackage);
+
+            var count = 0;
+            while (fd.Blocks.Count != 0)
+            {
+                if (count > 0)
+                {
+                    finalPara.Inlines.Add("\r\n");
+                }
+                var block = fd.Blocks.FirstBlock;
+                var blockPara = block as Paragraph;
+                if (blockPara != null)
+                {
+                    var paragraph = blockPara;
+                    var thePara = paragraph;
+                    while (thePara.Inlines.Count != 0)
+                    {
+                        var inline = thePara.Inlines.FirstInline;
+                        var container = inline as InlineUIContainer;
+                        if (container != null)
+                        {
+                            var uiContainer = container;
+                            var child = uiContainer.Child as Image;
+                            if (child != null)
+                            {
+                                var image = child;
+                                finalPara.Inlines.Add(image.ToolTip.ToString());
+                                thePara.Inlines.Remove(container);
+                            }
+                            else
+                            {
+                                finalPara.Inlines.Add(container);
+                            }
+                        }
+                        else
+                        {
+                            finalPara.Inlines.Add(inline);
+                        }
+                    }
+
+                    fd.Blocks.Remove(blockPara);
+                }
+                else
+                {
+                    fd.Blocks.Remove(block);
+                }
+
+                count++;
+            }
+
+            var newRange = new TextRange(finalPara.ContentStart, finalPara.ContentEnd);
+            Clipboard.SetText(newRange.Text);
+            _copied = true;
         }
 
         public void CenterText()
@@ -78,11 +170,13 @@ namespace iBot_GUI.Pages.Start
                 BaselineAlignment = BaselineAlignment.Center
             });
 
-            while(_paragraph.Inlines.Count != 0) {
+            while (_paragraph.Inlines.Count != 0)
+            {
                 p.Inlines.Add(_paragraph.Inlines.FirstInline);
             }
 
             InfoBox.Document.Blocks.Add(p);
+            Thread.Sleep(100);
 
             if (InfoBox.VerticalOffset + InfoBox.ActualHeight > InfoBox.ExtentHeight)
                 InfoBox.ScrollToEnd();
@@ -91,7 +185,6 @@ namespace iBot_GUI.Pages.Start
         private void ParseSmileys(TextElement element, string emoteTag)
         {
             var fullRange = new TextRange(element.ContentStart, element.ContentEnd);
-            // fullRange.ClearAllProperties();
 
             var emoteList = ParseEmotes(emoteTag);
             if (emoteList.Count > 0)
@@ -111,31 +204,9 @@ namespace iBot_GUI.Pages.Start
                         UriKind.Absolute);
                     bitmap.EndInit();
 
-                    ReplaceTextRangeWithImage(range, new Image {Source = bitmap, ToolTip = range.Text, Stretch = Stretch.None});
+                    ReplaceTextRangeWithImage(range,
+                        new Image {Source = bitmap, ToolTip = range.Text, Tag = range.Text, Stretch = Stretch.None});
                 });
-            }
-        }
-
-        /// <summary>
-        ///     Iterate through words and get the text range of smiley text. Replace it with corresponding icon.
-        /// </summary>
-        private void UpdateSmileys(TextElement paragraph)
-        {
-            var tp = paragraph.ContentStart;
-            var word = WordBreaker.GetWordRange(tp);
-
-            while (word.End.GetNextInsertionPosition(LogicalDirection.Forward) != null)
-            {
-                word = WordBreaker.GetWordRange(word.End.GetNextInsertionPosition(LogicalDirection.Forward));
-
-                if (word.Text != "Kappa") continue;
-
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(@"http://static-cdn.jtvnw.net/emoticons/v1/25/1.0", UriKind.Absolute);
-                bitmap.EndInit();
-
-                ReplaceTextRangeWithImage(word, new Image {Source = bitmap, Stretch = Stretch.None});
             }
         }
 
@@ -165,11 +236,6 @@ namespace iBot_GUI.Pages.Start
             textRange.Start.Paragraph.Inlines.Add(image);
             textRange.Start.Paragraph.Inlines.Add(runAfter);
             textRange.Start.Paragraph.Inlines.Remove(run);
-
-            if (Dispatcher.CheckAccess())
-            {
-                //InfoBox.CaretPosition = runAfter.ContentEnd;
-            }
         }
 
         private static List<Emote> ParseEmotes(string tagEmotes)
@@ -222,10 +288,9 @@ namespace iBot_GUI.Pages.Start
         {
             TextRange wordRange = null;
             TextPointer wordStartPosition = null;
-            TextPointer wordEndPosition = null;
 
             // Go forward first, to find word end position.
-            wordEndPosition = GetPositionAtWordBoundary(position, /*wordBreakDirection*/LogicalDirection.Forward);
+            var wordEndPosition = GetPositionAtWordBoundary(position, /*wordBreakDirection*/LogicalDirection.Forward);
 
             if (wordEndPosition != null)
             {
@@ -317,5 +382,111 @@ namespace iBot_GUI.Pages.Start
         public int Id { get; }
         public int Start { get; }
         public int End { get; }
+    }
+
+    public static class FlowDocumentHelper
+    {
+        public static IEnumerable<TTextElement> WalkTextRange<TTextElement>(this FlowDocument doc, TextPointer start,
+            TextPointer end) where TTextElement : TextElement
+        {
+            var lastVisited = new Dictionary<int, TTextElement>();
+            foreach (var stack in doc.WalkTextHierarchy())
+            {
+                var element = stack.Peek() as TTextElement;
+                if (element != null)
+                {
+                    TTextElement previous;
+                    if (!lastVisited.TryGetValue(stack.Count - 1, out previous) || previous != element)
+                    {
+                        if (element.Overlaps(start, end))
+                            yield return element;
+                        lastVisited[stack.Count - 1] = element;
+                    }
+                }
+            }
+        }
+
+        public static bool Overlaps(this TextElement element, TextPointer start, TextPointer end)
+        {
+            return element.ContentEnd.CompareTo(start) > 0 && element.ContentStart.CompareTo(end) < 0;
+        }
+
+        public static IEnumerable<Stack<DependencyObject>> WalkTextHierarchy(this FlowDocument doc)
+        {
+            if (doc == null)
+                throw new ArgumentNullException();
+
+            var stack = new Stack<DependencyObject>();
+
+            // Keep a TextPointer for FlowDocument.ContentEnd handy, so we know when we're done.
+            var docEnd = doc.ContentEnd;
+
+            // Keep going until the TextPointer is equal to or greater than ContentEnd.
+            for (var iterator = doc.ContentStart;
+                (iterator != null) && (iterator.CompareTo(docEnd) < 0);
+                iterator = iterator.GetNextContextPosition(LogicalDirection.Forward))
+            {
+                var parent = iterator.Parent;
+
+                // Identify the type of content immediately adjacent to the text pointer.
+                var context = iterator.GetPointerContext(LogicalDirection.Forward);
+
+                switch (context)
+                {
+                    case TextPointerContext.ElementStart:
+                    case TextPointerContext.EmbeddedElement:
+                    case TextPointerContext.Text:
+                        PushElement(stack, parent);
+                        yield return stack;
+                        break;
+
+                    case TextPointerContext.ElementEnd:
+                        break;
+
+                    default:
+                        throw new Exception("Unhandled TextPointerContext " + context);
+                }
+
+                switch (context)
+                {
+                    case TextPointerContext.ElementEnd:
+                    case TextPointerContext.EmbeddedElement:
+                    case TextPointerContext.Text:
+                        PopToElement(stack, parent);
+                        break;
+
+                    case TextPointerContext.ElementStart:
+                        break;
+
+                    default:
+                        throw new Exception("Unhandled TextPointerContext " + context);
+                }
+            }
+        }
+
+        private static int IndexOf<T>(Stack<T> source, T value)
+        {
+            var index = 0;
+            var comparer = EqualityComparer<T>.Default;
+            foreach (var item in source)
+            {
+                if (comparer.Equals(item, value))
+                    return index;
+                index++;
+            }
+            return -1;
+        }
+
+        private static void PopToElement<T>(Stack<T> stack, T item)
+        {
+            for (var index = IndexOf(stack, item); index >= 0; index--)
+                stack.Pop();
+        }
+
+        private static void PushElement<T>(Stack<T> stack, T item)
+        {
+            PopToElement(stack, item);
+            stack.Push(item);
+        }
     }
 }
