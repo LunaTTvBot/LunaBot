@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -48,76 +49,85 @@ namespace iBot_GUI.Pages.Start
 
         private void MainWindowOnOnClipboardChange(ClipboardFormat format, object data)
         {
-            if (_copied)
+            try
             {
-                _copied = false;
-                return;
-            }
-
-            if (Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive) == null) return;
-            if (!IsUserVisible(this, Window.GetWindow(this))) return;
-
-            var ms = new MemoryStream();
-            var fd = new FlowDocument();
-
-            if (!string.IsNullOrEmpty(InfoBox.Selection.Text))
-                InfoBox.Selection.Save(ms, DataFormats.XamlPackage);
-
-            var finalPara = new Paragraph();
-            var fdRange = new TextRange(fd.ContentStart, fd.ContentEnd);
-            fdRange.Load(ms, DataFormats.XamlPackage);
-
-            var count = 0;
-            while (fd.Blocks.Count != 0)
-            {
-                if (count > 0)
+                if (_copied)
                 {
-                    finalPara.Inlines.Add("\r\n");
+                    _copied = false;
+                    return;
                 }
-                var block = fd.Blocks.FirstBlock;
-                var blockPara = block as Paragraph;
-                if (blockPara != null)
+
+                if (Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive) == null)
+                    return;
+                if (!IsUserVisible(this, Window.GetWindow(this)))
+                    return;
+
+                var ms = new MemoryStream();
+                var fd = new FlowDocument();
+
+                if (!string.IsNullOrEmpty(InfoBox.Selection.Text))
+                    InfoBox.Selection.Save(ms, DataFormats.XamlPackage);
+
+                var finalPara = new Paragraph();
+                var fdRange = new TextRange(fd.ContentStart, fd.ContentEnd);
+                fdRange.Load(ms, DataFormats.XamlPackage);
+
+                var count = 0;
+                while (fd.Blocks.Count != 0)
                 {
-                    var paragraph = blockPara;
-                    var thePara = paragraph;
-                    while (thePara.Inlines.Count != 0)
+                    if (count > 0)
                     {
-                        var inline = thePara.Inlines.FirstInline;
-                        var container = inline as InlineUIContainer;
-                        if (container != null)
+                        finalPara.Inlines.Add("\r\n");
+                    }
+                    var block = fd.Blocks.FirstBlock;
+                    var blockPara = block as Paragraph;
+                    if (blockPara != null)
+                    {
+                        var paragraph = blockPara;
+                        var thePara = paragraph;
+                        while (thePara.Inlines.Count != 0)
                         {
-                            var uiContainer = container;
-                            var child = uiContainer.Child as Image;
-                            if (child != null)
+                            var inline = thePara.Inlines.FirstInline;
+                            var container = inline as InlineUIContainer;
+                            if (container != null)
                             {
-                                var image = child;
-                                finalPara.Inlines.Add(image.ToolTip.ToString());
-                                thePara.Inlines.Remove(container);
+                                var uiContainer = container;
+                                var child = uiContainer.Child as Image;
+                                if (child != null)
+                                {
+                                    var image = child;
+                                    finalPara.Inlines.Add(image.ToolTip.ToString());
+                                    thePara.Inlines.Remove(container);
+                                }
+                                else
+                                {
+                                    finalPara.Inlines.Add(container);
+                                }
                             }
                             else
                             {
-                                finalPara.Inlines.Add(container);
+                                finalPara.Inlines.Add(inline);
                             }
                         }
-                        else
-                        {
-                            finalPara.Inlines.Add(inline);
-                        }
+
+                        fd.Blocks.Remove(blockPara);
+                    }
+                    else
+                    {
+                        fd.Blocks.Remove(block);
                     }
 
-                    fd.Blocks.Remove(blockPara);
-                }
-                else
-                {
-                    fd.Blocks.Remove(block);
+                    count++;
                 }
 
-                count++;
+                var newRange = new TextRange(finalPara.ContentStart, finalPara.ContentEnd);
+                Clipboard.SetText(newRange.Text);
+                _copied = true;
             }
-
-            var newRange = new TextRange(finalPara.ContentStart, finalPara.ContentEnd);
-            Clipboard.SetText(newRange.Text);
-            _copied = true;
+            catch (Exception e)
+            {
+                Trace.WriteLine("Copy Error: " + e.Message);
+            }
         }
 
         public void CenterText()
@@ -205,7 +215,7 @@ namespace iBot_GUI.Pages.Start
                     bitmap.EndInit();
 
                     ReplaceTextRangeWithImage(range,
-                        new Image {Source = bitmap, ToolTip = range.Text, Tag = range.Text, Stretch = Stretch.None});
+                        new Image {Source = bitmap, ToolTip = range.Text, Tag = range.Text, MinWidth = 20, MinHeight = 20, MaxWidth = 32, MaxHeight = 32, Stretch = Stretch.None});
                 });
             }
         }
