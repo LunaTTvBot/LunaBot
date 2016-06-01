@@ -71,7 +71,7 @@ namespace IBot.Plugins.UserPoints
             CommandManager.RegisterWhisperCommand(new WhisperCommand()
             {
                 Name = "GivePoints",
-                Description = string.Format(PointLocale.TransferPointsDescription),
+                Description = string.Format(PointLocale.TransferPointsDescription, settings.PointNamePlural),
                 RegEx = @"!give\s(\w+)\s([0-9]+)",
                 RegexOptions = RegexOptions.IgnoreCase | RegexOptions.Compiled,
                 Action = GivePointsToUserCommand
