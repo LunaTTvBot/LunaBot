@@ -77,7 +77,9 @@ namespace iBot_GUI.Pages.Start
                 BaselineAlignment = BaselineAlignment.Center
             });
 
-            p.Inlines.AddRange(_paragraph.Inlines);
+            while(_paragraph.Inlines.Count != 0) {
+                p.Inlines.Add(_paragraph.Inlines.FirstInline);
+            }
 
             InfoBox.Document.Blocks.Add(p);
 
