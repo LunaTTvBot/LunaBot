@@ -5,18 +5,35 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:iBot_GUI.Pages.Start"
              mc:Ignorable="d"
+             Loaded="StartPage_OnLoaded"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid x:Name="Root">
-        <RichTextBox x:Name="InfoBox" BorderThickness="0" HorizontalAlignment="Stretch"
-                     Background="{DynamicResource PrimaryHueLightBrush}"
-                     Padding="5"  
-                 Focusable="True" Height="auto" VerticalAlignment="Stretch" IsReadOnly="True"
-                 AcceptsReturn="True" VerticalScrollBarVisibility="Auto" Foreground="{DynamicResource PrimaryHueLightForegroundBrush}">
-            <RichTextBox.Resources>
-                <Style TargetType="{x:Type Paragraph}">
-                    <Setter Property="Margin" Value="0,10,0,0"/>
-                </Style>
-            </RichTextBox.Resources>
-        </RichTextBox>
+        <DockPanel LastChildFill="True">
+            <ListBox Name="ChatterList" DockPanel.Dock="Right" Background="{DynamicResource PrimaryHueMidBrush}"
+                     Foreground="{DynamicResource PrimaryHueLightForegroundBrush}" Width="200" />
+            <Grid Background="{DynamicResource PrimaryHueLightBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <RichTextBox x:Name="InfoBox" BorderThickness="0" HorizontalAlignment="Stretch"
+                             Background="{DynamicResource PrimaryHueLightBrush}"
+                             Padding="5"
+                             Focusable="True" Height="auto" VerticalAlignment="Stretch" IsReadOnly="True"
+                             AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                             Foreground="{DynamicResource PrimaryHueLightForegroundBrush}">
+                    <RichTextBox.Resources>
+                        <Style TargetType="{x:Type Paragraph}">
+                            <Setter Property="Margin" Value="0,10,0,0" />
+                        </Style>
+                    </RichTextBox.Resources>
+                </RichTextBox>
+                <Grid Grid.Row="1" Margin="5">
+                    <TextBox Name="InputBox" Background="WhiteSmoke"
+                         Foreground="{DynamicResource PrimaryHueLightForegroundBrush}" MinLines="1"
+                         KeyUp="UIElement_OnKeyUp" />
+                </Grid>
+            </Grid>
+        </DockPanel>
     </Grid>
 </UserControl>

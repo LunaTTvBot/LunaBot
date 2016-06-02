@@ -7,9 +7,12 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using iBot_GUI.Windows;
+using IBot.Facades.Core;
 using IBot.Facades.Events;
 using IBot.Facades.Events.Args.User;
 
@@ -19,6 +22,7 @@ namespace iBot_GUI.Pages.Start
     {
         private bool _copied;
         private Paragraph _paragraph;
+        private readonly DispatcherTimer _userListTimer;
 
         public StartPage()
         {
@@ -30,9 +34,23 @@ namespace iBot_GUI.Pages.Start
 
             CenterText();
 
-            DataContext = this;
+            DataContext = this;            
 
             MainWindow.OnClipboardChange += MainWindowOnOnClipboardChange;
+
+            _userListTimer = new DispatcherTimer {Interval = new TimeSpan(0, 0, 10)};
+            _userListTimer.Tick += UserListTimerOnTick;
+        }
+
+        private void UserListTimerOnTick(object sender, EventArgs eventArgs)
+        {
+            if(Dispatcher.CheckAccess()) {
+                ChatterList.ItemsSource = ChatterList.ItemsSource = UserList.GetUsers(SettingsManager.GetConnectionSettings().Value.ChannelList.First()).Select(user => user.Name).ToList();
+            } else {
+                Dispatcher.Invoke(() => ChatterList.ItemsSource = UserList.GetUsers(SettingsManager.GetConnectionSettings().Value.ChannelList.First()).Select(user => user.Name).ToList());
+            }
+
+            ChatterList.SelectedItem = null;
         }
 
         private static bool IsUserVisible(FrameworkElement element, FrameworkElement container)
@@ -215,7 +233,17 @@ namespace iBot_GUI.Pages.Start
                     bitmap.EndInit();
 
                     ReplaceTextRangeWithImage(range,
-                        new Image {Source = bitmap, ToolTip = range.Text, Tag = range.Text, MinWidth = 20, MinHeight = 20, MaxWidth = 32, MaxHeight = 32, Stretch = Stretch.None});
+                        new Image
+                        {
+                            Source = bitmap,
+                            ToolTip = range.Text,
+                            Tag = range.Text,
+                            MinWidth = 20,
+                            MinHeight = 20,
+                            MaxWidth = 32,
+                            MaxHeight = 32,
+                            Stretch = Stretch.None
+                        });
                 });
             }
         }
@@ -281,6 +309,24 @@ namespace iBot_GUI.Pages.Start
             }
 
             return list;
+        }
+
+        private void UIElement_OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter) return;
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift) return;
+
+            var text = InputBox.Text;
+            if(!string.IsNullOrEmpty(text))
+            {
+                IBot.Facades.Connection.Connection.WritePublicChatMessage(new string(text.ToCharArray()), SettingsManager.GetConnectionSettings().Value.ChannelList.First());
+                InputBox.Text = "";
+            }
+        }
+
+        private void StartPage_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            _userListTimer.Start();
         }
     }
 
