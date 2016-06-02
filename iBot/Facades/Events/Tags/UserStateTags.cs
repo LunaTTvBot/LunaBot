@@ -17,13 +17,13 @@
 
         internal UserStateTags(IBot.Events.Tags.UserStateTags tags)
         {
-            Color = tags.Color;
-            DisplayName = tags.DisplayName;
-            EmoteSets = tags.EmoteSets;
-            Moderator = tags.Moderator;
-            Subscriber = tags.Subscriber;
-            Turbo = tags.Turbo;
-            UserType = tags.UserType;
+            Color = tags?.Color;
+            DisplayName = tags?.DisplayName;
+            EmoteSets = tags?.EmoteSets;
+            Moderator = tags?.Moderator ?? false;
+            Subscriber = tags?.Subscriber ?? false;
+            Turbo = tags?.Turbo ?? false;
+            UserType = tags?.UserType;
         }
 
         public string Color { get; }

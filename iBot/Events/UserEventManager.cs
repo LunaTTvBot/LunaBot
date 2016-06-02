@@ -21,7 +21,7 @@ namespace IBot.Events
             @"(" + GlobalTwitchPatterns.TwitchUserNamePattern + @")\s:(.*)$";
 
         public const string UserMessageTagsPattern =
-            @"^@color=([^;]*);display-name=([\d\w]*);emotes=(.*);mod=([0|1]);room-id=(\d+);subscriber=([0|1]);turbo=([0|1]);user-id=(\d+);user-type=(.*)$";
+            @"^@badges=([^;]*);color=([^;]*);display-name=([\d\w]*);emotes=(.*);mod=([0|1]);room-id=(\d+);subscriber=([0|1]);turbo=([0|1]);user-id=(\d+);user-type=(.*)$";
 
         public const string UserStatePattern =
             @"^(.*)\s:" + GlobalTwitchPatterns.TwitchHostNamePattern + @"\sUSERSTATE\s" +
@@ -141,12 +141,13 @@ namespace IBot.Events
                        : new UserMessageTags(match.Groups[1].Value,
                                              match.Groups[2].Value,
                                              match.Groups[3].Value,
-                                             match.Groups[4].Value == "1",
-                                             Convert.ToInt64(match.Groups[5].Value),
-                                             match.Groups[6].Value == "1",
+                                             match.Groups[4].Value,
+                                             match.Groups[5].Value == "1",
+                                             Convert.ToInt64(match.Groups[6].Value),
                                              match.Groups[7].Value == "1",
-                                             Convert.ToInt64(match.Groups[8].Value),
-                                             match.Groups[9].Value);
+                                             match.Groups[8].Value == "1",
+                                             Convert.ToInt64(match.Groups[9].Value),
+                                             match.Groups[10].Value);
         }
     }
 }

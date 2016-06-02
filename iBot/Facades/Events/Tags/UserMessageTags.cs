@@ -2,10 +2,11 @@
 {
     public class UserMessageTags
     {
-        public UserMessageTags(string color, string displayName, string emotes, bool moderator, long roomId,
+        public UserMessageTags(string badgets, string color, string displayName, string emotes, bool moderator, long roomId,
             bool subscriber,
             bool turbo, long userId, string userType)
         {
+            Badgets = badgets;
             Color = color;
             DisplayName = displayName;
             Emotes = emotes;
@@ -19,17 +20,19 @@
 
         internal UserMessageTags(IBot.Events.Tags.UserMessageTags tags)
         {
-            Color = tags.Color;
-            DisplayName = tags.DisplayName;
-            Emotes = tags.Emotes;
-            Moderator = tags.Moderator;
-            RoomId = tags.RoomId;
-            Subscriber = tags.Subscriber;
-            Turbo = tags.Turbo;
-            UserId = tags.UserId;
-            UserType = tags.UserType;
+            Badgets = tags?.Badgets;
+            Color = tags?.Color;
+            DisplayName = tags?.DisplayName;
+            Emotes = tags?.Emotes;
+            Moderator = tags?.Moderator ?? false;
+            RoomId = tags?.RoomId ?? 0;
+            Subscriber = tags?.Subscriber ?? false;
+            Turbo = tags?.Turbo ?? false;
+            UserId = tags?.UserId ?? 0;
+            UserType = tags?.UserType;
         }
 
+        public string Badgets { get; set; }
         public string Color { get; }
         public string DisplayName { get; }
         public string Emotes { get; }
