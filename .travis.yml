@@ -1,6 +1,0 @@
-language: csharp
-solution: iBot.sln
-install:
-  - nuget restore iBot.sln
-mono:
-  - latest
