@@ -226,7 +226,7 @@ namespace IBot.Core
         {
             EnqueueMessage(@"JOIN #" + channel, true);
 
-            if (_channelList.FindIndex(c => c == channel) == 0)
+            if (!_channelList.Contains(channel))
                 _channelList.Add(channel);
         }
 
@@ -277,10 +277,10 @@ namespace IBot.Core
             switch (aType)
             {
                 case AnswerType.Private:
-                    Write(ConnectionType.BotCon, SettingsManager.GetSettings<ConnectionSettings>().ChannelList.First(), $"/w {target} {msg}");
+                    Write(conType, SettingsManager.GetSettings<ConnectionSettings>().ChannelList.First(), $"/w {target} {msg}");
                     break;
                 case AnswerType.Public:
-                    Write(ConnectionType.BotCon, target, msg);
+                    Write(conType, target, msg);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(aType), aType, null);
