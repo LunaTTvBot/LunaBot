@@ -1,6 +1,6 @@
-# iBot
+# LunaBot
 
-iBot is a all-in-one solution to manage your [Twitch stream](https://twitch.tv).
+LunaBot (intern named iBot) is a all-in-one solution to manage your [Twitch stream](https://twitch.tv).
 
 ### Index
   1. Overview
@@ -14,7 +14,7 @@ iBot is a all-in-one solution to manage your [Twitch stream](https://twitch.tv).
 
 ### 1. Overview
 
-**iBot** is an Application that gives Twitch Streamers and Moderators all the tools to create an enjoyable experience for everybody.  
+**LunaBot** is an Application that gives Twitch Streamers and Moderators all the tools to create an enjoyable experience for everybody.  
 We include a chat-bot to give you the option to automate certain aspects of your Chat.  
 This way, you can have things like automatic Music Requests / Polls / Ranks / Giveaways / etc.  
 Additionally, you can lock these features behind Ranks, so that only real viewers may use them - make it really hard for trolls to grief.
@@ -29,12 +29,12 @@ Currently, the following features are implemented:
 
 ### 3. Setup
 
-Currently **iBot** is not ready for the general public, and as such has no easy way to run it outside of our development environments. *But Stay Tuned*
+Currently **LunaBot** is not ready for the general public, and as such has no easy way to run it outside of our development environments. *But Stay Tuned*
 
 ### 4. F.A.Q.
 
-> Q. Will **iBot** be Free? How much does it cost?  
-> A. **iBot** will not be a free product, but the exact price is not yet determined.
+> Q. Will **LunaBot** be Free? How much does it cost?  
+> A. **LunaBot** will not be a free product, but the exact price is not yet determined.
 
 > Q. When will it be released?  
 > A. When its done. *But we expect the first usable version to be ready this year*.
