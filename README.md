@@ -1,6 +1,6 @@
 # LunaBot
 
-LunaBot is a all-in-one solution to manage your [Twitch stream](https://twitch.tv).
+LunaBot (intern named iBot) is a all-in-one solution to manage your [Twitch stream](https://twitch.tv).
 
 ### Index
   1. Overview
