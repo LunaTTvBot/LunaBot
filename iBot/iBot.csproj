@@ -133,6 +133,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Poll.resx</DependentUpon>
     </Compile>
+    <Compile Include="Plugins\CommandCreator\CommandCreator.cs" />
     <Compile Include="Plugins\Poll\EventArgs\PollChangedEventArgs.cs" />
     <Compile Include="Plugins\Poll\EventArgs\PollCreatedEventArgs.cs" />
     <Compile Include="Facades\Plugins\Poll\Option.cs" />
@@ -206,6 +207,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>IrcConnection.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Plugins\CommandCreator\commandcreator.Designer.cs" />
     <Compile Include="Resources\Plugins\Points\PointLocale.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -295,6 +297,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>IrcConnection.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Plugins\CommandCreator\commandcreator.resx" />
     <EmbeddedResource Include="Resources\Plugins\Points\PointLocale.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>PointLocale.Designer.cs</LastGenOutput>
