@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using IBot.Core;
 using IBot.Events.Args.Users;
@@ -37,9 +39,39 @@ namespace IBot.Events
         private static readonly Regex RegExUsrState = new Regex(UserStatePattern);
         private static readonly Regex RegExUsrStTags = new Regex(UserStateTagsPattern);
 
+        private static readonly List<string> SpammerList = new List<string>();
+        private static readonly Dictionary<string, List<DateTime>> UserMessages = new Dictionary<string, List<DateTime>>();
+
         static UserEventManager()
         {
             IrcConnectionManager.RegisterMessageHandler(ConnectionType.BotCon, CheckAndRaiseMessageEvent);
+            UserPublicMessageEvent += CheckForSpam;
+        }
+
+        private static void CheckForSpam(object sender, UserPublicMessageEventArgs eventArgs)
+        {
+            if (!UserMessages.ContainsKey(eventArgs.UserName))
+                UserMessages.Add(eventArgs.UserName, new List<DateTime>());
+
+            var now = DateTime.Now;
+
+            UserMessages[eventArgs.UserName].Add(now);
+
+            // remove messages from the user that are older than 10 seconds
+            UserMessages[eventArgs.UserName].RemoveAll(dt => dt < now.AddSeconds(-10));
+
+            if (UserMessages[eventArgs.UserName].Count > 4)
+            {
+                SpammerList.Add(eventArgs.UserName);
+                UserSpamEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.Spam));
+                return;
+            }
+
+            if (UserMessages[eventArgs.UserName].Count <= 0)
+            {
+                SpammerList.Remove(eventArgs.UserName);
+                UserSpamEndEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.SpamEnd));
+            }
         }
 
         public static void CheckAndRaiseMessageEvent(object sender, MessageEventArgs msgEvArgs)
@@ -55,6 +87,8 @@ namespace IBot.Events
         public static event EventHandler<UserPublicMessageEventArgs> UserPublicMessageEvent;
         public static event EventHandler<UserWhisperMessageEventArgs> UserWhisperMessageEvent;
         public static event EventHandler<UserStateEventArgs> UserStateEvent;
+        public static event EventHandler<UserEventArgs> UserSpamEvent;
+        public static event EventHandler<UserEventArgs> UserSpamEndEvent;
 
         private static void OnUserJoinEvent(UserEventArgs e) => UserJoinEvent?.Invoke(typeof(EventManager), e);
 

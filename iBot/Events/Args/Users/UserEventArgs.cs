@@ -19,6 +19,7 @@ namespace IBot.Events.Args.Users
     internal enum UserEventType
     {
         Join,
-        Part
+        Part,
+        Spam
     }
 }
