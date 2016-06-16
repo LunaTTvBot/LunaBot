@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using IBot.Core;
 using IBot.Events;
 using IBot.Events.Args.Users;
 using IBot.Models;
-using Timer = System.Timers.Timer;
 
 namespace IBot.Plugins.UserAwards
 {
