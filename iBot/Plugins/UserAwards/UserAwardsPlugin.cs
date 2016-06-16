@@ -33,6 +33,8 @@ namespace IBot.Plugins.UserAwards
             UserList.UserListUpdated += OnUserListUpdated;
             UserEventManager.UserSpamEvent += OnUserSpam;
             UserEventManager.UserSpamEndEvent += OnUserSpamEnd;
+            UserEventManager.UserEmojiSpamEvent += OnUserEmojiSpam;
+            UserEventManager.UserEmojiSpamEndEvent += OnUserEmojiSpamEnd;
         }
 
         private void UnregisterEvents()
@@ -45,6 +47,10 @@ namespace IBot.Plugins.UserAwards
         private void OnUserSpam(object sender, UserEventArgs eventArgs) => AddAward(eventArgs.UserName, new Award(AwardType.ChatterSpammer));
 
         private void OnUserSpamEnd(object sender, UserEventArgs eventArgs) => RemoveAward(eventArgs.UserName, AwardType.ChatterSpammer);
+
+        private void OnUserEmojiSpam(object sender, UserEventArgs userEventArgs) => AddAward(userEventArgs.UserName, new Award(AwardType.ChatterEmoji));
+
+        private void OnUserEmojiSpamEnd(object sender, UserEventArgs userEventArgs) => RemoveAward(userEventArgs.UserName, AwardType.ChatterSpammer);
 
         private void OnUserListUpdated(object sender, EventArgs eventArgs)
         {

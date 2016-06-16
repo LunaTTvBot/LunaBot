@@ -42,10 +42,40 @@ namespace IBot.Events
         private static readonly List<string> SpammerList = new List<string>();
         private static readonly Dictionary<string, List<DateTime>> UserMessages = new Dictionary<string, List<DateTime>>();
 
+        private static readonly List<string> EmojiSpammerList = new List<string>();
+        private static readonly Dictionary<string, List<DateTime>> UserEmojiMessages = new Dictionary<string, List<DateTime>>();
+
         static UserEventManager()
         {
             IrcConnectionManager.RegisterMessageHandler(ConnectionType.BotCon, CheckAndRaiseMessageEvent);
             UserPublicMessageEvent += CheckForSpam;
+            UserPublicMessageEvent += CheckForEmojiSpam;
+        }
+
+        private static void CheckForEmojiSpam(object sender, UserPublicMessageEventArgs eventArgs)
+        {
+            if (!UserEmojiMessages.ContainsKey(eventArgs.UserName))
+                UserEmojiMessages.Add(eventArgs.UserName, new List<DateTime>());
+
+            var now = DateTime.Now;
+
+            UserEmojiMessages[eventArgs.UserName].Add(now);
+
+            // remove messages from the user that are older than 10 seconds
+            UserEmojiMessages[eventArgs.UserName].RemoveAll(dt => dt < now.AddSeconds(-10));
+
+            if (UserEmojiMessages[eventArgs.UserName].Count > 4)
+            {
+                EmojiSpammerList.Add(eventArgs.UserName);
+                UserEmojiSpamEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.EmojiSpam));
+                return;
+            }
+
+            if (UserEmojiMessages[eventArgs.UserName].Count <= 0)
+            {
+                EmojiSpammerList.Remove(eventArgs.UserName);
+                UserEmojiSpamEndEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.EmojiSpamEnd));
+            }
         }
 
         private static void CheckForSpam(object sender, UserPublicMessageEventArgs eventArgs)
@@ -89,6 +119,8 @@ namespace IBot.Events
         public static event EventHandler<UserStateEventArgs> UserStateEvent;
         public static event EventHandler<UserEventArgs> UserSpamEvent;
         public static event EventHandler<UserEventArgs> UserSpamEndEvent;
+        public static event EventHandler<UserEventArgs> UserEmojiSpamEvent;
+        public static event EventHandler<UserEventArgs> UserEmojiSpamEndEvent;
 
         private static void OnUserJoinEvent(UserEventArgs e) => UserJoinEvent?.Invoke(typeof(EventManager), e);
 

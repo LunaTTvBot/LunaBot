@@ -20,6 +20,9 @@ namespace IBot.Events.Args.Users
     {
         Join,
         Part,
-        Spam
+        Spam,
+        SpamEnd,
+        EmojiSpam,
+        EmojiSpamEnd
     }
 }
