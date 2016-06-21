@@ -90,14 +90,14 @@ namespace IBot.Plugins.UserAwards
                         var existingAward = UserAwards[username].First(a => a.Type == award.Type);
                         existingAward.Add(incrementValue);
 
-                        Logger.Debug("user {0} received increment for award {1}, now at {2}", username, award.Type, existingAward.TotalValue);
+                        Logger.Info("user {0} received increment for award {1}, now at {2}", username, award.Type, existingAward.TotalValue);
                     }
 
                     return;
                 }
 
                 UserAwards[username].Add(award);
-                Logger.Debug("user {0} received award {1}, now at {2}", username, award.Type, award.TotalValue);
+                Logger.Info("user {0} received award {1}, now at {2}", username, award.Type, award.TotalValue);
             }
         }
 
@@ -109,6 +109,7 @@ namespace IBot.Plugins.UserAwards
             lock (UserAwards[username])
             {
                 UserAwards[username].RemoveAll(a => a.Type == type);
+                Logger.Info("user {0} lost award {1}", username, type);
             }
         }
 
