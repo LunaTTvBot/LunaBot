@@ -133,6 +133,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Poll.resx</DependentUpon>
     </Compile>
+    <Compile Include="Models\Emote.cs" />
     <Compile Include="Plugins\Poll\EventArgs\PollChangedEventArgs.cs" />
     <Compile Include="Plugins\Poll\EventArgs\PollCreatedEventArgs.cs" />
     <Compile Include="Facades\Plugins\Poll\Option.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="TmiApi\TmiUriProvider.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Core\UserList.cs" />
+    <Compile Include="Tools\EmoteTools.cs" />
     <Compile Include="TwitchAPI\Models\Admin.cs" />
     <Compile Include="TwitchAPI\Models\Authorization.cs" />
     <Compile Include="TwitchAPI\Models\Badge.cs" />

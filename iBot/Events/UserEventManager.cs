@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using IBot.Core;
 using IBot.Events.Args.Users;
 using IBot.Events.Tags;
+using IBot.TwitchAPI.Models;
+using Tools;
 
 namespace IBot.Events
 {
@@ -59,23 +62,29 @@ namespace IBot.Events
 
             var now = DateTime.Now;
 
-            UserEmojiMessages[eventArgs.UserName].Add(now);
+            var emotes = EmoteTools.ParseEmotes(eventArgs.Tags.Emotes);
 
             // remove messages from the user that are older than 10 seconds
             UserEmojiMessages[eventArgs.UserName].RemoveAll(dt => dt < now.AddSeconds(-10));
 
-            if (UserEmojiMessages[eventArgs.UserName].Count > 4)
+            if (emotes.Count < 5)
+                return;
+
+            UserEmojiMessages[eventArgs.UserName].Add(now);
+
+            // raise event for people with more than x messages, and which are not already in the spammer list
+            if (UserEmojiMessages[eventArgs.UserName].Count > 4 && !EmojiSpammerList.Contains(eventArgs.UserName))
             {
                 EmojiSpammerList.Add(eventArgs.UserName);
                 UserEmojiSpamEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.EmojiSpam));
                 return;
             }
 
-            if (UserEmojiMessages[eventArgs.UserName].Count <= 0)
-            {
-                EmojiSpammerList.Remove(eventArgs.UserName);
-                UserEmojiSpamEndEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.EmojiSpamEnd));
-            }
+            if (UserEmojiMessages[eventArgs.UserName].Count > 0)
+                return;
+
+            EmojiSpammerList.Remove(eventArgs.UserName);
+            UserEmojiSpamEndEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.EmojiSpamEnd));
         }
 
         private static void CheckForSpam(object sender, UserPublicMessageEventArgs eventArgs)
@@ -85,23 +94,24 @@ namespace IBot.Events
 
             var now = DateTime.Now;
 
-            UserMessages[eventArgs.UserName].Add(now);
-
             // remove messages from the user that are older than 10 seconds
             UserMessages[eventArgs.UserName].RemoveAll(dt => dt < now.AddSeconds(-10));
 
-            if (UserMessages[eventArgs.UserName].Count > 4)
+            UserMessages[eventArgs.UserName].Add(now);
+
+            // raise event for people with more than x messages, and which are not already in the spammer list
+            if (UserMessages[eventArgs.UserName].Count > 4 && !SpammerList.Contains(eventArgs.UserName))
             {
                 SpammerList.Add(eventArgs.UserName);
                 UserSpamEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.Spam));
                 return;
             }
 
-            if (UserMessages[eventArgs.UserName].Count <= 0)
-            {
-                SpammerList.Remove(eventArgs.UserName);
-                UserSpamEndEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.SpamEnd));
-            }
+            if (UserMessages[eventArgs.UserName].Count > 0)
+                return;
+
+            SpammerList.Remove(eventArgs.UserName);
+            UserSpamEndEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.SpamEnd));
         }
 
         public static void CheckAndRaiseMessageEvent(object sender, MessageEventArgs msgEvArgs)
