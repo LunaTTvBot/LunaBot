@@ -95,6 +95,7 @@
     <Compile Include="Core\Rights.cs" />
     <Compile Include="Core\SettingsManager.cs" />
     <Compile Include="Core\Settings\ConnectionSettings.cs" />
+    <Compile Include="Core\Settings\GeneralSettings.cs" />
     <Compile Include="Core\Settings\SettingsHelper.cs" />
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
     <Compile Include="Events\Args\Connections\ConnectionUnexpectedCloseEventArgs.cs" />

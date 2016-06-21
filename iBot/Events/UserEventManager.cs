@@ -56,65 +56,80 @@ namespace IBot.Events
             UserPublicMessageEvent += CheckForEmojiSpam;
         }
 
-        private static void CheckForEmojiSpam(object sender, UserPublicMessageEventArgs eventArgs)
+        // limitId => (user => times)
+        private static readonly Dictionary<string, Dictionary<string, List<DateTime>>> RateLimitDictionary = new Dictionary<string, Dictionary<string, List<DateTime>>>();
+
+        // limitId => users
+        private static readonly Dictionary<string, HashSet<string>> RateLimitedUsers = new Dictionary<string, HashSet<string>>();
+
+        private static void RateLimitMessage(string limitIdentifier,
+                                             UserPublicMessageEventArgs eArgs,
+                                             Func<UserPublicMessageEventArgs, bool> evaluator,
+                                             int maximum,
+                                             int interval,
+                                             Action<UserPublicMessageEventArgs> onRateLimitAction,
+                                             Action<UserPublicMessageEventArgs> onRateLimitEndAction)
         {
-            if (!UserEmojiMessages.ContainsKey(eventArgs.UserName))
-                UserEmojiMessages.Add(eventArgs.UserName, new List<DateTime>());
+            if (!RateLimitDictionary.ContainsKey(limitIdentifier))
+                RateLimitDictionary.Add(limitIdentifier, new Dictionary<string, List<DateTime>>());
+
+            if (!RateLimitedUsers.ContainsKey(limitIdentifier))
+                RateLimitedUsers.Add(limitIdentifier, new HashSet<string>());
 
             var now = DateTime.Now;
-            var settings = SettingsManager.GetSettings<GeneralSettings>();
+            var user = eArgs.UserName;
+            var limitedUsers = RateLimitedUsers[limitIdentifier];
+            var userAssoc = RateLimitDictionary[limitIdentifier];
 
-            var emotes = EmoteTools.ParseEmotes(eventArgs.Tags.Emotes);
+            if (!userAssoc.ContainsKey(user))
+                userAssoc.Add(user, new List<DateTime>());
 
-            // remove messages from the user that are older than x seconds
-            UserEmojiMessages[eventArgs.UserName].RemoveAll(dt => dt < now.AddSeconds(settings.UserEmoteSpamInterval * -1));
+            // remove times from before the given interval
+            userAssoc[user].RemoveAll(t => t < now.AddSeconds(interval * -1));
 
-            if (emotes.Count < settings.UserEmoteSpamThreshold)
+            if (limitedUsers.Contains(user))
                 return;
 
-            UserEmojiMessages[eventArgs.UserName].Add(now);
-
-            // raise event for people with more than x messages, and which are not already in the spammer list
-            if (UserEmojiMessages[eventArgs.UserName].Count > 4 && !EmojiSpammerList.Contains(eventArgs.UserName))
+            if (evaluator.Invoke(eArgs))
             {
-                EmojiSpammerList.Add(eventArgs.UserName);
-                UserEmojiSpamEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.EmojiSpam));
+                userAssoc[user].Add(now);
+
+                if (userAssoc[user].Count <= maximum)
+                    return;
+
+                limitedUsers.Add(user);
+                onRateLimitAction.Invoke(eArgs);
+
                 return;
             }
 
-            if (UserEmojiMessages[eventArgs.UserName].Count > 0)
+            if (!limitedUsers.Contains(user))
                 return;
 
-            EmojiSpammerList.Remove(eventArgs.UserName);
-            UserEmojiSpamEndEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.EmojiSpamEnd));
+            limitedUsers.Remove(user);
+            onRateLimitEndAction.Invoke(eArgs);
+        }
+
+        private static void CheckForEmojiSpam(object sender, UserPublicMessageEventArgs eventArgs)
+        {
+            var settings = SettingsManager.GetSettings<GeneralSettings>();
+            RateLimitMessage("emotes", eventArgs,
+                             eArgs => EmoteTools.ParseEmotes(eArgs.Tags.Emotes).Count >= 1,
+                             settings.UserEmoteSpamThreshold,
+                             settings.UserEmoteSpamInterval,
+                             eArgs => UserEmojiSpamEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.EmojiSpam)),
+                             eArgs => UserEmojiSpamEndEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.EmojiSpamEnd)));
         }
 
         private static void CheckForSpam(object sender, UserPublicMessageEventArgs eventArgs)
         {
-            if (!UserMessages.ContainsKey(eventArgs.UserName))
-                UserMessages.Add(eventArgs.UserName, new List<DateTime>());
-
-            var now = DateTime.Now;
             var settings = SettingsManager.GetSettings<GeneralSettings>();
-
-            // remove messages from the user that are older than x seconds
-            UserMessages[eventArgs.UserName].RemoveAll(dt => dt < now.AddSeconds(settings.UserMessageSpamInterval * -1));
-
-            UserMessages[eventArgs.UserName].Add(now);
-
-            // raise event for people with more than x messages, and which are not already in the spammer list
-            if (UserMessages[eventArgs.UserName].Count > settings.UserMessageSpamThreshold && !SpammerList.Contains(eventArgs.UserName))
-            {
-                SpammerList.Add(eventArgs.UserName);
-                UserSpamEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.Spam));
-                return;
-            }
-
-            if (UserMessages[eventArgs.UserName].Count > 0)
-                return;
-
-            SpammerList.Remove(eventArgs.UserName);
-            UserSpamEndEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.SpamEnd));
+            RateLimitMessage("bareMessages", eventArgs,
+                             eArgs => true,
+                             settings.UserMessageSpamThreshold,
+                             settings.UserMessageSpamInterval,
+                             eArgs => UserSpamEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.Spam)),
+                             eArgs => UserSpamEndEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.SpamEnd)));
         }
 
         public static void CheckAndRaiseMessageEvent(object sender, MessageEventArgs msgEvArgs)
