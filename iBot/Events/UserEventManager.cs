@@ -64,7 +64,8 @@ namespace IBot.Events
                              settings.UserEmoteSpamInterval,
                              eArgs => UserEmojiSpamEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.EmojiSpam)),
                              eArgs => UserEmojiSpamEndEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.EmojiSpamEnd)),
-                             eArgs => EmoteTools.ParseEmotes(eArgs.Tags.Emotes).Count >= 1);
+                             eArgs => EmoteTools.EmotePercentageOfMessage(eArgs.Message, eArgs.Tags.Emotes) >= 35.0d,
+                             eArgs => EmoteTools.ParseEmotes(eArgs.Tags.Emotes).Count >= 6);
         }
 
         private static void CheckForSpam(object sender, UserPublicMessageEventArgs eventArgs)

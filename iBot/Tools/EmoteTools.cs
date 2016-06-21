@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using IBot.Models;
 
 namespace Tools
@@ -42,6 +44,39 @@ namespace Tools
             }
 
             return list;
+        }
+
+        public static double EmotePercentageOfMessage(string message, string emoteTags)
+        {
+            if (string.IsNullOrWhiteSpace(message) || string.IsNullOrWhiteSpace(emoteTags))
+                return 0.0d;
+
+            var builder = new StringBuilder();
+
+            var emotes = ParseEmotes(emoteTags).OrderBy(e => e.Start).ToList();
+
+            var messageIndex = 0;
+            for (int emoteIndex = 0; emoteIndex < emotes.Count(); emoteIndex++)
+            {
+                var emote = emotes[emoteIndex];
+                builder.Append(message.Substring(messageIndex, emote.Start - messageIndex));
+
+                // unicode replacement character, we use this char to mark an emote
+                builder.Append("\ufffd\ufffd");
+
+                messageIndex = emote.End + 1;
+            }
+
+            var filteredMessage = builder.ToString();
+            var noEmoteMessage = filteredMessage.Replace("\ufffd", "");
+
+            var fullLength = filteredMessage.Length;
+            var noEmoteLength = noEmoteMessage.Length;
+
+            var textPercentage = (100.0 / fullLength) * noEmoteLength;
+            var emotePercentage = 100.0 - textPercentage;
+
+            return emotePercentage;
         }
     }
 }

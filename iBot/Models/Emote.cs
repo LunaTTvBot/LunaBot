@@ -12,5 +12,6 @@
         public int Id { get; }
         public int Start { get; }
         public int End { get; }
+        public int Length => End - Start;
     }
 }
