@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using IBot.Core;
+using IBot.Core.Settings;
 using IBot.Events.Args.Users;
 using IBot.Events.Tags;
 using IBot.TwitchAPI.Models;
@@ -61,13 +62,14 @@ namespace IBot.Events
                 UserEmojiMessages.Add(eventArgs.UserName, new List<DateTime>());
 
             var now = DateTime.Now;
+            var settings = SettingsManager.GetSettings<GeneralSettings>();
 
             var emotes = EmoteTools.ParseEmotes(eventArgs.Tags.Emotes);
 
-            // remove messages from the user that are older than 10 seconds
-            UserEmojiMessages[eventArgs.UserName].RemoveAll(dt => dt < now.AddSeconds(-10));
+            // remove messages from the user that are older than x seconds
+            UserEmojiMessages[eventArgs.UserName].RemoveAll(dt => dt < now.AddSeconds(settings.UserEmoteSpamInterval * -1));
 
-            if (emotes.Count < 5)
+            if (emotes.Count < settings.UserEmoteSpamThreshold)
                 return;
 
             UserEmojiMessages[eventArgs.UserName].Add(now);
@@ -93,14 +95,15 @@ namespace IBot.Events
                 UserMessages.Add(eventArgs.UserName, new List<DateTime>());
 
             var now = DateTime.Now;
+            var settings = SettingsManager.GetSettings<GeneralSettings>();
 
-            // remove messages from the user that are older than 10 seconds
-            UserMessages[eventArgs.UserName].RemoveAll(dt => dt < now.AddSeconds(-10));
+            // remove messages from the user that are older than x seconds
+            UserMessages[eventArgs.UserName].RemoveAll(dt => dt < now.AddSeconds(settings.UserMessageSpamInterval * -1));
 
             UserMessages[eventArgs.UserName].Add(now);
 
             // raise event for people with more than x messages, and which are not already in the spammer list
-            if (UserMessages[eventArgs.UserName].Count > 4 && !SpammerList.Contains(eventArgs.UserName))
+            if (UserMessages[eventArgs.UserName].Count > settings.UserMessageSpamThreshold && !SpammerList.Contains(eventArgs.UserName))
             {
                 SpammerList.Add(eventArgs.UserName);
                 UserSpamEvent?.Invoke(null, new UserEventArgs(eventArgs.UserName, eventArgs.Channel, UserEventType.Spam));
