@@ -5,11 +5,13 @@ using IBot.Core;
 using IBot.Events;
 using IBot.Events.Args.Users;
 using IBot.Models;
+using NLog;
 
 namespace IBot.Plugins.UserAwards
 {
     internal class UserAwardsPlugin : IPlugin
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly Dictionary<string, List<Award>> UserAwards = new Dictionary<string, List<Award>>();
 
         public string PluginName => "User Awards Plugin";
@@ -85,13 +87,17 @@ namespace IBot.Plugins.UserAwards
                 {
                     if (incrementIfAvailable)
                     {
-                        UserAwards[username].First(a => a.Type == award.Type).Add(incrementValue);
+                        var existingAward = UserAwards[username].First(a => a.Type == award.Type);
+                        existingAward.Add(incrementValue);
+
+                        Logger.Debug("user {0} received increment for award {1}, now at {2}", username, award.Type, existingAward.TotalValue);
                     }
 
                     return;
                 }
 
                 UserAwards[username].Add(award);
+                Logger.Debug("user {0} received award {1}, now at {2}", username, award.Type, award.TotalValue);
             }
         }
 
