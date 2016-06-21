@@ -64,11 +64,11 @@ namespace IBot.Events
 
         private static void RateLimitMessage(string limitIdentifier,
                                              UserPublicMessageEventArgs eArgs,
-                                             Func<UserPublicMessageEventArgs, bool> evaluator,
                                              int maximum,
                                              int interval,
                                              Action<UserPublicMessageEventArgs> onRateLimitAction,
-                                             Action<UserPublicMessageEventArgs> onRateLimitEndAction)
+                                             Action<UserPublicMessageEventArgs> onRateLimitEndAction,
+                                             params Func<UserPublicMessageEventArgs, bool>[] evaluators)
         {
             if (!RateLimitDictionary.ContainsKey(limitIdentifier))
                 RateLimitDictionary.Add(limitIdentifier, new Dictionary<string, List<DateTime>>());
@@ -90,7 +90,8 @@ namespace IBot.Events
             if (limitedUsers.Contains(user))
                 return;
 
-            if (evaluator.Invoke(eArgs))
+            // if any one of the evaluators matches, continue
+            if (evaluators.Any(e => e.Invoke(eArgs)))
             {
                 userAssoc[user].Add(now);
 
@@ -114,22 +115,22 @@ namespace IBot.Events
         {
             var settings = SettingsManager.GetSettings<GeneralSettings>();
             RateLimitMessage("emotes", eventArgs,
-                             eArgs => EmoteTools.ParseEmotes(eArgs.Tags.Emotes).Count >= 1,
                              settings.UserEmoteSpamThreshold,
                              settings.UserEmoteSpamInterval,
                              eArgs => UserEmojiSpamEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.EmojiSpam)),
-                             eArgs => UserEmojiSpamEndEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.EmojiSpamEnd)));
+                             eArgs => UserEmojiSpamEndEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.EmojiSpamEnd)),
+                             eArgs => EmoteTools.ParseEmotes(eArgs.Tags.Emotes).Count >= 1);
         }
 
         private static void CheckForSpam(object sender, UserPublicMessageEventArgs eventArgs)
         {
             var settings = SettingsManager.GetSettings<GeneralSettings>();
             RateLimitMessage("bareMessages", eventArgs,
-                             eArgs => true,
                              settings.UserMessageSpamThreshold,
                              settings.UserMessageSpamInterval,
                              eArgs => UserSpamEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.Spam)),
-                             eArgs => UserSpamEndEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.SpamEnd)));
+                             eArgs => UserSpamEndEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.SpamEnd)),
+                             eArgs => true);
         }
 
         public static void CheckAndRaiseMessageEvent(object sender, MessageEventArgs msgEvArgs)
