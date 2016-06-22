@@ -6,6 +6,7 @@
         xmlns:p="clr-namespace:iBot_GUI.Resources"
         xmlns:startPage="clr-namespace:iBot_GUI.Pages.Start"
         xmlns:aboutUsPage="clr-namespace:iBot_GUI.Pages.AboutUs"
+        xmlns:SettingsPage="clr-namespace:iBot_GUI.Pages.Settings"
         xmlns:local="clr-namespace:iBot_GUI"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:dockablz="clr-namespace:Dragablz.Dockablz;assembly=Dragablz"
@@ -115,7 +116,12 @@
                                         <Grid>
                                             <aboutUsPage:AboutUs x:Name="AboutUs" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  />
                                         </Grid>
-                                    </TabItem>                                    
+                                    </TabItem>
+                                    <TabItem Header="Settings">
+                                        <Grid>
+                                            <SettingsPage:SettingsPage x:Name="SettingsPage" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                                        </Grid>
+                                    </TabItem>
                                 </dragablz:TabablzControl>
                             </dockablz:Layout>
                         </Grid>
