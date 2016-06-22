@@ -16,5 +16,11 @@ namespace IBot.Core.Settings
 
         [JsonProperty("user_emote_spam_interval")]
         public int UserEmoteSpamInterval { get; set; } = 10;
+
+        [JsonProperty("user_emote_spam_message_percentage")]
+        public double UserEmoteSpamMessagePercentage { get; set; } = 35.0d;
+
+        [JsonProperty("user_emote_spam_message_threshold")]
+        public int UserEmoteSpamMessageThreshold { get; set; } = 6;
     }
 }
