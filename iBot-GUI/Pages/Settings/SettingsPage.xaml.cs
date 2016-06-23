@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using iBot_GUI.Annotations;
+using iBot_GUI.Controls;
 
 namespace iBot_GUI.Pages.Settings
 {
@@ -24,101 +15,11 @@ namespace iBot_GUI.Pages.Settings
         {
             InitializeComponent();
 
-            MainTabControl.Items.Add(new TabItem
+            MainTabControl.Items.Add(new TabItem()
             {
-                Content = MakeScaffolding(new TestSettings())
+                Header = "TestSettings",
+                Content = new SettingsControl(new TestSettings())
             });
-        }
-
-        private UIElement MakeScaffolding<T>(T settings)
-        {
-            var stack = new StackPanel();
-
-            var type = settings.GetType();
-
-            var props = type.GetProperties();
-
-            foreach (var prop in props)
-            {
-                var element = new DockPanel();
-
-                var propType = prop.PropertyType;
-                var value = prop.GetValue(settings);
-
-                if (propType.IsValueType || value is string)
-                {
-                    Label label;
-                    UIElement valueElement;
-
-                    if (value is char || value is string)
-                    {
-                        label = new Label { Content = $"Char or String: {prop.Name}" };
-                        valueElement = new TextBox { Text = value.ToString() };
-                    }
-                    else if (value is bool)
-                    {
-                        label = new Label { Content = $"Bool: {prop.Name}" };
-                        valueElement = new CheckBox { IsChecked = (bool) value };
-                    }
-                    else if (value is short || value is int || value is long || value is ushort || value is uint || value is ulong)
-                    {
-                        label = new Label { Content = $"Short, Int, Long, UShort, UInt, ULong: {prop.Name}" };
-                        valueElement = new TextBox() { Text = value.ToString() };
-                    }
-                    else if (value is float || value is double)
-                    {
-                        label = new Label { Content = $"Float or Double: {prop.Name}" };
-                        valueElement = new TextBox { Text = value.ToString() };
-                    }
-                    else if (value is byte || value is sbyte)
-                    {
-                        label = new Label { Content = $"Byte or SByte: {prop.Name}" };
-                        valueElement = new TextBox { Text = value.ToString() };
-                    }
-                    else if (value is Enum)
-                    {
-                        label = new Label { Content = $"Enum: {prop.Name}" };
-                        var combo = new ComboBox();
-
-                        foreach (var enumValue in Enum.GetValues(propType))
-                        {
-                            combo.Items.Add(enumValue);
-                        }
-                        combo.SelectedValue = value;
-
-                        valueElement = combo;
-                    }
-                    else
-                    {
-                        // structs? fuck it...
-                        continue;
-                    }
-
-                    DockPanel.SetDock(label, Dock.Left);
-                    DockPanel.SetDock(valueElement, Dock.Right);
-
-                    element.Children.Add(label);
-                    element.Children.Add(valueElement);
-
-                    stack.Children.Add(element);
-                }
-                else
-                {
-                    var label = new Label { Content = prop.Name };
-                    var list = new ListBox();
-                    list.Items.Add(MakeScaffolding(prop.GetValue(settings)));
-
-                    DockPanel.SetDock(label, Dock.Left);
-                    DockPanel.SetDock(list, Dock.Right);
-
-                    element.Children.Add(label);
-                    element.Children.Add(list);
-
-                    stack.Children.Add(element);
-                }
-            }
-
-            return stack;
         }
     }
 
@@ -132,65 +33,334 @@ namespace iBot_GUI.Pages.Settings
         ESix
     }
 
-    internal class SettingsBase {}
+    internal class BindingBase : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        protected virtual void SetField<T>(ref T field, T value, string name)
+        {
+            var prev = field;
+            field = value;
+            OnPropertyChanged(name);
+            System.Console.WriteLine($"Property {name} changed from {prev} to {value}");
+        }
+    }
+
+    internal class SettingsBase : BindingBase {}
 
     internal class TestSettings : SettingsBase
     {
-        public ushort UShortField { get; set; } = 10;
+        private ushort _uShortField = 10;
+        private short _shortField = 10;
+        private uint _uIntegerField = 10;
+        private NestedOne _nestedOneField = new NestedOne();
+        private TestEnum _enumField = TestEnum.ESix;
+        private string _stringField = "Hello, World";
+        private char _charField = 'h';
+        private bool _boolField = false;
+        private float _floatField = 10.0f;
+        private double _doubleField = 10.0d;
+        private decimal _decimalField = 10.0m;
+        private long _longField = 10;
+        private ulong _uLongField = 10;
+        private int _integerField = 10;
 
-        public short ShortField { get; set; } = 10;
+        [Description("settings_description" + nameof(_uShortField))]
+        public ushort UShortField
+        {
+            get { return _uShortField; }
+            set { SetField(ref _uShortField, value, nameof(UShortField)); }
+        }
 
-        public uint UIntegerField { get; set; } = 10;
+        [Description("settings_description" + nameof(_shortField))]
+        public short ShortField
+        {
+            get { return _shortField; }
+            set { SetField(ref _shortField, value, nameof(ShortField)); }
+        }
 
-        public int IntegerField { get; set; } = 10;
+        [Description("settings_description" + nameof(_uIntegerField))]
+        public uint UIntegerField
+        {
+            get { return _uIntegerField; }
+            set { SetField(ref _uIntegerField, value, nameof(UIntegerField)); }
+        }
 
-        public ulong ULongField { get; set; } = 10;
+        [Description("settings_description" + nameof(_uIntegerField))]
+        public int IntegerField
+        {
+            get { return _integerField; }
+            set { SetField(ref _integerField, value, nameof(IntegerField)); }
+        }
 
-        public long LongField { get; set; } = 10;
+        [Description("settings_description" + nameof(_uLongField))]
+        public ulong ULongField
+        {
+            get { return _uLongField; }
+            set { SetField(ref _uLongField, value, nameof(ULongField)); }
+        }
 
-        public decimal DecimalField { get; set; } = 10.0m;
+        [Description("settings_description" + nameof(_longField))]
+        public long LongField
+        {
+            get { return _longField; }
+            set { SetField(ref _longField, value, nameof(LongField)); }
+        }
 
-        public double DoubleField { get; set; } = 10.0d;
+        [Description("settings_description" + nameof(_decimalField))]
+        public decimal DecimalField
+        {
+            get { return _decimalField; }
+            set { SetField(ref _decimalField, value, nameof(DecimalField)); }
+        }
 
-        public float FloatField { get; set; } = 10.0f;
+        [Description("settings_description" + nameof(_doubleField))]
+        public double DoubleField
+        {
+            get { return _doubleField; }
+            set { SetField(ref _doubleField, value, nameof(DoubleField)); }
+        }
 
-        public bool BoolField { get; set; } = false;
+        [Description("settings_description" + nameof(_floatField))]
+        public float FloatField
+        {
+            get { return _floatField; }
+            set { SetField(ref _floatField, value, nameof(FloatField)); }
+        }
 
-        public char CharField { get; set; } = 'h';
+        [Description("settings_description" + nameof(_boolField))]
+        public bool BoolField
+        {
+            get { return _boolField; }
+            set { SetField(ref _boolField, value, nameof(BoolField)); }
+        }
 
-        public string StringField { get; set; } = "Hello, World";
+        [Description("settings_description" + nameof(_charField))]
+        public char CharField
+        {
+            get { return _charField; }
+            set { SetField(ref _charField, value, nameof(CharField)); }
+        }
 
-        public TestEnum EnumField { get; set; } = TestEnum.ESix;
+        [Description("settings_description" + nameof(_stringField))]
+        public string StringField
+        {
+            get { return _stringField; }
+            set { SetField(ref _stringField, value, nameof(StringField)); }
+        }
 
-        public Nested NestedField { get; set; } = new Nested();
+        [Description("settings_description" + nameof(_enumField))]
+        public TestEnum EnumField
+        {
+            get { return _enumField; }
+            set { SetField(ref _enumField, value, nameof(EnumField)); }
+        }
+
+        [Description("settings_description" + nameof(_nestedOneField))]
+        public NestedOne NestedOneField
+        {
+            get { return _nestedOneField; }
+            set { SetField(ref _nestedOneField, value, nameof(NestedOneField)); }
+        }
     }
 
-    internal class Nested
+    internal class NestedOne : BindingBase
     {
-        public ushort UShortField { get; set; } = 10;
+        private ushort _uShortField = 10;
+        private short _shortField = 10;
+        private uint _uIntegerField = 10;
+        private NestedTwo _nestedTwoField = new NestedTwo();
+        private TestEnum _enumField = TestEnum.ESix;
+        private string _stringField = "Hello, World";
+        private char _charField = 'h';
+        private bool _boolField = false;
+        private float _floatField = 10.0f;
+        private double _doubleField = 10.0d;
+        private decimal _decimalField = 10.0m;
+        private long _longField = 10;
+        private ulong _uLongField = 10;
+        private int _integerField = 10;
 
-        public short ShortField { get; set; } = 10;
+        public ushort UShortField
+        {
+            get { return _uShortField; }
+            set { SetField(ref _uShortField, value, nameof(UShortField)); }
+        }
 
-        public uint UIntegerField { get; set; } = 10;
+        public short ShortField
+        {
+            get { return _shortField; }
+            set { SetField(ref _shortField, value, nameof(ShortField)); }
+        }
 
-        public int IntegerField { get; set; } = 10;
+        public uint UIntegerField
+        {
+            get { return _uIntegerField; }
+            set { SetField(ref _uIntegerField, value, nameof(UIntegerField)); }
+        }
 
-        public ulong ULongField { get; set; } = 10;
+        public int IntegerField
+        {
+            get { return _integerField; }
+            set { SetField(ref _integerField, value, nameof(IntegerField)); }
+        }
 
-        public long LongField { get; set; } = 10;
+        public ulong ULongField
+        {
+            get { return _uLongField; }
+            set { SetField(ref _uLongField, value, nameof(ULongField)); }
+        }
 
-        public decimal DecimalField { get; set; } = 10.0m;
+        public long LongField
+        {
+            get { return _longField; }
+            set { SetField(ref _longField, value, nameof(LongField)); }
+        }
 
-        public double DoubleField { get; set; } = 10.0d;
+        public decimal DecimalField
+        {
+            get { return _decimalField; }
+            set { SetField(ref _decimalField, value, nameof(DecimalField)); }
+        }
 
-        public float FloatField { get; set; } = 10.0f;
+        public double DoubleField
+        {
+            get { return _doubleField; }
+            set { SetField(ref _doubleField, value, nameof(DoubleField)); }
+        }
 
-        public bool BoolField { get; set; } = false;
+        public float FloatField
+        {
+            get { return _floatField; }
+            set { SetField(ref _floatField, value, nameof(FloatField)); }
+        }
 
-        public char CharField { get; set; } = 'h';
+        public bool BoolField
+        {
+            get { return _boolField; }
+            set { SetField(ref _boolField, value, nameof(BoolField)); }
+        }
 
-        public string StringField { get; set; } = "Hello, World";
+        public char CharField
+        {
+            get { return _charField; }
+            set { SetField(ref _charField, value, nameof(CharField)); }
+        }
 
-        public TestEnum EnumField { get; set; } = TestEnum.ESix;
+        public string StringField
+        {
+            get { return _stringField; }
+            set { SetField(ref _stringField, value, nameof(StringField)); }
+        }
+
+        public TestEnum EnumField
+        {
+            get { return _enumField; }
+            set { SetField(ref _enumField, value, nameof(EnumField)); }
+        }
+
+        public NestedTwo NestedTwoField
+        {
+            get { return _nestedTwoField; }
+            set { SetField(ref _nestedTwoField, value, nameof(NestedTwoField)); }
+        }
+    }
+
+    internal class NestedTwo : BindingBase
+    {
+        private ushort _uShortField = 10;
+        private short _shortField = 10;
+        private uint _uIntegerField = 10;
+        private TestEnum _enumField = TestEnum.ESix;
+        private string _stringField = "Hello, World";
+        private char _charField = 'h';
+        private bool _boolField = false;
+        private float _floatField = 10.0f;
+        private double _doubleField = 10.0d;
+        private decimal _decimalField = 10.0m;
+        private long _longField = 10;
+        private ulong _uLongField = 10;
+        private int _integerField = 10;
+
+        public ushort UShortField
+        {
+            get { return _uShortField; }
+            set { SetField(ref _uShortField, value, nameof(UShortField)); }
+        }
+
+        public short ShortField
+        {
+            get { return _shortField; }
+            set { SetField(ref _shortField, value, nameof(ShortField)); }
+        }
+
+        public uint UIntegerField
+        {
+            get { return _uIntegerField; }
+            set { SetField(ref _uIntegerField, value, nameof(UIntegerField)); }
+        }
+
+        public int IntegerField
+        {
+            get { return _integerField; }
+            set { SetField(ref _integerField, value, nameof(IntegerField)); }
+        }
+
+        public ulong ULongField
+        {
+            get { return _uLongField; }
+            set { SetField(ref _uLongField, value, nameof(ULongField)); }
+        }
+
+        public long LongField
+        {
+            get { return _longField; }
+            set { SetField(ref _longField, value, nameof(LongField)); }
+        }
+
+        public decimal DecimalField
+        {
+            get { return _decimalField; }
+            set { SetField(ref _decimalField, value, nameof(DecimalField)); }
+        }
+
+        public double DoubleField
+        {
+            get { return _doubleField; }
+            set { SetField(ref _doubleField, value, nameof(DoubleField)); }
+        }
+
+        public float FloatField
+        {
+            get { return _floatField; }
+            set { SetField(ref _floatField, value, nameof(FloatField)); }
+        }
+
+        public bool BoolField
+        {
+            get { return _boolField; }
+            set { SetField(ref _boolField, value, nameof(BoolField)); }
+        }
+
+        public char CharField
+        {
+            get { return _charField; }
+            set { SetField(ref _charField, value, nameof(CharField)); }
+        }
+
+        public string StringField
+        {
+            get { return _stringField; }
+            set { SetField(ref _stringField, value, nameof(StringField)); }
+        }
+
+        public TestEnum EnumField
+        {
+            get { return _enumField; }
+            set { SetField(ref _enumField, value, nameof(EnumField)); }
+        }
     }
 }
