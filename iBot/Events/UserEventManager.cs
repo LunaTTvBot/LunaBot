@@ -1,8 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using IBot.Core;
+using IBot.Core.Settings;
 using IBot.Events.Args.Users;
 using IBot.Events.Tags;
+using IBot.TwitchAPI.Models;
+using Tools;
 
 namespace IBot.Events
 {
@@ -37,9 +43,40 @@ namespace IBot.Events
         private static readonly Regex RegExUsrState = new Regex(UserStatePattern);
         private static readonly Regex RegExUsrStTags = new Regex(UserStateTagsPattern);
 
+        // limitId => (user => times)
+        private static readonly Dictionary<string, Dictionary<string, List<DateTime>>> RateLimitDictionary = new Dictionary<string, Dictionary<string, List<DateTime>>>();
+
+        // limitId => users
+        private static readonly Dictionary<string, HashSet<string>> RateLimitedUsers = new Dictionary<string, HashSet<string>>();
+
         static UserEventManager()
         {
             IrcConnectionManager.RegisterMessageHandler(ConnectionType.BotCon, CheckAndRaiseMessageEvent);
+            UserPublicMessageEvent += CheckForSpam;
+            UserPublicMessageEvent += CheckForEmojiSpam;
+        }
+
+        private static void CheckForEmojiSpam(object sender, UserPublicMessageEventArgs eventArgs)
+        {
+            var settings = SettingsManager.GetSettings<GeneralSettings>();
+            RateLimitMessage("emotes", eventArgs,
+                             settings.UserEmoteSpamThreshold,
+                             settings.UserEmoteSpamInterval,
+                             eArgs => UserEmojiSpamEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.EmojiSpam)),
+                             eArgs => UserEmojiSpamEndEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.EmojiSpamEnd)),
+                             eArgs => EmoteTools.EmotePercentageOfMessage(eArgs.Message, eArgs.Tags.Emotes) >= settings.UserEmoteSpamMessagePercentage,
+                             eArgs => EmoteTools.ParseEmotes(eArgs.Tags.Emotes).Count >= settings.UserEmoteSpamMessageThreshold);
+        }
+
+        private static void CheckForSpam(object sender, UserPublicMessageEventArgs eventArgs)
+        {
+            var settings = SettingsManager.GetSettings<GeneralSettings>();
+            RateLimitMessage("bareMessages", eventArgs,
+                             settings.UserMessageSpamThreshold,
+                             settings.UserMessageSpamInterval,
+                             eArgs => UserSpamEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.Spam)),
+                             eArgs => UserSpamEndEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.SpamEnd)),
+                             eArgs => true);
         }
 
         public static void CheckAndRaiseMessageEvent(object sender, MessageEventArgs msgEvArgs)
@@ -50,11 +87,64 @@ namespace IBot.Events
             RaiseUserStateEvent(msgEvArgs.Message);
         }
 
+        private static void RateLimitMessage(string limitIdentifier,
+                                             UserPublicMessageEventArgs eArgs,
+                                             int maximum,
+                                             int interval,
+                                             Action<UserPublicMessageEventArgs> onRateLimitAction,
+                                             Action<UserPublicMessageEventArgs> onRateLimitEndAction,
+                                             params Func<UserPublicMessageEventArgs, bool>[] evaluators)
+        {
+            if (!RateLimitDictionary.ContainsKey(limitIdentifier))
+                RateLimitDictionary.Add(limitIdentifier, new Dictionary<string, List<DateTime>>());
+
+            if (!RateLimitedUsers.ContainsKey(limitIdentifier))
+                RateLimitedUsers.Add(limitIdentifier, new HashSet<string>());
+
+            var now = DateTime.Now;
+            var user = eArgs.UserName;
+            var limitedUsers = RateLimitedUsers[limitIdentifier];
+            var userAssoc = RateLimitDictionary[limitIdentifier];
+
+            if (!userAssoc.ContainsKey(user))
+                userAssoc.Add(user, new List<DateTime>());
+
+            // remove times from before the given interval
+            userAssoc[user].RemoveAll(t => t < now.AddSeconds(interval * -1));
+
+            if (limitedUsers.Contains(user))
+                return;
+
+            // if any one of the evaluators matches, continue
+            if (evaluators.Any(e => e.Invoke(eArgs)))
+            {
+                userAssoc[user].Add(now);
+
+                if (userAssoc[user].Count <= maximum)
+                    return;
+
+                limitedUsers.Add(user);
+                onRateLimitAction.Invoke(eArgs);
+
+                return;
+            }
+
+            if (!limitedUsers.Contains(user))
+                return;
+
+            limitedUsers.Remove(user);
+            onRateLimitEndAction.Invoke(eArgs);
+        }
+
         public static event EventHandler<UserEventArgs> UserJoinEvent;
         public static event EventHandler<UserEventArgs> UserPartEvent;
         public static event EventHandler<UserPublicMessageEventArgs> UserPublicMessageEvent;
         public static event EventHandler<UserWhisperMessageEventArgs> UserWhisperMessageEvent;
         public static event EventHandler<UserStateEventArgs> UserStateEvent;
+        public static event EventHandler<UserEventArgs> UserSpamEvent;
+        public static event EventHandler<UserEventArgs> UserSpamEndEvent;
+        public static event EventHandler<UserEventArgs> UserEmojiSpamEvent;
+        public static event EventHandler<UserEventArgs> UserEmojiSpamEndEvent;
 
         private static void OnUserJoinEvent(UserEventArgs e) => UserJoinEvent?.Invoke(typeof(EventManager), e);
 

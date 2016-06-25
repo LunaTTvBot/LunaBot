@@ -17,6 +17,7 @@ namespace IBot.TwitchAPI
         private const string TwitchApiBase = "https://api.twitch.tv/kraken";
         private const string ChannelSubscriptionFormat = "/channels/{0}/subscriptions";
         private const string ChannelFollowerFormat = "/channels/{0}/follows";
+        private const string ChatEmoticonListFormat = "/chat/emoticons";
 
         /// <summary>
         /// client_id    = your client ID
@@ -194,6 +195,43 @@ namespace IBot.TwitchAPI
                        {
                            { (HttpStatusCode) 422, response => _logger.Trace("channel {0} has no followers - expected result", channel) },
                            { HttpStatusCode.Forbidden, response => _logger.Trace("not authorized to view followers of channel {0}", channel) },
+                       });
+
+            return retVal;
+        }
+
+        public static IEnumerable<Emoticon> GetEmoticons()
+        {
+            var retVal = new List<Emoticon>();
+
+            CallTwitch(url: ChatEmoticonListFormat,
+                       successAction: response =>
+                       {
+                           var responseDefinition = new
+                           {
+                               _links = new Links(),
+                               emoticons = new List<Emoticon>(),
+                           };
+
+                           try
+                           {
+                               var content = JsonConvert.DeserializeAnonymousType(response.Content, responseDefinition);
+                               retVal.AddRange(content.emoticons);
+                           }
+                           catch (JsonException e)
+                           {
+                               _logger.Debug(e);
+                               retVal.Clear();
+                           }
+                       },
+                       failureAction: (e, response) =>
+                       {
+                           _logger.Warn("could not retrieve list of emoticons");
+                           retVal.Clear();
+                       },
+                       responseHandlers: new Dictionary<HttpStatusCode, Action<IRestResponse>>()
+                       {
+                           { HttpStatusCode.Forbidden, response => _logger.Trace("not authorized to view list of emoticons") },
                        });
 
             return retVal;
