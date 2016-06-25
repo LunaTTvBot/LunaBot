@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using IBot.Core;
@@ -8,7 +7,6 @@ using IBot.Core.Settings;
 using IBot.Events.Args.Users;
 using IBot.Events.Tags;
 using IBot.Tools;
-using IBot.TwitchAPI.Models;
 
 namespace IBot.Events
 {
