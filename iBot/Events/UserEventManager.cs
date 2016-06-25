@@ -7,8 +7,8 @@ using IBot.Core;
 using IBot.Core.Settings;
 using IBot.Events.Args.Users;
 using IBot.Events.Tags;
+using IBot.Tools;
 using IBot.TwitchAPI.Models;
-using Tools;
 
 namespace IBot.Events
 {
