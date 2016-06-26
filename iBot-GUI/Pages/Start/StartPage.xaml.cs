@@ -194,10 +194,7 @@ namespace iBot_GUI.Pages.Start
                 BaselineAlignment = BaselineAlignment.Center
             });
 
-            Paragraph parsedPara = null;
-            if (!string.IsNullOrEmpty(publicMessageEventArgsFacade.Tags?.Emotes))
-                parsedPara = ParseSmileys(_paragraph, publicMessageEventArgsFacade.Tags.Emotes);
-
+            var parsedPara = ParseSmileys(_paragraph, !string.IsNullOrEmpty(publicMessageEventArgsFacade.Tags?.Emotes) ? publicMessageEventArgsFacade.Tags.Emotes : null);
             var p = new Paragraph();
 
             p.Inlines.Add(new Run(DateTime.Now.ToString("HH:mm:ss") + " | ")
@@ -230,58 +227,63 @@ namespace iBot_GUI.Pages.Start
         private static Paragraph ParseSmileys(TextElement element, string emoteTag)
         {
             var fullRange = new TextRange(element.ContentStart, element.ContentEnd);
-
             var builder = new Paragraph();
-
-            var emotes = ParseEmotes(emoteTag);
-            if (emotes.Count <= 0) return null;
-
-            emotes = emotes.OrderBy(e => e.Start).ToList();
-
             var messageIndex = 0;
-            for (var emoteIndex = 0; emoteIndex < emotes.Count(); emoteIndex++)
-            {
-                var emote = emotes[emoteIndex];
 
-                var start = fullRange.Start.GetPositionAtOffset(messageIndex);
-                if (start == null)
-                    continue;
-                var end = fullRange.Start.GetPositionAtOffset(emote.Start);
-                if (end == null)
-                    continue;
+            if(emoteTag != null) {            
+                var emotes = ParseEmotes(emoteTag);
+                if(emotes.Count <= 0)
+                    return null;
 
-                var range = new TextRange(start, end);
-
-                var ms = new MemoryStream();
-                range.Save(ms, DataFormats.XamlPackage);
-                var flowDocumentCopy = new FlowDocument();
-                var copyRange = new TextRange(flowDocumentCopy.ContentStart, flowDocumentCopy.ContentEnd);
-                copyRange.Load(ms, DataFormats.XamlPackage);
-
-                builder.Inlines.Add(new Run(copyRange.Text)
+                emotes = emotes.OrderBy(e => e.Start).ToList();
+                for (var emoteIndex = 0; emoteIndex < emotes.Count(); emoteIndex++)
                 {
-                    BaselineAlignment = BaselineAlignment.Center
-                });
+                    var emote = emotes[emoteIndex];
 
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(@"http://static-cdn.jtvnw.net/emoticons/v1/" + emote.Id + @"/1.0",
-                    UriKind.Absolute);
-                bitmap.EndInit();
+                    var start = fullRange.Start.GetPositionAtOffset(messageIndex);
+                    if (start == null)
+                        continue;
+                    var end = fullRange.Start.GetPositionAtOffset(emote.Start);
+                    if (end == null)
+                        continue;
 
-                builder.Inlines.Add(new Image
-                {
-                    Source = bitmap,
-                    ToolTip = range.Text,
-                    Tag = range.Text,
-                    MinWidth = 20,
-                    MinHeight = 20,
-                    MaxWidth = 32,
-                    MaxHeight = 32,
-                    Stretch = Stretch.None
-                });
+                    var range = new TextRange(start, end);
 
-                messageIndex = emote.End + 1;
+                    var ms = new MemoryStream();
+                    range.Save(ms, DataFormats.XamlPackage);
+                    var flowDocumentCopy = new FlowDocument();
+                    var copyRange = new TextRange(flowDocumentCopy.ContentStart, flowDocumentCopy.ContentEnd);
+                    copyRange.Load(ms, DataFormats.XamlPackage);
+
+                    builder.Inlines.Add(new Run(copyRange.Text)
+                    {
+                        BaselineAlignment = BaselineAlignment.Center
+                    });
+
+                    var emoteStart = fullRange.Start.GetPositionAtOffset(emote.Start);
+                    var emoteEnd = fullRange.Start.GetPositionAtOffset(emote.End + 1);
+                    var emoteRange = new TextRange(emoteStart, emoteEnd);
+
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(@"http://static-cdn.jtvnw.net/emoticons/v1/" + emote.Id + @"/1.0",
+                        UriKind.Absolute);
+                    bitmap.EndInit();
+
+                    builder.Inlines.Add(new Image
+                    {
+                        Source = bitmap,
+                        ToolTip = emoteRange.Text,
+                        Tag = emoteRange.Text,
+                        MinWidth = 20,
+                        MinHeight = 20,
+                        MaxWidth = 32,
+                        MaxHeight = 32,
+                        Stretch = Stretch.None
+                    });
+
+                    messageIndex = emote.End + 1;
+                }
             }
 
             if (messageIndex == fullRange.Text.Length) return builder;
