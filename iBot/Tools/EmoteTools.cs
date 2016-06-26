@@ -67,6 +67,11 @@ namespace IBot.Tools
                 messageIndex = emote.End + 1;
             }
 
+            if(messageIndex != message.Length)
+            {
+                builder.Append(message.Substring(messageIndex, message.Length - messageIndex));
+            }
+
             var filteredMessage = builder.ToString();
             var noEmoteMessage = filteredMessage.Replace("\ufffd", "");
 
