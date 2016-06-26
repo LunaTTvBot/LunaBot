@@ -25,7 +25,7 @@ namespace IBot.Events
             @"(" + GlobalTwitchPatterns.TwitchUserNamePattern + @")\s:(.*)$";
 
         public const string UserMessageTagsPattern =
-            @"^@badges=([^;]*);color=([^;]*);display-name=([\d\w]*);emotes=(.*);mod=([0|1]);room-id=(\d+);subscriber=([0|1]);turbo=([0|1]);user-id=(\d+);user-type=(.*)$";
+            @"^@badges=([^;]*);color=([^;]*);display-name=([^;]*);emotes=([^;]*);id=[^;]*;mod=([0|1]);room-id=(\d+);subscriber=([0|1]);turbo=([0|1]);user-id=(\d+);user-type=(.*)$";
 
         public const string UserStatePattern =
             @"^(.*)\s:" + GlobalTwitchPatterns.TwitchHostNamePattern + @"\sUSERSTATE\s" +
