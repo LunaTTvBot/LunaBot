@@ -3,6 +3,8 @@ using IBot.Facades.TranslationExtensions;
 using CoreSettingsManager = IBot.Core.SettingsManager;
 using CoreConnectionSettings = IBot.Core.Settings.ConnectionSettings;
 using FacadeConnectionSettings = IBot.Facades.Core.Settings.ConnectionSettings;
+using CoreGeneralSettings = IBot.Core.Settings.GeneralSettings;
+using FacadeGeneralSettings = IBot.Facades.Core.Settings.GeneralSettings;
 
 namespace IBot.Facades.Core
 {
@@ -33,6 +35,36 @@ namespace IBot.Facades.Core
             {
                 result = new Result<FacadeConnectionSettings>("Connection settings successfully saved.", 0,
                     fullSettings.ToFacadeSettings());
+            }
+
+            return result;
+        }
+
+        public static Result<FacadeGeneralSettings> GetGeneralSettings()
+        {
+            var result = new Result<FacadeGeneralSettings>("Unable to load General settings.", 400,
+                new FacadeGeneralSettings());
+
+            var settings = CoreSettingsManager.GetSettings<CoreGeneralSettings>();
+            if (settings != null)
+                result = new Result<FacadeGeneralSettings>("General settings successfully loaded.", 0,
+                                                           settings.ToFacadeSettings());
+
+            return result;
+        }
+
+        public static Result<FacadeGeneralSettings> SaveConnectionSettings(FacadeGeneralSettings settings)
+        {
+            var result = new Result<FacadeGeneralSettings>("Unable to save General settings.", 400,
+                                                           settings);
+
+            var fullSettings = CoreSettingsManager.GetSettings<CoreGeneralSettings>();
+            CopyValues(fullSettings, settings);
+
+            if (CoreSettingsManager.SetSettings(fullSettings))
+            {
+                result = new Result<FacadeGeneralSettings>("General settings successfully saved.", 0,
+                                                           fullSettings.ToFacadeSettings());
             }
 
             return result;
