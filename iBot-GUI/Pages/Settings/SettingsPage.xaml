@@ -10,11 +10,24 @@
              xmlns:start="clr-namespace:iBot_GUI.Pages.Start"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:themes="clr-namespace:Dragablz.Themes;assembly=Dragablz"
+             xmlns:controls="clr-namespace:iBot_GUI.Controls"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="800">
     <Grid>
-        <ScrollViewer>
-            <dragablz:TabablzControl Name="MainTabControl" />
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <dragablz:TabablzControl ItemsSource="{Binding Settings}">
+                <dragablz:TabablzControl.HeaderItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Key}" />
+                    </DataTemplate>
+                </dragablz:TabablzControl.HeaderItemTemplate>
+                <dragablz:TabablzControl.ContentTemplate>
+                    <DataTemplate>
+                        <controls:SettingsControl Settings="{Binding Value}" />
+                    </DataTemplate>
+                </dragablz:TabablzControl.ContentTemplate>
+            </dragablz:TabablzControl>
         </ScrollViewer>
     </Grid>
 </UserControl>

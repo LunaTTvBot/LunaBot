@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using iBot_GUI.Pages.Settings;
 using iBot_GUI.Resources;
+using IBot.Facades.Core;
 
 namespace iBot_GUI.Controls
 {
@@ -15,14 +16,36 @@ namespace iBot_GUI.Controls
     /// </summary>
     public partial class SettingsControl : UserControl
     {
+        public SettingsBase Settings { get; set; }
+
+        public static readonly DependencyProperty SettingsProperty =
+            DependencyProperty.Register(nameof(Settings),
+                                        typeof(SettingsBase),
+                                        typeof(SettingsControl),
+                                        new PropertyMetadata(new SettingsBase(),
+                                                             PropertyChangedCallback));
+
         public SettingsControl()
         {
             InitializeComponent();
         }
 
-        internal SettingsControl(SettingsBase settings) : this()
+        private static void PropertyChangedCallback(DependencyObject dpObject, DependencyPropertyChangedEventArgs eventArgs)
         {
-            MainStack.Children.Add(MakeScaffolding(settings));
+            if (!(dpObject is SettingsControl))
+                return;
+
+            var instance = (SettingsControl) dpObject;
+            var value = dpObject.GetValue(SettingsProperty) as SettingsBase;
+
+            instance.Settings = value;
+            instance.MakeScaffolding();
+        }
+
+        private void MakeScaffolding()
+        {
+            MainStack.Children.Clear();
+            MainStack.Children.Add(MakeScaffolding(Settings));
         }
 
         private UIElement MakeScaffolding<T>(T settings)

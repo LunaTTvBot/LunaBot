@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using iBot_GUI.Annotations;
@@ -9,21 +11,47 @@ namespace iBot_GUI.Pages.Settings
     /// <summary>
     /// Interaction logic for SettingsPage.xaml
     /// </summary>
-    public partial class SettingsPage : UserControl
+    public partial class SettingsPage : UserControl, INotifyPropertyChanged
     {
+        private Dictionary<string, SettingsBase> _settings;
+        public Dictionary<string, SettingsBase> Settings
+        {
+            get { return _settings; }
+            set
+            {
+                if (Equals(value, _settings))
+                    return;
+                _settings = value;
+                OnPropertyChanged(nameof(Settings));
+            }
+        }
+
         public SettingsPage()
         {
+            Settings = new Dictionary<string, SettingsBase>();
+
             InitializeComponent();
 
-            MainTabControl.Items.Add(new TabItem()
-            {
-                Header = "TestSettings",
-                Content = new SettingsControl(new TestSettings())
-            });
+            Settings.Add("Test Settings", new TestSettings());
+            OnPropertyChanged(nameof(Settings));
+
+            //MainTabControl.Items.Add(new TabItem()
+            //{
+            //    Header = "TestSettings",
+            //    Content = new SettingsControl(new TestSettings())
+            //});
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
-    internal enum TestEnum
+    public enum TestEnum
     {
         EOne,
         ETwo,
@@ -33,7 +61,7 @@ namespace iBot_GUI.Pages.Settings
         ESix
     }
 
-    internal class BindingBase : INotifyPropertyChanged
+    public class BindingBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -49,9 +77,9 @@ namespace iBot_GUI.Pages.Settings
         }
     }
 
-    internal class SettingsBase : BindingBase {}
+    public class SettingsBase : BindingBase {}
 
-    internal class TestSettings : SettingsBase
+    public class TestSettings : SettingsBase
     {
         private ushort _uShortField = 10;
         private short _shortField = 10;
@@ -167,7 +195,7 @@ namespace iBot_GUI.Pages.Settings
         }
     }
 
-    internal class NestedOne : BindingBase
+    public class NestedOne : BindingBase
     {
         private ushort _uShortField = 10;
         private short _shortField = 10;
@@ -269,7 +297,7 @@ namespace iBot_GUI.Pages.Settings
         }
     }
 
-    internal class NestedTwo : BindingBase
+    public class NestedTwo : BindingBase
     {
         private ushort _uShortField = 10;
         private short _shortField = 10;
