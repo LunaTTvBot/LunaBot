@@ -106,6 +106,8 @@
     <Compile Include="Facades\Core\PluginManager.cs" />
     <Compile Include="Facades\Core\SettingsManager.cs" />
     <Compile Include="Facades\Core\Settings\ConnectionSettings.cs" />
+    <Compile Include="Facades\Core\Settings\GeneralSettings.cs" />
+    <Compile Include="Facades\Core\Settings\SettingsBase.cs" />
     <Compile Include="Facades\Events\Args\Channel\JoinPartEventArgs.cs" />
     <Compile Include="Facades\Events\Args\User\PrivateMessageEventArgs.cs" />
     <Compile Include="Facades\Events\Args\User\PublicMessageEventArgs.cs" />
@@ -134,6 +136,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Poll.resx</DependentUpon>
     </Compile>
+    <Compile Include="Facades\TranslationExtensions\GeneralSettingsExtension.cs" />
     <Compile Include="Models\Emote.cs" />
     <Compile Include="Plugins\Poll\EventArgs\PollChangedEventArgs.cs" />
     <Compile Include="Plugins\Poll\EventArgs\PollCreatedEventArgs.cs" />
