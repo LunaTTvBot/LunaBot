@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using iBot_GUI.Windows;
+using IBot.Facades.Connection;
 using IBot.Facades.Core;
 using IBot.Facades.Events;
 using IBot.Facades.Events.Args.User;
@@ -20,9 +21,9 @@ namespace iBot_GUI.Pages.Start
 {
     public partial class StartPage
     {
+        private readonly DispatcherTimer _userListTimer;
         private bool _copied;
         private Paragraph _paragraph;
-        private readonly DispatcherTimer _userListTimer;
 
         public StartPage()
         {
@@ -34,7 +35,7 @@ namespace iBot_GUI.Pages.Start
 
             CenterText();
 
-            DataContext = this;            
+            DataContext = this;
 
             MainWindow.OnClipboardChange += MainWindowOnOnClipboardChange;
 
@@ -44,10 +45,22 @@ namespace iBot_GUI.Pages.Start
 
         private void UserListTimerOnTick(object sender, EventArgs eventArgs)
         {
-            if(Dispatcher.CheckAccess()) {
-                ChatterList.ItemsSource = ChatterList.ItemsSource = UserList.GetUsers(SettingsManager.GetConnectionSettings().Value.ChannelList.First()).Select(user => user.Name).ToList();
-            } else {
-                Dispatcher.Invoke(() => ChatterList.ItemsSource = UserList.GetUsers(SettingsManager.GetConnectionSettings().Value.ChannelList.First()).Select(user => user.Name).ToList());
+            if (Dispatcher.CheckAccess())
+            {
+                ChatterList.ItemsSource =
+                    ChatterList.ItemsSource =
+                        UserList.GetUsers(SettingsManager.GetConnectionSettings().Value.ChannelList.First())
+                            .Select(user => user.Name)
+                            .ToList();
+            }
+            else
+            {
+                Dispatcher.Invoke(
+                    () =>
+                        ChatterList.ItemsSource =
+                            UserList.GetUsers(SettingsManager.GetConnectionSettings().Value.ChannelList.First())
+                                .Select(user => user.Name)
+                                .ToList());
             }
 
             ChatterList.SelectedItem = null;
@@ -181,9 +194,7 @@ namespace iBot_GUI.Pages.Start
                 BaselineAlignment = BaselineAlignment.Center
             });
 
-            if (!string.IsNullOrEmpty(publicMessageEventArgsFacade.Tags?.Emotes))
-                ParseSmileys(_paragraph, publicMessageEventArgsFacade.Tags.Emotes);
-
+            var parsedPara = ParseSmileys(_paragraph, !string.IsNullOrEmpty(publicMessageEventArgsFacade.Tags?.Emotes) ? publicMessageEventArgsFacade.Tags.Emotes : null);
             var p = new Paragraph();
 
             p.Inlines.Add(new Run(DateTime.Now.ToString("HH:mm:ss") + " | ")
@@ -198,9 +209,12 @@ namespace iBot_GUI.Pages.Start
                 BaselineAlignment = BaselineAlignment.Center
             });
 
-            while (_paragraph.Inlines.Count != 0)
+            if (parsedPara != null)
             {
-                p.Inlines.Add(_paragraph.Inlines.FirstInline);
+                while (parsedPara.Inlines.Count != 0)
+                {
+                    p.Inlines.Add(parsedPara.Inlines.FirstInline);
+                }
             }
 
             InfoBox.Document.Blocks.Add(p);
@@ -210,21 +224,45 @@ namespace iBot_GUI.Pages.Start
                 InfoBox.ScrollToEnd();
         }
 
-        private void ParseSmileys(TextElement element, string emoteTag)
+        private static Paragraph ParseSmileys(TextElement element, string emoteTag)
         {
             var fullRange = new TextRange(element.ContentStart, element.ContentEnd);
+            var builder = new Paragraph();
+            var messageIndex = 0;
 
-            var emoteList = ParseEmotes(emoteTag);
-            if (emoteList.Count > 0)
-            {
-                emoteList.ForEach(emote =>
+            if(emoteTag != null) {            
+                var emotes = ParseEmotes(emoteTag);
+                if(emotes.Count <= 0)
+                    return null;
+
+                emotes = emotes.OrderBy(e => e.Start).ToList();
+                for (var emoteIndex = 0; emoteIndex < emotes.Count(); emoteIndex++)
                 {
-                    var start = fullRange.Start.GetPositionAtOffset(emote.Start);
-                    if (start == null) return;
-                    var end = fullRange.Start.GetPositionAtOffset(emote.End + 1);
-                    if (end == null) return;
+                    var emote = emotes[emoteIndex];
+
+                    var start = fullRange.Start.GetPositionAtOffset(messageIndex);
+                    if (start == null)
+                        continue;
+                    var end = fullRange.Start.GetPositionAtOffset(emote.Start);
+                    if (end == null)
+                        continue;
 
                     var range = new TextRange(start, end);
+
+                    var ms = new MemoryStream();
+                    range.Save(ms, DataFormats.XamlPackage);
+                    var flowDocumentCopy = new FlowDocument();
+                    var copyRange = new TextRange(flowDocumentCopy.ContentStart, flowDocumentCopy.ContentEnd);
+                    copyRange.Load(ms, DataFormats.XamlPackage);
+
+                    builder.Inlines.Add(new Run(copyRange.Text)
+                    {
+                        BaselineAlignment = BaselineAlignment.Center
+                    });
+
+                    var emoteStart = fullRange.Start.GetPositionAtOffset(emote.Start);
+                    var emoteEnd = fullRange.Start.GetPositionAtOffset(emote.End + 1);
+                    var emoteRange = new TextRange(emoteStart, emoteEnd);
 
                     var bitmap = new BitmapImage();
                     bitmap.BeginInit();
@@ -232,20 +270,41 @@ namespace iBot_GUI.Pages.Start
                         UriKind.Absolute);
                     bitmap.EndInit();
 
-                    ReplaceTextRangeWithImage(range,
-                        new Image
-                        {
-                            Source = bitmap,
-                            ToolTip = range.Text,
-                            Tag = range.Text,
-                            MinWidth = 20,
-                            MinHeight = 20,
-                            MaxWidth = 32,
-                            MaxHeight = 32,
-                            Stretch = Stretch.None
-                        });
+                    builder.Inlines.Add(new Image
+                    {
+                        Source = bitmap,
+                        ToolTip = emoteRange.Text,
+                        Tag = emoteRange.Text,
+                        MinWidth = 20,
+                        MinHeight = 20,
+                        MaxWidth = 32,
+                        MaxHeight = 32,
+                        Stretch = Stretch.None
+                    });
+
+                    messageIndex = emote.End + 1;
+                }
+            }
+
+            if (messageIndex == fullRange.Text.Length) return builder;
+            {
+                var start = fullRange.Start.GetPositionAtOffset(messageIndex);
+                var end = fullRange.Start.GetPositionAtOffset(fullRange.Text.Length);
+
+                var range = new TextRange(start, end);
+
+                var ms = new MemoryStream();
+                range.Save(ms, DataFormats.XamlPackage);
+                var flowDocumentCopy = new FlowDocument();
+                var copyRange = new TextRange(flowDocumentCopy.ContentStart, flowDocumentCopy.ContentEnd);
+                copyRange.Load(ms, DataFormats.XamlPackage);
+
+                builder.Inlines.Add(new Run(copyRange.Text) {
+                    BaselineAlignment = BaselineAlignment.Center
                 });
             }
+
+            return builder;
         }
 
         /// <summary>
@@ -317,9 +376,10 @@ namespace iBot_GUI.Pages.Start
             if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift) return;
 
             var text = InputBox.Text;
-            if(!string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(text))
             {
-                IBot.Facades.Connection.Connection.WritePublicChatMessage(new string(text.ToCharArray()), SettingsManager.GetConnectionSettings().Value.ChannelList.First());
+                Connection.WritePublicChatMessage(new string(text.ToCharArray()),
+                    SettingsManager.GetConnectionSettings().Value.ChannelList.First());
                 InputBox.Text = "";
             }
         }

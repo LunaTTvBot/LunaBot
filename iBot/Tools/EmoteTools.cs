@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using IBot.Models;
 
-namespace Tools
+namespace IBot.Tools
 {
     internal static class EmoteTools
     {
@@ -65,6 +65,11 @@ namespace Tools
                 builder.Append("\ufffd\ufffd");
 
                 messageIndex = emote.End + 1;
+            }
+
+            if(messageIndex != message.Length)
+            {
+                builder.Append(message.Substring(messageIndex, message.Length - messageIndex));
             }
 
             var filteredMessage = builder.ToString();

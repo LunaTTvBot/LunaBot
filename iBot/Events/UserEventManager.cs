@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using IBot.Core;
 using IBot.Core.Settings;
 using IBot.Events.Args.Users;
 using IBot.Events.Tags;
-using IBot.TwitchAPI.Models;
-using Tools;
+using IBot.Tools;
 
 namespace IBot.Events
 {
@@ -27,7 +25,7 @@ namespace IBot.Events
             @"(" + GlobalTwitchPatterns.TwitchUserNamePattern + @")\s:(.*)$";
 
         public const string UserMessageTagsPattern =
-            @"^@badges=([^;]*);color=([^;]*);display-name=([\d\w]*);emotes=(.*);mod=([0|1]);room-id=(\d+);subscriber=([0|1]);turbo=([0|1]);user-id=(\d+);user-type=(.*)$";
+            @"^@badges=([^;]*);color=([^;]*);display-name=([^;]*);emotes=([^;]*);id=[^;]*;mod=([0|1]);room-id=(\d+);subscriber=([0|1]);turbo=([0|1]);user-id=(\d+);user-type=(.*)$";
 
         public const string UserStatePattern =
             @"^(.*)\s:" + GlobalTwitchPatterns.TwitchHostNamePattern + @"\sUSERSTATE\s" +
@@ -64,8 +62,8 @@ namespace IBot.Events
                              settings.UserEmoteSpamInterval,
                              eArgs => UserEmojiSpamEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.EmojiSpam)),
                              eArgs => UserEmojiSpamEndEvent?.Invoke(null, new UserEventArgs(eArgs.UserName, eArgs.Channel, UserEventType.EmojiSpamEnd)),
-                             eArgs => EmoteTools.EmotePercentageOfMessage(eArgs.Message, eArgs.Tags.Emotes) >= settings.UserEmoteSpamMessagePercentage,
-                             eArgs => EmoteTools.ParseEmotes(eArgs.Tags.Emotes).Count >= settings.UserEmoteSpamMessageThreshold);
+                             eArgs => EmoteTools.EmotePercentageOfMessage(eArgs.Message, eArgs.Tags?.Emotes) >= settings.UserEmoteSpamMessagePercentage,
+                             eArgs => EmoteTools.ParseEmotes(eArgs.Tags?.Emotes).Count >= settings.UserEmoteSpamMessageThreshold);
         }
 
         private static void CheckForSpam(object sender, UserPublicMessageEventArgs eventArgs)
