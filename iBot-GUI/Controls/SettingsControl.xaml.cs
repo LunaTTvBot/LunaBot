@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Windows.Data;
 using iBot_GUI.Pages.Settings;
 using iBot_GUI.Resources;
 using IBot.Facades.Core;
+using IBot.Facades.Core.Settings;
 
 namespace iBot_GUI.Controls
 {
@@ -72,7 +74,10 @@ namespace iBot_GUI.Controls
                                       ? ""
                                       : SettingsDescriptions.ResourceManager.GetString(settingsDescriptionIdentifier);
 
-                if (propType.IsValueType || value is string)
+                if (propType.IsValueType
+                    || value is string
+                    || value is IList
+                    || value is IDictionary)
                 {
                     UIElement valueElement;
 
@@ -134,6 +139,28 @@ namespace iBot_GUI.Controls
                         };
 
                         box.SetBinding(ComboBox.SelectedItemProperty, binding);
+
+                        valueElement = box;
+                    }
+                    else if (value is IList)
+                    {
+                        var box = new ListBox
+                        {
+                            ItemsSource = (value as IList),
+                        };
+
+                        box.SetBinding(ListBox.SelectedItemProperty, binding);
+
+                        valueElement = box;
+                    }
+                    else if (value is IDictionary)
+                    {
+                        var box = new ListBox
+                        {
+                            ItemsSource = (value as IDictionary),
+                        };
+
+                        box.SetBinding(ListBox.SelectedItemProperty, binding);
 
                         valueElement = box;
                     }
