@@ -61,11 +61,101 @@ namespace iBot_GUI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is the description for the unsigned Short field, taken from the default resource.
+        ///   Looks up a localized string similar to Given Nickname of the Bot.
         /// </summary>
-        internal static string settings_description_uShortField {
+        internal static string settings_description_BotNickname {
             get {
-                return ResourceManager.GetString("settings_description_uShortField", resourceCulture);
+                return ResourceManager.GetString("settings_description_BotNickname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Twitch-OAuth key for the Bot-Account.
+        /// </summary>
+        internal static string settings_description_BotTwitchApiKey {
+            get {
+                return ResourceManager.GetString("settings_description_BotTwitchApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List of channels the bot should join upon start.
+        /// </summary>
+        internal static string settings_description_ChannelList {
+            get {
+                return ResourceManager.GetString("settings_description_ChannelList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Owners (Your) Nickname.
+        /// </summary>
+        internal static string settings_description_OwnerNickname {
+            get {
+                return ResourceManager.GetString("settings_description_OwnerNickname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Owners (Your)Twitch-OAuth key.
+        /// </summary>
+        internal static string settings_description_OwnerTwitchApiKey {
+            get {
+                return ResourceManager.GetString("settings_description_OwnerTwitchApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Length of any given interval in which a users messages are considered spam.
+        /// </summary>
+        internal static string settings_description_UserEmoteSpamInterval {
+            get {
+                return ResourceManager.GetString("settings_description_UserEmoteSpamInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to How much of a message needs to be emotes to be considered spam.
+        /// </summary>
+        internal static string settings_description_UserEmoteSpamMessagePercentage {
+            get {
+                return ResourceManager.GetString("settings_description_UserEmoteSpamMessagePercentage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum amount of emotes in a message before it being considered spam.
+        /// </summary>
+        internal static string settings_description_UserEmoteSpamMessageThreshold {
+            get {
+                return ResourceManager.GetString("settings_description_UserEmoteSpamMessageThreshold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to How many emote-spam messages a user can send before it being considered as spam.
+        /// </summary>
+        internal static string settings_description_UserEmoteSpamThreshold {
+            get {
+                return ResourceManager.GetString("settings_description_UserEmoteSpamThreshold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Length of any given interval in which a users messages are counted.
+        /// </summary>
+        internal static string settings_description_UserMessageSpamInterval {
+            get {
+                return ResourceManager.GetString("settings_description_UserMessageSpamInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to How many messages in the given interval are considered spam.
+        /// </summary>
+        internal static string settings_description_UserMessageSpamThreshold {
+            get {
+                return ResourceManager.GetString("settings_description_UserMessageSpamThreshold", resourceCulture);
             }
         }
     }

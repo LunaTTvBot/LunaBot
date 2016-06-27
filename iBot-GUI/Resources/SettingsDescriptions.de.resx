@@ -117,7 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="settings_description_uShortField" xml:space="preserve">
-    <value>Dies ist die beschreibund für das unsignierte kleine Feld, direkt aus der deutschen resource</value>
+  <data name="settings_description_BotNickname" xml:space="preserve">
+    <value>settings_description_BotNickname</value>
+  </data>
+  <data name="settings_description_BotTwitchApiKey" xml:space="preserve">
+    <value>settings_description_BotTwitchApiKey</value>
+  </data>
+  <data name="settings_description_ChannelList" xml:space="preserve">
+    <value>settings_description_ChannelList</value>
+  </data>
+  <data name="settings_description_OwnerNickname" xml:space="preserve">
+    <value>settings_description_OwnerNickname</value>
+  </data>
+  <data name="settings_description_OwnerTwitchApiKey" xml:space="preserve">
+    <value>settings_description_OwnerTwitchApiKey</value>
+  </data>
+  <data name="settings_description_UserEmoteSpamInterval" xml:space="preserve">
+    <value>settings_description_UserEmoteSpamInterval</value>
+  </data>
+  <data name="settings_description_UserEmoteSpamMessagePercentage" xml:space="preserve">
+    <value>settings_description_UserEmoteSpamMessagePercentage</value>
+  </data>
+  <data name="settings_description_UserEmoteSpamMessageThreshold" xml:space="preserve">
+    <value>settings_description_UserEmoteSpamMessageThreshold</value>
+  </data>
+  <data name="settings_description_UserEmoteSpamThreshold" xml:space="preserve">
+    <value>settings_description_UserEmoteSpamThreshold</value>
+  </data>
+  <data name="settings_description_UserMessageSpamInterval" xml:space="preserve">
+    <value>settings_description_UserMessageSpamInterval</value>
+  </data>
+  <data name="settings_description_UserMessageSpamThreshold" xml:space="preserve">
+    <value>settings_description_UserMessageSpamThreshold</value>
   </data>
 </root>

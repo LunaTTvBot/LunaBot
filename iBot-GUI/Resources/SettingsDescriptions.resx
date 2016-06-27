@@ -117,7 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="settings_description_uShortField" xml:space="preserve">
-    <value>This is the description for the unsigned Short field, taken from the default resource</value>
+  <data name="settings_description_BotNickname" xml:space="preserve">
+    <value>Given Nickname of the Bot</value>
+  </data>
+  <data name="settings_description_BotTwitchApiKey" xml:space="preserve">
+    <value>Twitch-OAuth key for the Bot-Account</value>
+  </data>
+  <data name="settings_description_ChannelList" xml:space="preserve">
+    <value>List of channels the bot should join upon start</value>
+  </data>
+  <data name="settings_description_OwnerNickname" xml:space="preserve">
+    <value>Owners (Your) Nickname</value>
+  </data>
+  <data name="settings_description_OwnerTwitchApiKey" xml:space="preserve">
+    <value>Owners (Your)Twitch-OAuth key</value>
+  </data>
+  <data name="settings_description_UserEmoteSpamInterval" xml:space="preserve">
+    <value>Length of any given interval in which a users messages are considered spam</value>
+  </data>
+  <data name="settings_description_UserEmoteSpamMessagePercentage" xml:space="preserve">
+    <value>How much of a message needs to be emotes to be considered spam</value>
+  </data>
+  <data name="settings_description_UserEmoteSpamMessageThreshold" xml:space="preserve">
+    <value>Maximum amount of emotes in a message before it being considered spam</value>
+  </data>
+  <data name="settings_description_UserEmoteSpamThreshold" xml:space="preserve">
+    <value>How many emote-spam messages a user can send before it being considered as spam</value>
+  </data>
+  <data name="settings_description_UserMessageSpamInterval" xml:space="preserve">
+    <value>Length of any given interval in which a users messages are counted</value>
+  </data>
+  <data name="settings_description_UserMessageSpamThreshold" xml:space="preserve">
+    <value>How many messages in the given interval are considered spam</value>
   </data>
 </root>
