@@ -133,7 +133,7 @@
     <value>Owners (Your)Twitch-OAuth key</value>
   </data>
   <data name="settings_description_UserEmoteSpamInterval" xml:space="preserve">
-    <value>Length of any given interval in which a users messages are considered spam</value>
+    <value>Length of any given interval in which a users emote-spam-messages are counted</value>
   </data>
   <data name="settings_description_UserEmoteSpamMessagePercentage" xml:space="preserve">
     <value>How much of a message needs to be emotes to be considered spam</value>
@@ -142,12 +142,12 @@
     <value>Maximum amount of emotes in a message before it being considered spam</value>
   </data>
   <data name="settings_description_UserEmoteSpamThreshold" xml:space="preserve">
-    <value>How many emote-spam messages a user can send before it being considered as spam</value>
+    <value>How many emote-spam messages a user can send before being considered as spammer</value>
   </data>
   <data name="settings_description_UserMessageSpamInterval" xml:space="preserve">
-    <value>Length of any given interval in which a users messages are counted</value>
+    <value>Length of any given interval in which a users spam-messages are counted</value>
   </data>
   <data name="settings_description_UserMessageSpamThreshold" xml:space="preserve">
-    <value>How many messages in the given interval are considered spam</value>
+    <value>How many messages a user can send before being considered a spammer</value>
   </data>
 </root>

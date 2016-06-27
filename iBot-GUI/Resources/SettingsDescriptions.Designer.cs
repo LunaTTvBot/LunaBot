@@ -106,7 +106,7 @@ namespace iBot_GUI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Length of any given interval in which a users messages are considered spam.
+        ///   Looks up a localized string similar to Length of any given interval in which a users emote-spam-messages are counted.
         /// </summary>
         internal static string settings_description_UserEmoteSpamInterval {
             get {
@@ -133,7 +133,7 @@ namespace iBot_GUI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to How many emote-spam messages a user can send before it being considered as spam.
+        ///   Looks up a localized string similar to How many emote-spam messages a user can send before being considered as spammer.
         /// </summary>
         internal static string settings_description_UserEmoteSpamThreshold {
             get {
@@ -142,7 +142,7 @@ namespace iBot_GUI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Length of any given interval in which a users messages are counted.
+        ///   Looks up a localized string similar to Length of any given interval in which a users spam-messages are counted.
         /// </summary>
         internal static string settings_description_UserMessageSpamInterval {
             get {
@@ -151,7 +151,7 @@ namespace iBot_GUI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to How many messages in the given interval are considered spam.
+        ///   Looks up a localized string similar to How many messages a user can send before being considered a spammer.
         /// </summary>
         internal static string settings_description_UserMessageSpamThreshold {
             get {

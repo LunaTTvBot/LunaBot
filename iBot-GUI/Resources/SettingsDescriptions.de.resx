@@ -118,36 +118,36 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="settings_description_BotNickname" xml:space="preserve">
-    <value>settings_description_BotNickname</value>
+    <value>Nickname des Bots</value>
   </data>
   <data name="settings_description_BotTwitchApiKey" xml:space="preserve">
-    <value>settings_description_BotTwitchApiKey</value>
+    <value>Twitch-OAuth Schlüssel für den Bot-Account</value>
   </data>
   <data name="settings_description_ChannelList" xml:space="preserve">
-    <value>settings_description_ChannelList</value>
+    <value>Liste der Kanäle denen der Bot beitreten soll</value>
   </data>
   <data name="settings_description_OwnerNickname" xml:space="preserve">
-    <value>settings_description_OwnerNickname</value>
+    <value>Nickname des Besitzers (Du)</value>
   </data>
   <data name="settings_description_OwnerTwitchApiKey" xml:space="preserve">
-    <value>settings_description_OwnerTwitchApiKey</value>
+    <value>Twitch-OAuth schlüssel des Besitzers (Du)</value>
   </data>
   <data name="settings_description_UserEmoteSpamInterval" xml:space="preserve">
-    <value>settings_description_UserEmoteSpamInterval</value>
+    <value>Zeitspanne in der Spam-Nachrichten gezählt werden</value>
   </data>
   <data name="settings_description_UserEmoteSpamMessagePercentage" xml:space="preserve">
-    <value>settings_description_UserEmoteSpamMessagePercentage</value>
+    <value>Wieviel Prozent einer Nachricht emotes sein dürfen bevor die nachricht als Spam gilt</value>
   </data>
   <data name="settings_description_UserEmoteSpamMessageThreshold" xml:space="preserve">
-    <value>settings_description_UserEmoteSpamMessageThreshold</value>
+    <value>Maximale anzahl an emotes in einer Nachricht bevor sie als Spam gilt</value>
   </data>
   <data name="settings_description_UserEmoteSpamThreshold" xml:space="preserve">
-    <value>settings_description_UserEmoteSpamThreshold</value>
+    <value>Wieviele Spam nachrichten ein Viewer schicken darf bevor er als Spammer gilt</value>
   </data>
   <data name="settings_description_UserMessageSpamInterval" xml:space="preserve">
-    <value>settings_description_UserMessageSpamInterval</value>
+    <value>Zeitspanne in der Spam-Nachrichten gezählt werden</value>
   </data>
   <data name="settings_description_UserMessageSpamThreshold" xml:space="preserve">
-    <value>settings_description_UserMessageSpamThreshold</value>
+    <value>Wieviele Nachrichten ein Viewer schicken darf bevor er als Spammer gilt</value>
   </data>
 </root>
