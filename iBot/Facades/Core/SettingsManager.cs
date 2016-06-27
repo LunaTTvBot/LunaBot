@@ -15,7 +15,7 @@ namespace IBot.Facades.Core
 
             var settings = CoreSettingsManager.GetSettings<CoreConnectionSettings>();
             if (settings != null)
-                result = new Result<FacadeConnectionSettings>("Unable to load Connection settings.", 400,
+                result = new Result<FacadeConnectionSettings>("Connection settings successfully loaded.", 0,
                     settings.ToFacadeSettings());
 
             return result;
