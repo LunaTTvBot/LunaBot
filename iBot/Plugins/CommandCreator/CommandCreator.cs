@@ -30,13 +30,14 @@ namespace IBot.Plugins.CommandCreator
      * !command create(_TITLE_) _Text_      - Creates a command with given _TEXT_
      * !command delete(_TITLE)              - Deletes command with _TITLE_
      * !command list                        - Lists all created commands
-     * 
      */
 
         private const string CommandCreatePattern = @"^\s([a-zA-Z][a-zA-Z0-9_-]*)\s(.{2,})$";
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         private static readonly Regex CommandCreateRegEx = new Regex(CommandCreatePattern);
+
+        private static readonly List<CommandCreator> CommandStack = new List<CommandCreator>();
 
         public string PluginName => CommandCreatorLocale.commandcreator_plugin_name;
 
