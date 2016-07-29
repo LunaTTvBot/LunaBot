@@ -134,6 +134,8 @@
       <DependentUpon>Poll.resx</DependentUpon>
     </Compile>
     <Compile Include="Plugins\CommandCreator\CommandCreator.cs" />
+    <Compile Include="Plugins\CommandCreator\EventArgs\CommandChangedEventArgs.cs" />
+    <Compile Include="Plugins\CommandCreator\EventArgs\CommandCreatedEventArgs.cs" />
     <Compile Include="Plugins\Poll\EventArgs\PollChangedEventArgs.cs" />
     <Compile Include="Plugins\Poll\EventArgs\PollCreatedEventArgs.cs" />
     <Compile Include="Facades\Plugins\Poll\Option.cs" />

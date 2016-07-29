@@ -9,6 +9,7 @@ using IBot.Events;
 using IBot.Events.Args.Users;
 using IBot.Events.Commands;
 using IBot.Facades.Core.Settings;
+using IBot.Plugins.CommandCreator.EventArgs;
 using NLog;
 using CommandCreatorLocale = IBot.Resources.Plugins.CommandCreator.CommandCreatorLocale;
 
@@ -50,9 +51,37 @@ namespace IBot.Plugins.CommandCreator
                 Name = PluginName,
                 //Action = CommandAction
             });
-
-          
         }
 
+        public static event EventHandler<CommandCreatedEventArgs> CommandCreatedEvent;
+        private static void OnCommandCreatedEvent(CommandCreatedEventArgs e) => CommandCreatedEvent?.Invoke(null, e);
+
+        public static event EventHandler<CommandChangedEventArgs> CommandDeletedEvent;
+        private static void OnCommandDeletedEvent(CommandChangedEventArgs e) => CommandDeletedEvent?.Invoke(null, e);
+
+        public static List<CommandCreator> GetCommandList() => CommandStack;
+
+        public static CommandCreator CreateCommand(string title, string commandtext)
+        {
+
+            var p = new CommandCreator(title, commandtext);
+            CommandStack.Add(p);
+
+            OnCommandCreatedEvent(new CommandCreatedEventArgs(p));
+            return p;
+        }
+
+        public static CommandCreator DeleteCommand(string title)
+        {
+            var p = CommandStack.Find(command => command.title == title);
+
+            if (p == null)
+                return null;
+
+            CommandStack.Remove(p);
+
+            OnCommandDeletedEvent(new CommandChangedEventArgs(p));
+            return p;
+        }
     }
 }
