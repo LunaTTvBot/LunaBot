@@ -33,10 +33,16 @@ namespace IBot.Plugins.CommandCreator
      * !command list                        - Lists all created commands
      */
 
+        private const string CommandCreateTitlePattern = @"^\screate\((.*)\)\s(.*)";
         private const string CommandCreatePattern = @"^\s([a-zA-Z][a-zA-Z0-9_-]*)\s(.{2,})$";
+        private const string CommandTextPattern = @"([^|]+)\|?";
+        private const string CommandListPattern = @"^\slist";
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
+        private static readonly Regex CommandCreateTitleRegEx = new Regex(CommandCreateTitlePattern);
         private static readonly Regex CommandCreateRegEx = new Regex(CommandCreatePattern);
+        private static readonly Regex CommandTextsRegEx = new Regex(CommandTextPattern);
+        private static readonly Regex CommandListRegEx = new Regex(CommandTextPattern);
 
         private static readonly List<CommandCreator> CommandStack = new List<CommandCreator>();
 
@@ -63,7 +69,6 @@ namespace IBot.Plugins.CommandCreator
 
         public static CommandCreator CreateCommand(string title, string commandtext)
         {
-
             var p = new CommandCreator(title, commandtext);
             CommandStack.Add(p);
 
