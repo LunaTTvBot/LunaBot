@@ -16,6 +16,22 @@ namespace IBot.Plugins.CommandCreator
 {
     internal class CommandCreator : IPlugin
     {
+        /**
+     * CommandCreator Plugin by Lion Haupt
+     * 
+     * !command
+     * -----
+     * Params:
+     * _TITLE_      string
+     * _TEXT_       string
+     * 
+     * Commands:
+     * !command                             - Description
+     * !command create(_TITLE_) _Text_      - Creates a command with given _TEXT_
+     * !command delete(_TITLE)              - Deletes command with _TITLE_
+     * !command list                        - Lists all created commands
+     * 
+     */
 
         private const string CommandCreatePattern = @"^\s([a-zA-Z][a-zA-Z0-9_-]*)\s(.{2,})$";
         private static Logger _logger = LogManager.GetCurrentClassLogger();
@@ -29,10 +45,12 @@ namespace IBot.Plugins.CommandCreator
             _logger.Debug("{0} {1}", PluginName, CommandCreatorLocale.commandcreator_plugin_loaded);
             CommandManager.RegisterPublicChannelCommand(new PublicChannelCommand
             {
-                RegEx = "!addCom(.*)",
+                RegEx = "!command(.*)",
                 Name = PluginName,
-                Action = CommandAction
+                //Action = CommandAction
             });
+
+          
         }
 
     }
