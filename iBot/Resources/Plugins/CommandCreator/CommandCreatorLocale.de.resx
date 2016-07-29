@@ -117,10 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="commandcreator_plugin_loaded" xml:space="preserve">
-    <value>GELADEN!</value>
+  <data name="poll_plugin_loaded" xml:space="preserve">
+    <value>GELAEDN!</value>
   </data>
-  <data name="commandcreator_plugin_name" xml:space="preserve">
-    <value>Command Creator Erweiterung</value>
+  <data name="poll_plugin_name" xml:space="preserve">
+    <value>CommandCreator Erweiterung</value>
   </data>
 </root>

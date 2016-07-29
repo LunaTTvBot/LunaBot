@@ -207,10 +207,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>IrcConnection.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\Plugins\CommandCreator\commandcreator.de.Designer.cs">
+    <Compile Include="Resources\Plugins\CommandCreator\CommandCreatorLocale.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>commandcreator.de.resx</DependentUpon>
+      <DependentUpon>CommandCreatorLocale.resx</DependentUpon>
     </Compile>
     <Compile Include="Resources\Plugins\Points\PointLocale.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -276,7 +276,9 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Facades\Resources\Connection.de.resx" />
     <EmbeddedResource Include="Facades\Resources\Connection.resx">
@@ -301,10 +303,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>IrcConnection.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Plugins\CommandCreator\commandcreator.resx" />
-    <EmbeddedResource Include="Resources\Plugins\CommandCreator\commandcreator.de.resx">
+    <EmbeddedResource Include="Resources\Plugins\CommandCreator\CommandCreatorLocale.de.resx" />
+    <EmbeddedResource Include="Resources\Plugins\CommandCreator\CommandCreatorLocale.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>commandcreator.de.Designer.cs</LastGenOutput>
+      <LastGenOutput>CommandCreatorLocale.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Plugins\Points\PointLocale.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -316,6 +318,7 @@
       <LastGenOutput>poll.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
