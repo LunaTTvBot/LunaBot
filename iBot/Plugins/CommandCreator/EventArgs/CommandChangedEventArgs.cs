@@ -2,9 +2,9 @@
 {
     internal class CommandChangedEventArgs
     {
-        public CommandCreatorPlugin Command { get; }
+        public CommandCreator Command { get; }
 
-        public CommandChangedEventArgs(CommandCreatorPlugin command)
+        public CommandChangedEventArgs(CommandCreator command)
         {
             Command = command;
         }
