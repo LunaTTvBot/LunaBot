@@ -61,6 +61,24 @@ namespace IBot.Resources.Plugins.CommandCreator {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Command created! ähnelt.
+        /// </summary>
+        internal static string commandcreator_created {
+            get {
+                return ResourceManager.GetString("commandcreator_created", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Type &quot;!command create (Text)&quot; to create a command. ähnelt.
+        /// </summary>
+        internal static string commandcreator_help {
+            get {
+                return ResourceManager.GetString("commandcreator_help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die LOADED! ähnelt.
         /// </summary>
         internal static string commandcreator_plugin_loaded {

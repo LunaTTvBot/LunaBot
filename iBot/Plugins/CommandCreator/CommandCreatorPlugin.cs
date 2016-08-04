@@ -41,7 +41,7 @@ namespace IBot.Plugins.CommandCreator
 
         private static readonly Regex CommandCreateTitleRegEx = new Regex(CommandCreateTitlePattern);
         private static readonly Regex CommandCreateRegEx = new Regex(CommandCreatePattern);
-        private static readonly Regex CommandTextsRegEx = new Regex(CommandTextPattern);
+        private static readonly Regex CommandTextRegEx = new Regex(CommandTextPattern);
         private static readonly Regex CommandListRegEx = new Regex(CommandTextPattern);
 
         private static readonly List<CommandCreator> CommandStack = new List<CommandCreator>();
@@ -80,7 +80,7 @@ namespace IBot.Plugins.CommandCreator
                 var lIdx = CommandStack[CommandStack.Count - 1].Id;
             }
 
-            var p = new CommandCreator(title, commandtext, idx);
+            var p = new CommandCreator(title, list, idx);
             CommandStack.Add(p);
 
             OnCommandCreatedEvent(new CommandCreatedEventArgs(p));
@@ -99,5 +99,54 @@ namespace IBot.Plugins.CommandCreator
             OnCommandDeletedEvent(new CommandChangedEventArgs(p));
             return p;
         }
+
+        private static void SendMessage(string msg, AnswerType aType, string target)
+        {
+            IrcConnection.Write(ConnectionType.BotCon, aType, target, msg);
+        }
+
+        private static bool HandleCommandBaseCommand(string commandParams, AnswerType answerT, string answerTarget)
+        {
+            if (commandParams != "") return false;
+
+            SendMessage(CommandCreatorLocale.commandcreator_help, answerT, answerTarget);
+
+            return true;
+        }
+
+        private static bool HandleCommandCreateTitleCommand(string commandParams, AnswerType answerType, string answerTarget)
+        {
+            var m = CommandCreateTitleRegEx.Match(commandParams);
+            if (!m.Success) return false;
+
+            var optM = CommandTextRegEx.Matches(m.Groups[2].Value);
+            if (optM.Count <= 0) return false;
+
+            var list = (from Match match in optM select match.Groups[1].Value).ToList();
+            var idx = 1;
+            if (CommandStack.Count > 0)
+            {
+                var lIdx = CommandStack[CommandStack.Count - 1].Id;
+                idx = lIdx + 1;
+            }
+
+            var cmdText = list.Select((t, i) => new CommandText(i + 1, t)).ToList();
+
+            var p = new CommandCreator(m.Groups[1].Value, cmdText, idx);
+            CommandStack.Add(p);
+
+            SendMessage(string.Format(CommandCreatorLocale.commandcreator_created, p.Id), answerType, answerTarget);
+            OnCommandCreatedEvent(new CommandCreatedEventArgs(p));
+
+            return true;
+        }
+
+        private static void CommandAction(PublicChannelCommand command, Match match, UserPublicMessageEventArgs eArgs)
+        {
+
+        }
+
+
+
     }
 }
