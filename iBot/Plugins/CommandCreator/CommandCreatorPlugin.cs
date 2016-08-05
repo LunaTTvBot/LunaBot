@@ -57,7 +57,7 @@ namespace IBot.Plugins.CommandCreator
             {
                 RegEx = "!command(.*)",
                 Name = PluginName,
-                //Action = CommandAction
+                Action = CommandAction
             });
         }
 
