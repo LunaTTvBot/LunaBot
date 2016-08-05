@@ -61,6 +61,15 @@ namespace IBot.Resources.Plugins.CommandCreator {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Command removed successfully! ähnelt.
+        /// </summary>
+        internal static string commandcreator_command_removed {
+            get {
+                return ResourceManager.GetString("commandcreator_command_removed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Command created! ähnelt.
         /// </summary>
         internal static string commandcreator_created {
@@ -75,6 +84,15 @@ namespace IBot.Resources.Plugins.CommandCreator {
         internal static string commandcreator_help {
             get {
                 return ResourceManager.GetString("commandcreator_help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die There are no commands yet. Get help with !command ähnelt.
+        /// </summary>
+        internal static string commandcreator_no_commands {
+            get {
+                return ResourceManager.GetString("commandcreator_no_commands", resourceCulture);
             }
         }
         
