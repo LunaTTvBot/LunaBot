@@ -22,7 +22,7 @@ namespace iBot_GUI
     {
         public MainWindow()
         {
-           // InitializeComponent();
+            InitializeComponent();
         }
     }
 }
