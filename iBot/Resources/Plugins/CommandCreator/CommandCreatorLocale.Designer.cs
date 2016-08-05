@@ -61,6 +61,24 @@ namespace IBot.Resources.Plugins.CommandCreator {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Upps, something went wrong. Please try again or type &quot;!command&quot; to get help. ähnelt.
+        /// </summary>
+        internal static string commandcreator_base_error {
+            get {
+                return ResourceManager.GetString("commandcreator_base_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Command {0} could not be found. Get a list of all available Commands with &quot;!command list&quot; ähnelt.
+        /// </summary>
+        internal static string commandcreator_command_not_found {
+            get {
+                return ResourceManager.GetString("commandcreator_command_not_found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Command removed successfully! ähnelt.
         /// </summary>
         internal static string commandcreator_command_removed {
@@ -88,7 +106,7 @@ namespace IBot.Resources.Plugins.CommandCreator {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die There are no commands yet. Get help with !command ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die There are no commands yet. Get help with &quot;!command&quot;. ähnelt.
         /// </summary>
         internal static string commandcreator_no_commands {
             get {
@@ -111,6 +129,15 @@ namespace IBot.Resources.Plugins.CommandCreator {
         internal static string commandcreator_plugin_name {
             get {
                 return ResourceManager.GetString("commandcreator_plugin_name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Your command could not be executed successfully. Please try again or type &quot;!command&quot; to get help. ähnelt.
+        /// </summary>
+        internal static string commandcreator_wrong_command {
+            get {
+                return ResourceManager.GetString("commandcreator_wrong_command", resourceCulture);
             }
         }
     }

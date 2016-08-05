@@ -37,12 +37,14 @@ namespace IBot.Plugins.CommandCreator
         private const string CommandCreatePattern = @"^\s([a-zA-Z][a-zA-Z0-9_-]*)\s(.{2,})$";
         private const string CommandTextPattern = @"([^|]+)\|?";
         private const string CommandListPattern = @"^\slist";
+        private const string CommandActionsPattern = @"^\s(delete|abort|result|reset)[:\s]([0-9]+)";
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         private static readonly Regex CommandCreateTitleRegEx = new Regex(CommandCreateTitlePattern);
         private static readonly Regex CommandCreateRegEx = new Regex(CommandCreatePattern);
         private static readonly Regex CommandTextRegEx = new Regex(CommandTextPattern);
         private static readonly Regex CommandListRegEx = new Regex(CommandTextPattern);
+        private static readonly Regex CommandActionsRegEx = new Regex(CommandActionsPattern);
 
         private static readonly List<CommandCreator> CommandsStack = new List<CommandCreator>();
 
@@ -141,32 +143,6 @@ namespace IBot.Plugins.CommandCreator
             return true;
         }
 
-        private static bool HandleCommandCreateCommand(string commandParams, AnswerType answerType, string answerTarget)
-        {
-            var m = CommandCreateTitleRegEx.Match(commandParams);
-            if (!m.Success) return false;
-
-            var optM = CommandTextRegEx.Matches(m.Groups[2].Value);
-            if (optM.Count <= 0) return false;
-
-            var list = (from Match match in optM select match.Groups[1].Value).ToList();
-            var idx = 1;
-            if (CommandsStack.Count > 0)
-            {
-                var lIdx = CommandsStack[CommandsStack.Count - 1].Id;
-                idx = lIdx + 1;
-            }
-
-            var cmdText = list.Select((t, i) => new CommandText(i + 1, t)).ToList();
-
-            var c = new CommandCreator("", cmdText, idx);
-            CommandsStack.Add(c);
-
-            SendMessage(string.Format(CommandCreatorLocale.commandcreator_created, c.Id), answerType, answerTarget);
-            OnCommandCreatedEvent(new CommandCreatedEventArgs(c));
-
-            return true;
-        }
 
         private static bool HandleCommandListCommand(string commandParams, AnswerType answerType, string answerTarget)
         {
@@ -188,8 +164,6 @@ namespace IBot.Plugins.CommandCreator
                 if (command.Title != "")
                     stringB.Append($" - {command.Title}");
 
-                //stringB.Append($" ({command.GetPollState().ToString()}) ");
-
                 command.Texts.ForEach(text =>
                 {
                     var idx = command.Texts.IndexOf(text);
@@ -204,12 +178,73 @@ namespace IBot.Plugins.CommandCreator
             return true;
         }
 
-        private static void CommandAction(PublicChannelCommand command, Match match, UserPublicMessageEventArgs eArgs)
+        private static void HandleCommandDelete(CommandCreator c, AnswerType answerType, string answerTarget)
         {
-
+            CommandsStack.Remove(c);
+            SendMessage(string.Format(CommandCreatorLocale.commandcreator_command_removed, c.Id), answerType, answerTarget);
+            OnCommandDeletedEvent(new CommandChangedEventArgs(c));
         }
 
+        private static void HandleCommandActions(string commandParams, AnswerType answerType, string answerTarget)
+        {
+            var m = CommandActionsRegEx.Match(commandParams);
+            if (!m.Success) return;
 
+            var cIdx = Convert.ToInt32(m.Groups[2].Value);
+            if (!CommandsStack.Exists(command => command.Id == cIdx))
+            {
+                SendMessage(string.Format(CommandCreatorLocale.commandcreator_command_not_found, cIdx), answerType,
+                    answerTarget);
+                return;
+            }
+
+            var c = CommandsStack.Find(command => command.Id == cIdx);
+
+            switch (m.Groups[1].Value)
+            {
+                case "delete":
+                    HandleCommandDelete(c, answerType, answerTarget);
+                    break;
+                default:
+                    SendMessage(string.Format(CommandCreatorLocale.commandcreator_wrong_command, cIdx), answerType,
+                        answerTarget);
+                    break;
+            }
+        }
+
+        private static void CommandAction(PublicChannelCommand command, Match match, UserPublicMessageEventArgs eArgs)
+        {
+            var commandParams = match.Groups[1].Value;
+
+            try
+            {
+                // !command
+                // Always send private due to a lot of text.
+                if (HandleCommandBaseCommand(commandParams, AnswerType.Private, eArgs.UserName))
+                    return;
+
+                HandleCommandCommands(commandParams, AnswerType.Public, eArgs.Channel);
+            }
+            catch (Exception)
+            {
+                SendMessage(CommandCreatorLocale.commandcreator_base_error, AnswerType.Public,
+                    eArgs.Channel);
+            }
+        }
+
+        private static void HandleCommandCommands(string pollParams, AnswerType aType, string target)
+        {
+            // !command create(_TITLE_) _TEXT_ 
+            if (HandleCommandCreateTitleCommand(pollParams, aType, target))
+                return;
+
+            // !command list
+            if (HandleCommandListCommand(pollParams, aType, target))
+                return;
+
+            // !command delete:_ID_
+            HandleCommandActions(pollParams, aType, target);
+        }
 
     }
 }

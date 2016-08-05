@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="commandcreator_base_error" xml:space="preserve">
+    <value>Ups, etwas ist schief gelaufen. Bitte versuche es erneut oder benutze "!command" um Hilfe zu kriegen.</value>
+  </data>
+  <data name="commandcreator_command_not_found" xml:space="preserve">
+    <value>Command {0} konnte nicht gefunden werden. Benutze "!command list" um eine Liste aller angelegten Commands zu erhalten. </value>
+  </data>
   <data name="commandcreator_command_removed" xml:space="preserve">
     <value>Das Command wurde erfolgreich entfernt!</value>
   </data>
@@ -134,5 +140,8 @@
   </data>
   <data name="commandcreator_plugin_name" xml:space="preserve">
     <value>CommandCreator Erweiterung</value>
+  </data>
+  <data name="commandcreator_wrong_command" xml:space="preserve">
+    <value>Das Kommando konnte nicht ausgeführt werden. Bitte versuche es erneut oder gib "!command" ein um Hilfe zu erhalten.</value>
   </data>
 </root>
