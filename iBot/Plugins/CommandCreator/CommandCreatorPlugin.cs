@@ -15,7 +15,7 @@ namespace IBot.Plugins.CommandCreator
 {
     internal class CommandCreatorPlugin : IPlugin
     {
-        /**
+    /**
      * CommandCreator Plugin by Lion Haupt
      * 
      * !command
@@ -67,12 +67,12 @@ namespace IBot.Plugins.CommandCreator
 
         public static List<CommandCreator> GetCommandList() => CommandsStack;
 
-        public static CommandCreator CreateCommand(string title, string[] texts)
+        public static CommandCreator CreateCommand(string title, string[] cmdtexts)
         {
             var list = new List<CommandText>();
-            foreach (var text in texts)
+            foreach (var cmdtext in cmdtexts)
             {
-                list.Add(new CommandText(list.Count + 1, text));
+                list.Add(new CommandText(list.Count + 1, cmdtext));
             }
             var idx = 1;
             if(CommandsStack.Count > 0)
@@ -162,9 +162,9 @@ namespace IBot.Plugins.CommandCreator
                 if (command.Title != "")
                     stringB.Append($" - {command.Title}");
 
-                command.Texts.ForEach(text =>
+                command.CmdTexts.ForEach(text =>
                 {
-                    var idx = command.Texts.IndexOf(text);
+                    var idx = command.CmdTexts.IndexOf(text);
                     if (idx != 0)
                         stringB.Append(", ");
                     stringB.Append($"{text.Id}:{text.Name}");
