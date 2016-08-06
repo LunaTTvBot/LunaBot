@@ -40,17 +40,16 @@ namespace IBot.Plugins.CommandCreator
          * !(_TITLE_)                           - Activates an created command
          */
 
-        private const string CommandCreateTitlePattern = @"^\screate\((.*)\)\s(.*)";
+        private const string CommandCreateTitlePattern = @"^\screate\s([\w]{2,})\s(.*)$";
         private const string CommandCreatePattern = @"^\s([a-zA-Z][a-zA-Z0-9_-]*)\s(.{2,})$";
         private const string CommandTextPattern = @"([^|]+)\|?";
         private const string CommandListPattern = @"^\slist";
-        private const string CommandActionsPattern = @"^\s(delete|abort|result|reset)[:\s]([0-9]+)";
+        private const string CommandActionsPattern = @"^\s(delete)[:\s]([0-9]+)";
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         private static readonly Regex CommandCreateTitleRegEx = new Regex(CommandCreateTitlePattern);
-        private static readonly Regex CommandCreateRegEx = new Regex(CommandCreatePattern);
         private static readonly Regex CommandTextRegEx = new Regex(CommandTextPattern);
-        private static readonly Regex CommandListRegEx = new Regex(CommandTextPattern);
+        private static readonly Regex CommandListRegEx = new Regex(CommandListPattern);
         private static readonly Regex CommandActionsRegEx = new Regex(CommandActionsPattern);
 
         private static readonly List<CommandCreator> CommandsStack = new List<CommandCreator>();

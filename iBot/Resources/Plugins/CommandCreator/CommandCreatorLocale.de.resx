@@ -136,7 +136,7 @@
     <value>Noch sind keine Commands vorhanden. Hilfe kriegst du per !command</value>
   </data>
   <data name="commandcreator_plugin_loaded" xml:space="preserve">
-    <value>GELAEDN!</value>
+    <value>GELADEN!</value>
   </data>
   <data name="commandcreator_plugin_name" xml:space="preserve">
     <value>CommandCreator Erweiterung</value>
