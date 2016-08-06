@@ -15,21 +15,30 @@ namespace IBot.Plugins.CommandCreator
 {
     internal class CommandCreatorPlugin : IPlugin
     {
-    /**
-     * CommandCreator Plugin by Lion Haupt
-     * 
-     * !command
-     * -----
-     * Params:
-     * _TITLE_      string
-     * _TEXT_       string
-     * 
-     * Commands:
-     * !command                             - Description
-     * !command create(_TITLE_) _Text_      - Creates a command with given _TEXT_
-     * !command delete(_TITLE)              - Deletes command with _TITLE_
-     * !command list                        - Lists all created commands
-     */
+        /**
+         * CommandCreator Plugin by Lion Haupt
+         * 
+         * !command
+         * -----
+         * Params:
+         * _TITLE_      string
+         * _TEXT_       string
+         * 
+         * Commands:
+         * !command                             - Description
+         * !command create(_TITLE_) _Text_      - Creates a command with given _TEXT_
+         * !command delete(_TITLE)              - Deletes command with _TITLE_
+         * !command list                        - Lists all created commands
+         * 
+         * 
+         * Created Commands
+         * -----
+         * Params:
+         * _TITLE_      String (Title of the created command)
+         * 
+         * commands:
+         * !(_TITLE_)                           - Activates the desired command
+         */
 
         private const string CommandCreateTitlePattern = @"^\screate\((.*)\)\s(.*)";
         private const string CommandCreatePattern = @"^\s([a-zA-Z][a-zA-Z0-9_-]*)\s(.{2,})$";
