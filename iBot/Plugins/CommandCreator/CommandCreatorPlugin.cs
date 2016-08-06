@@ -34,10 +34,10 @@ namespace IBot.Plugins.CommandCreator
          * Created Commands
          * -----
          * Params:
-         * _TITLE_      String (Title of the created command)
+         * _TITLE_      String (Title of a created command)
          * 
          * commands:
-         * !(_TITLE_)                           - Activates the desired command
+         * !(_TITLE_)                           - Activates an created command
          */
 
         private const string CommandCreateTitlePattern = @"^\screate\((.*)\)\s(.*)";
@@ -66,6 +66,7 @@ namespace IBot.Plugins.CommandCreator
                 Name = PluginName,
                 Action = CommandAction
             });
+
         }
 
         public static event EventHandler<CommandCreatedEventArgs> CommandCreatedEvent;

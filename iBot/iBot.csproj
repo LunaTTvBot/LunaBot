@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -95,6 +95,7 @@
     <Compile Include="Core\Rights.cs" />
     <Compile Include="Core\SettingsManager.cs" />
     <Compile Include="Core\Settings\ConnectionSettings.cs" />
+    <Compile Include="Core\Settings\GeneralSettings.cs" />
     <Compile Include="Core\Settings\SettingsHelper.cs" />
     <Compile Include="Events\Args\Connections\ConnectionEventArgs.cs" />
     <Compile Include="Events\Args\Connections\ConnectionUnexpectedCloseEventArgs.cs" />
@@ -105,6 +106,8 @@
     <Compile Include="Facades\Core\PluginManager.cs" />
     <Compile Include="Facades\Core\SettingsManager.cs" />
     <Compile Include="Facades\Core\Settings\ConnectionSettings.cs" />
+    <Compile Include="Facades\Core\Settings\GeneralSettings.cs" />
+    <Compile Include="Facades\Core\Settings\SettingsBase.cs" />
     <Compile Include="Facades\Events\Args\Channel\JoinPartEventArgs.cs" />
     <Compile Include="Facades\Events\Args\User\PrivateMessageEventArgs.cs" />
     <Compile Include="Facades\Events\Args\User\PublicMessageEventArgs.cs" />
@@ -138,6 +141,8 @@
     <Compile Include="Plugins\CommandCreator\CommandText.cs" />
     <Compile Include="Plugins\CommandCreator\EventArgs\CommandChangedEventArgs.cs" />
     <Compile Include="Plugins\CommandCreator\EventArgs\CommandCreatedEventArgs.cs" />
+    <Compile Include="Facades\TranslationExtensions\GeneralSettingsExtension.cs" />
+    <Compile Include="Models\Emote.cs" />
     <Compile Include="Plugins\Poll\EventArgs\PollChangedEventArgs.cs" />
     <Compile Include="Plugins\Poll\EventArgs\PollCreatedEventArgs.cs" />
     <Compile Include="Facades\Plugins\Poll\Option.cs" />
@@ -193,6 +198,11 @@
     <Compile Include="Plugins\Poll\PollOption.cs" />
     <Compile Include="Plugins\Poll\PollPlugin.cs" />
     <Compile Include="Plugins\Poll\PollResult.cs" />
+    <Compile Include="Plugins\UserAwards\Award.cs" />
+    <Compile Include="Plugins\UserAwards\AwardSettings.cs" />
+    <Compile Include="Plugins\UserAwards\AwardType.cs" />
+    <Compile Include="Plugins\UserAwards\AwardTypeAttribute.cs" />
+    <Compile Include="Plugins\UserAwards\UserAwardsPlugin.cs" />
     <Compile Include="Plugins\UserPoints\PointSettings.cs" />
     <Compile Include="Plugins\UserPoints\UserPointPlugin.cs" />
     <Compile Include="Program.cs" />
@@ -232,6 +242,7 @@
     <Compile Include="TmiApi\TmiUriProvider.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Core\UserList.cs" />
+    <Compile Include="Tools\EmoteTools.cs" />
     <Compile Include="TwitchAPI\Models\Admin.cs" />
     <Compile Include="TwitchAPI\Models\Authorization.cs" />
     <Compile Include="TwitchAPI\Models\Badge.cs" />
