@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -136,6 +136,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Poll.resx</DependentUpon>
     </Compile>
+    <Compile Include="Plugins\CommandCreator\CommandCreator.cs" />
+    <Compile Include="Plugins\CommandCreator\CommandCreatorPlugin.cs" />
+    <Compile Include="Plugins\CommandCreator\CommandText.cs" />
+    <Compile Include="Plugins\CommandCreator\EventArgs\CommandChangedEventArgs.cs" />
+    <Compile Include="Plugins\CommandCreator\EventArgs\CommandCreatedEventArgs.cs" />
     <Compile Include="Facades\TranslationExtensions\GeneralSettingsExtension.cs" />
     <Compile Include="Models\Emote.cs" />
     <Compile Include="Plugins\Poll\EventArgs\PollChangedEventArgs.cs" />
@@ -216,6 +221,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>IrcConnection.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Plugins\CommandCreator\CommandCreatorLocale.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CommandCreatorLocale.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\Plugins\Points\PointLocale.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -281,7 +291,9 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Facades\Resources\Connection.de.resx" />
     <EmbeddedResource Include="Facades\Resources\Connection.resx">
@@ -306,6 +318,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>IrcConnection.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Plugins\CommandCreator\CommandCreatorLocale.de.resx" />
+    <EmbeddedResource Include="Resources\Plugins\CommandCreator\CommandCreatorLocale.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommandCreatorLocale.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Plugins\Points\PointLocale.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>PointLocale.Designer.cs</LastGenOutput>
@@ -316,6 +333,7 @@
       <LastGenOutput>poll.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

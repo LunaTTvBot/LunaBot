@@ -12,6 +12,7 @@ using IBot.Core.Settings;
 using IBot.Events.Args.Connections;
 using IBot.Events.Args.Users;
 using NLog;
+using System.Diagnostics;
 
 namespace IBot.Core
 {
@@ -380,6 +381,7 @@ namespace IBot.Core
                         Logger.Debug("PING received -> Send PONG!");
                     }
 
+                    Trace.WriteLine(message);
                     OnRaiseMessageEvent(new MessageEventArgs(message));
                 }
             }
