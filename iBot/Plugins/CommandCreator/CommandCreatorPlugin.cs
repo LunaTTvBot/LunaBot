@@ -30,7 +30,6 @@ namespace IBot.Plugins.CommandCreator
          * !command delete(_TITLE)              - Deletes command with _TITLE_
          * !command list                        - Lists all created commands
          * 
-         * 
          * Created Commands
          * -----
          * Params:
