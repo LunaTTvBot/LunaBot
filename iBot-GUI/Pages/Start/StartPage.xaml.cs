@@ -45,22 +45,28 @@ namespace iBot_GUI.Pages.Start
 
         private void UserListTimerOnTick(object sender, EventArgs eventArgs)
         {
-            if (Dispatcher.CheckAccess())
+            Action action = () =>
             {
+                var channel = SettingsManager.GetConnectionSettings()
+                                             ?.Value
+                                             ?.ChannelList
+                                             ?.FirstOrDefault();
+                if (channel == null)
+                    return;
+
                 ChatterList.ItemsSource =
-                    ChatterList.ItemsSource =
-                        UserList.GetUsers(SettingsManager.GetConnectionSettings().Value.ChannelList.First())
+                    UserList.GetUsers(channel)
                             .Select(user => user.Name)
                             .ToList();
+            };
+
+            if (Dispatcher.CheckAccess())
+            {
+                action.Invoke();
             }
             else
             {
-                Dispatcher.Invoke(
-                    () =>
-                        ChatterList.ItemsSource =
-                            UserList.GetUsers(SettingsManager.GetConnectionSettings().Value.ChannelList.First())
-                                .Select(user => user.Name)
-                                .ToList());
+                Dispatcher.Invoke(action);
             }
 
             ChatterList.SelectedItem = null;
