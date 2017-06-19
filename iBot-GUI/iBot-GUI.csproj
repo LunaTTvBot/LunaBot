@@ -57,6 +57,9 @@
       <HintPath>..\packages\MaterialDesignThemes.1.5.0.523\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="SQLite.CodeFirst, Version=1.2.0.12, Culture=neutral, PublicKeyToken=eb96ba0a78d831a7, processorArchitecture=MSIL">
       <HintPath>..\packages\SQLite.CodeFirst.1.2.0.12\lib\net45\SQLite.CodeFirst.dll</HintPath>
       <Private>True</Private>
@@ -153,6 +156,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SettingsDescriptions.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\EditorElementGenerator.cs" />
     <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
