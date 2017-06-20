@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using iBot_GUI.Annotations;
-using Newtonsoft.Json;
+using iBot_GUI.Resources;
 
 namespace iBot_GUI.Utilities
 {
@@ -16,24 +19,68 @@ namespace iBot_GUI.Utilities
     public static class EditorElementGenerator
     {
         /// <summary>
+        /// Generate a <see cref="UIElement"/> for a specific <see cref="Type"/>, using all possible Properties of the given type recursively
+        /// </summary>
+        /// <typeparam name="T">Type that determines which <see cref="UIElement"/> will be generated</typeparam>
+        /// /// <returns><see cref="UIElement"/> that can be injected into some other Control</returns>
+        public static IEnumerable<UIElement> GenerateUiElementRecursive<T>([NotNull] T baseObject)
+        {
+            var list = new List<UIElement>();
+
+            foreach (var prop in baseObject.GetType()
+                                           .GetProperties())
+            {
+                var name = prop.Name;
+
+                var value = prop.GetValue(baseObject);
+
+                var settingsDescriptionIdentifier = Attribute.GetCustomAttributes(prop)
+                                                             .OfType<DescriptionAttribute>()
+                                                             .FirstOrDefault()
+                                                             ?.Description;
+
+                var description = string.IsNullOrWhiteSpace(settingsDescriptionIdentifier)
+                                      ? ""
+                                      : SettingsDescriptions.ResourceManager
+                                                            .GetString(settingsDescriptionIdentifier);
+
+                var binding = new Binding(prop.Name)
+                {
+                    Source = baseObject,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    Mode = BindingMode.TwoWay,
+                    Delay = 250
+                };
+
+                var element = GenerateUiElement(name, value, description, binding);
+
+                list.Add(element);
+            }
+
+            return list;
+        }
+
+        /// <summary>
         /// Generate a <see cref="UIElement"/> for a specific <see cref="Type"/>
         /// </summary>
         /// <typeparam name="T">Type that determines which <see cref="UIElement"/> will be generated</typeparam>
         /// <param name="name">Name of this Value</param>
         /// <param name="value">Value for the desired <see cref="UIElement"/></param>
+        /// <param name="description">Optional description for this Key / Value Pair</param>
         /// <param name="binding">Binding to use while binding the Value to the UIElement</param>
         /// <returns><see cref="UIElement"/> that can be injected into some other Control</returns>
         [NotNull]
-        public static UIElement GenerateUiElement<T>(string name, [NotNull] T value, [CanBeNull] Binding binding = null)
+        private static UIElement GenerateUiElement<T>([NotNull] string name,
+                                                      [NotNull] T value,
+                                                      [CanBeNull] string description,
+                                                      [CanBeNull] Binding binding = null)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            var type = typeof(T);
-
-            var result = HandleValueType(type, value, binding)
-                         ?? (HandleSpecialTypes(type, value, binding)
-                             ?? HandleGenericType(type, value, binding));
+            var result = HandleValueType<T>(name, value, description, binding)
+                         ?? (HandleSpecialTypes<T>(name, value, description, binding)
+                             ?? HandleGenericType<T>(name, value, description, binding));
 
             return result;
         }
@@ -53,7 +100,7 @@ namespace iBot_GUI.Utilities
                                                     [CanBeNull] string description = null,
                                                     [CanBeNull] Binding binding = null)
         {
-            var type = typeof(T);
+            var type = value.GetType();
 
             var element = new DockPanel();
 
@@ -149,7 +196,7 @@ namespace iBot_GUI.Utilities
                                                        [CanBeNull] string description = null,
                                                        [CanBeNull] Binding binding = null)
         {
-            var type = typeof(T);
+            var type = value.GetType();
 
             var element = new DockPanel();
 
@@ -217,21 +264,14 @@ namespace iBot_GUI.Utilities
         {
             var element = new DockPanel();
 
-            var box = new TextBox();
-
-            try
+            var box = new GroupBox
             {
-                box.Text = JsonConvert.SerializeObject(value, Formatting.Indented);
-            }
-            catch (JsonException)
-            {
-                box.Text = "";
-            }
+                Header = name,
+                Content = GenerateUiElementRecursive(value)
+            };
 
             if (binding != null)
                 box.SetBinding(TextBox.TextProperty, binding);
-
-            var valueElement = box;
 
             var label = new Label
             {
@@ -240,10 +280,10 @@ namespace iBot_GUI.Utilities
             };
 
             DockPanel.SetDock(label, Dock.Left);
-            DockPanel.SetDock(valueElement, Dock.Right);
+            DockPanel.SetDock(box, Dock.Right);
 
             element.Children.Add(label);
-            element.Children.Add(valueElement);
+            element.Children.Add(box);
 
             return element;
         }
