@@ -169,7 +169,7 @@ namespace iBot_GUI.Utilities
             var label = new Label
             {
                 Content = name,
-                ToolTip = description
+                ToolTip = description ?? ""
             };
 
             DockPanel.SetDock(label, Dock.Left);
@@ -235,7 +235,7 @@ namespace iBot_GUI.Utilities
             var label = new Label
             {
                 Content = name,
-                ToolTip = description
+                ToolTip = description ?? ""
             };
 
             DockPanel.SetDock(label, Dock.Left);
@@ -262,30 +262,22 @@ namespace iBot_GUI.Utilities
                                                       [CanBeNull] string description = null,
                                                       [CanBeNull] Binding binding = null)
         {
-            var element = new DockPanel();
+            var stack = new StackPanel();
+
+            foreach (var uiElement in GenerateUiElementRecursive(value))
+                stack.Children.Add(uiElement);
 
             var box = new GroupBox
             {
                 Header = name,
-                Content = GenerateUiElementRecursive(value)
+                Content = stack,
+                ToolTip = description ?? ""
             };
 
             if (binding != null)
                 box.SetBinding(TextBox.TextProperty, binding);
 
-            var label = new Label
-            {
-                Content = name,
-                ToolTip = description
-            };
-
-            DockPanel.SetDock(label, Dock.Left);
-            DockPanel.SetDock(box, Dock.Right);
-
-            element.Children.Add(label);
-            element.Children.Add(box);
-
-            return element;
+            return box;
         }
     }
 }
