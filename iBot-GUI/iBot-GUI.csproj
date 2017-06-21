@@ -153,6 +153,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SettingsDescriptions.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\EditorElementGenerator.cs" />
     <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
